@@ -62,6 +62,12 @@ border-radius:20px;background:var(--surface);color:var(--text);}
 .record{display:flex;gap:.5rem;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
 border-left:3px solid var(--gold);border-radius:8px;padding:.6rem .9rem;margin:.4rem 0 .8rem;font-size:.82rem;}
 .record b{color:var(--text);}.record .ok{color:var(--green);font-weight:700;}.record .no{color:var(--accent);font-weight:700;}
+.lnpanel{display:flex;align-items:center;gap:.7rem;background:var(--surface);border:1px solid var(--border);
+border-left:3px solid var(--accent);border-radius:10px;padding:.7rem .9rem;margin:.2rem 0 .4rem;color:var(--text);transition:.15s;}
+.lnpanel:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.lnp-ic{font-size:1.3rem;}.lnp-tx{display:flex;flex-direction:column;flex:1;min-width:0;}
+.lnp-tx b{font-size:.95rem;}.lnp-sub{font-size:.76rem;color:var(--muted);}
+.lnp-go{font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700;}
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow-x:auto;}
 table.board{width:100%;border-collapse:collapse;font-size:.86rem;}
 table.board thead th{background:var(--surface-hover);color:var(--muted);text-align:left;font-weight:600;font-size:.66rem;
@@ -104,6 +110,8 @@ table.board tbody td.col-streak{font-size:1.1rem;font-weight:700;color:var(--acc
 <nav class="nav"><a href="index.html" class="active">Leaderboards</a><a href="feats.html">Rarest Feats</a></nav>
 <div class="wrap">
 <header><span class="brand">HoopsHype · NBA Statistical Streaks</span><h1>NBA <span class="accent">Statistical Streaks</span></h1><p class="subtitle">Longest runs of consecutive games hitting a statistical mark — skipping missed games, breaking only on an appearance that falls short. 1946–present.</p></header>
+<a class="lnpanel" href="lastnight.html"><span class="lnp-ic">🌙</span><span class="lnp-tx"><b>Last Night's Streaks</b><span class="lnp-sub" id="lnp-sub">Daily active-streak tracker — see what extended, broke, or hit a milestone</span></span><span class="lnp-go">→</span></a>
+<script>fetch("active-state.json").then(function(r){return r.json();}).then(function(s){document.getElementById("lnp-sub").textContent=s.count+" active streaks tracked · updated "+s.data_through;}).catch(function(){});</script>
 <div class="psearch-wrap"><input class="psearch" type="search" placeholder="Search any player by name…" autocomplete="off" spellcheck="false"><div class="ac" role="listbox"></div></div>
 <div class="controls"><div class="tabs"><button class="tab" data-scope="regular">Regular Season</button><button class="tab" data-scope="playoffs">Playoffs</button><button class="tab" data-scope="combined">Combined</button></div></div>
 <div class="fams"><div class="fam"><span class="flabel">Scoring</span><button class="chip" data-streak="pts10">10+ points</button><button class="chip" data-streak="pts20">20+ points</button><button class="chip" data-streak="pts30">30+ points</button><button class="chip" data-streak="pts40">40+ points</button></div><div class="fam"><span class="flabel">Rebounding</span><button class="chip" data-streak="reb10">10+ rebounds</button><button class="chip" data-streak="reb15">15+ rebounds</button><button class="chip" data-streak="reb20">20+ rebounds</button></div><div class="fam"><span class="flabel">Playmaking</span><button class="chip" data-streak="ast5">5+ assists</button><button class="chip" data-streak="ast10">10+ assists</button><button class="chip" data-streak="ast15">15+ assists</button></div><div class="fam"><span class="flabel">Defense</span><button class="chip" data-streak="stl2">2+ steals</button><button class="chip" data-streak="stl3">3+ steals</button><button class="chip" data-streak="blk2">2+ blocks</button><button class="chip" data-streak="blk3">3+ blocks</button></div><div class="fam"><span class="flabel">Shooting</span><button class="chip" data-streak="tpm3">3+ threes</button><button class="chip" data-streak="tpm5">5+ threes</button></div><div class="fam"><span class="flabel">Combo</span><button class="chip" data-streak="dd">Double-double</button><button class="chip" data-streak="td">Triple-double</button><button class="chip" data-streak="p20r10">20+ pts &amp; 10+ reb</button><button class="chip" data-streak="p30r5a5">30+ pts, 5+ reb, 5+ ast</button></div></div>

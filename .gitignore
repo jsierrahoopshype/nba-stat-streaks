@@ -1,6 +1,8 @@
-# Data files (large Kaggle dataset — never commit)
-data/
+# Data files (large Kaggle dataset — never commit) — but DO keep the nightly pulls
+data/*
+!data/daily/
 *.csv
+*.parquet
 
 # Archives
 *.zip

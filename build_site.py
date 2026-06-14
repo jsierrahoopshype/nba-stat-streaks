@@ -324,6 +324,16 @@ def build_index_html(meta):
         f'<h1>NBA <span class="accent">Statistical Streaks</span></h1>'
         f'<p class="subtitle">Longest runs of consecutive games hitting a statistical mark — skipping missed games, '
         f'breaking only on an appearance that falls short. 1946–present.</p></header>\n'
+        # Daily tracker panel — links to lastnight.html (written by the nightly job); the
+        # subtitle is filled in client-side from active-state.json so the panel never needs
+        # the build to re-run.
+        f'<a class="lnpanel" href="lastnight.html"><span class="lnp-ic">🌙</span>'
+        f'<span class="lnp-tx"><b>Last Night\'s Streaks</b><span class="lnp-sub" id="lnp-sub">'
+        f'Daily active-streak tracker — see what extended, broke, or hit a milestone</span></span>'
+        f'<span class="lnp-go">→</span></a>\n'
+        f'<script>fetch("active-state.json").then(function(r){{return r.json();}}).then(function(s){{'
+        f'document.getElementById("lnp-sub").textContent=s.count+" active streaks tracked · updated "+s.data_through;'
+        f'}}).catch(function(){{}});</script>\n'
         f'{search_box()}\n'
         f'<div class="controls"><div class="tabs">{tabs}</div></div>\n'
         f'{family_chips_html(meta)}\n'
@@ -401,41 +411,45 @@ def build_player_page(pid, ctx):
     name, iso, country = players[slug]
     label_by_id = ctx["label_by_id"]; feat_label = ctx["feat_label"]
 
-    # best streak per type (max across scopes), plus rank
-    rows = []
+    # one table per scope: every streak type where this player has a 2+ run in that
+    # scope, sorted by length desc. (Scope column dropped — it's now the table header.)
     headline = None
-    for s in ctx["STREAK_META"]:
-        sid = s["id"]
-        best = None
-        for scope_key, _ in SCOPES:
-            de = ctx["player_best"].get((sid, scope_key), {}).get(pid)
-            if de and de["length"] >= 2 and (best is None or de["length"] > best[1]["length"]):
-                best = (scope_key, de)
-        if best:
-            scope_key, de = best
-            rank = ctx["rank_map"].get((sid, scope_key), {}).get(slug)
-            rows.append({"label": label_by_id[sid], "len": de["length"], "scope": SCOPE_LABEL[scope_key],
-                         "start": de["start"], "end": de["end"], "teams": de["teams"], "rank": rank})
-            if headline is None or de["length"] > headline["len"]:
-                headline = {"len": de["length"], "label": label_by_id[sid]}
-    rows.sort(key=lambda r: r["len"], reverse=True)
 
-    streak_tbl = ""
-    if rows:
+    def scope_table(scope_key, scope_label):
+        rrows = []
+        for s in ctx["STREAK_META"]:
+            sid = s["id"]
+            de = ctx["player_best"].get((sid, scope_key), {}).get(pid)
+            if de and de["length"] >= 2:
+                rank = ctx["rank_map"].get((sid, scope_key), {}).get(slug)
+                rrows.append({"label": label_by_id[sid], "len": de["length"], "start": de["start"],
+                              "end": de["end"], "teams": de["teams"], "rank": rank})
+        rrows.sort(key=lambda r: r["len"], reverse=True)
+        if not rrows:
+            return ""
         body_rows = "".join(
             f'<tr><td class="col-player" data-label="Streak">{esc(r["label"])}</td>'
             f'<td class="col-streak" data-label="Best">{r["len"]}</td>'
-            f'<td data-label="Scope">{r["scope"]}</td>'
             f'<td class="col-date" data-label="Dates">{fmt_iso(r["start"])} – {fmt_iso(r["end"])}</td>'
             f'<td class="col-team" data-label="Team(s)">{esc(r["teams"] or "—")}</td>'
             f'<td data-label="All-time rank">{("#"+str(r["rank"])) if r["rank"] else "—"}</td></tr>'
-            for r in rows)
-        streak_tbl = (
-            '<h2>Consecutive-Game Streaks</h2>'
-            '<div class="table-card"><table class="board"><thead><tr>'
-            '<th>Streak</th><th class="col-streak">Best</th><th>Scope</th>'
-            '<th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th>'
-            f'</tr></thead><tbody>{body_rows}</tbody></table></div>\n')
+            for r in rrows)
+        return (f'<h2>{scope_label}</h2>'
+                '<div class="table-card"><table class="board"><thead><tr>'
+                '<th>Streak</th><th class="col-streak">Best</th>'
+                '<th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th>'
+                f'</tr></thead><tbody>{body_rows}</tbody></table></div>\n')
+
+    # headline = single longest streak across every type/scope (for the SEO blurb)
+    for s in ctx["STREAK_META"]:
+        for scope_key, _ in SCOPES:
+            de = ctx["player_best"].get((s["id"], scope_key), {}).get(pid)
+            if de and de["length"] >= 2 and (headline is None or de["length"] > headline["len"]):
+                headline = {"len": de["length"], "label": label_by_id[s["id"]]}
+
+    streak_tbl = (scope_table("regular", "Regular Season")
+                  + scope_table("playoffs", "Playoffs")
+                  + scope_table("combined", "Combined"))
 
     # feats
     fp = ctx["feat_player"].get(pid, {})
@@ -530,6 +544,12 @@ border-radius:20px;background:var(--surface);color:var(--text);}
 .record{display:flex;gap:.5rem;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
 border-left:3px solid var(--gold);border-radius:8px;padding:.6rem .9rem;margin:.4rem 0 .8rem;font-size:.82rem;}
 .record b{color:var(--text);}.record .ok{color:var(--green);font-weight:700;}.record .no{color:var(--accent);font-weight:700;}
+.lnpanel{display:flex;align-items:center;gap:.7rem;background:var(--surface);border:1px solid var(--border);
+border-left:3px solid var(--accent);border-radius:10px;padding:.7rem .9rem;margin:.2rem 0 .4rem;color:var(--text);transition:.15s;}
+.lnpanel:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.lnp-ic{font-size:1.3rem;}.lnp-tx{display:flex;flex-direction:column;flex:1;min-width:0;}
+.lnp-tx b{font-size:.95rem;}.lnp-sub{font-size:.76rem;color:var(--muted);}
+.lnp-go{font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700;}
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow-x:auto;}
 table.board{width:100%;border-collapse:collapse;font-size:.86rem;}
 table.board thead th{background:var(--surface-hover);color:var(--muted);text-align:left;font-weight:600;font-size:.66rem;

@@ -1,0 +1,67 @@
+name: Nightly streak update
+
+# MANUAL ONLY for now — no `on: schedule:` block, so this never runs automatically.
+# Trigger it by hand from the Actions tab (workflow_dispatch). Add a schedule later
+# once the live proxy is verified.
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Date to process (YYYY-MM-DD). Blank = last night, US Eastern."
+        required: false
+        default: ""
+
+# Only the contents scope; the commit step below is further restricted to 3 paths.
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly-streaks
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install pandas numpy
+
+      - name: Run nightly fetcher
+        run: |
+          if [ -n "${{ inputs.date }}" ]; then
+            python fetch_nightly.py --date "${{ inputs.date }}"
+          else
+            python fetch_nightly.py
+          fi
+
+      - name: Commit ONLY pipeline outputs (active-state.json, data/daily/, lastnight.html)
+        run: |
+          git config user.name  "nba-streaks-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage ONLY the three allowed outputs — never engine/build files or player pages.
+          git add active-state.json lastnight.html
+          if [ -d data/daily ]; then git add data/daily; fi
+
+          staged="$(git diff --cached --name-only)"
+          echo "Staged files:"; echo "$staged"
+
+          # Hard guard: abort if anything outside the allowed set got staged.
+          if echo "$staged" | grep -qvE '^(active-state\.json|lastnight\.html|data/daily/)'; then
+            echo "::error::Out-of-scope file staged — refusing to commit."
+            exit 1
+          fi
+
+          if [ -z "$staged" ]; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Nightly streak update ($(date -u +%F))"
+          git push
