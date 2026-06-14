@@ -1,0 +1,14 @@
+# Data files (large Kaggle dataset — never commit)
+data/
+*.csv
+
+# Archives
+*.zip
+
+# Python
+__pycache__/
+
+# Temp / scratch scripts and tooling
+_*.py
+node_modules/
+*.png

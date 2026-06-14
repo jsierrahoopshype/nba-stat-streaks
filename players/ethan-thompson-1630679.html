@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ethan Thompson NBA Streaks: Consecutive Games Stats and Career Feats</title>
+<meta name="description" content="Ethan Thompson&#x27;s NBA consecutive-game streaks and career feats — longest streak of 4 10+ points in a row. Regular season, playoffs and combined, with all-time ranks.">
+<meta property="og:title" content="Ethan Thompson NBA Streaks: Consecutive Games Stats and Career Feats">
+<meta property="og:description" content="Ethan Thompson&#x27;s NBA consecutive-game streaks and career feats — longest streak of 4 10+ points in a row. Regular season, playoffs and combined, with all-time ranks.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f5f7;--surface:#fff;--surface-hover:#f0f0f2;--border:#d1d1d6;--text:#1d1d1f;
+--muted:#6e6e73;--accent:#3b82f6;--accent-dim:rgba(59,130,246,.15);--green:#34c759;--gold:#b8860b;}
+*{box-sizing:border-box;}html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;
+font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
+a{color:var(--accent);text-decoration:none;}
+.flag-img{vertical-align:middle;border-radius:2px;box-shadow:0 0 0 .5px rgba(0,0,0,.18);margin-left:.25rem;}
+.flag-lg{height:22px;}
+.nav{display:flex;gap:.3rem;flex-wrap:wrap;max-width:1280px;margin:0 auto;padding:1.5rem 1.5rem .3rem;}
+.nav a{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;padding:.4rem .8rem;
+border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);}
+.nav a:hover{border-color:var(--accent);color:var(--accent);}
+.nav a.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.wrap{max-width:1280px;margin:0 auto;padding:.5rem 1.5rem 4rem;}
+.brand{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);text-transform:uppercase;
+letter-spacing:.08em;display:block;margin-bottom:.3rem;}
+h1{font-size:clamp(1.4rem,3.5vw,1.7rem);font-weight:700;letter-spacing:-.03em;margin:0 0 .3rem;
+display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;}
+h1 .accent{color:var(--accent);}
+h2{font-size:1.15rem;font-weight:700;letter-spacing:-.02em;margin:1.6rem 0 .7rem;}
+h2 .note{font-weight:400;font-size:.8rem;color:var(--muted);}
+.subtitle{color:var(--muted);font-size:.9rem;margin:0;max-width:60rem;}
+.backtop{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);margin:.3rem 0;}
+.backtop:hover{color:var(--accent);}
+.psearch-wrap{position:relative;margin:1rem 0;}
+.psearch{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);
+font-size:.9rem;font-family:inherit;padding:.6rem .8rem;outline:none;transition:.15s;}
+.psearch:hover{border-color:var(--accent);}.psearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.ac{position:absolute;top:100%;left:0;right:0;margin-top:.25rem;background:var(--surface);border:1px solid var(--border);
+border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:20rem;overflow-y:auto;z-index:60;display:none;}
+.ac.open{display:block;}
+.ac-item{display:block;padding:.55rem .8rem;border-bottom:1px solid var(--border);font-size:.88rem;color:var(--text);}
+.ac-item:last-child{border-bottom:none;}.ac-item:hover,.ac-item.sel{background:var(--surface-hover);color:var(--accent);}
+.ac-empty{padding:.7rem .8rem;color:var(--muted);font-size:.8rem;text-align:center;}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:1rem 0 .4rem;}
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap;}
+.tab{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;padding:.45rem .85rem;cursor:pointer;
+border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);}
+.tab:hover{border-color:var(--accent);color:var(--accent);}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.fams{display:flex;flex-direction:column;gap:.5rem;margin:.6rem 0 1rem;}
+.fam{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;}
+.fam .flabel{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;text-transform:uppercase;
+letter-spacing:.06em;color:var(--muted);min-width:6.5rem;}
+.chip{font-size:.76rem;font-weight:600;padding:.32rem .7rem;cursor:pointer;border:1px solid var(--border);
+border-radius:20px;background:var(--surface);color:var(--text);}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
+.chip.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+.record{display:flex;gap:.5rem;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
+border-left:3px solid var(--gold);border-radius:8px;padding:.6rem .9rem;margin:.4rem 0 .8rem;font-size:.82rem;}
+.record b{color:var(--text);}.record .ok{color:var(--green);font-weight:700;}.record .no{color:var(--accent);font-weight:700;}
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow-x:auto;}
+table.board{width:100%;border-collapse:collapse;font-size:.86rem;}
+table.board thead th{background:var(--surface-hover);color:var(--muted);text-align:left;font-weight:600;font-size:.66rem;
+letter-spacing:.04em;text-transform:uppercase;padding:.6rem .55rem;white-space:nowrap;border-bottom:1px solid var(--border);}
+table.board th.col-rank,table.board td.col-rank,table.board th.col-streak,table.board td.col-streak,
+table.board th.col-date,table.board td.col-date{text-align:center;}
+table.board tbody td{padding:.5rem .55rem;border-bottom:1px solid var(--border);white-space:nowrap;
+font-family:'JetBrains Mono',monospace;font-weight:500;font-variant-numeric:tabular-nums;}
+table.board tbody td.col-player{font-family:'DM Sans',sans-serif;text-align:left;font-weight:600;}
+table.board td.col-team{font-size:.76rem;}
+table.board tbody tr:last-child td{border-bottom:none;}
+table.board tbody tr:hover{background:var(--surface-hover);}
+.col-rank{color:var(--muted);width:3rem;font-size:.78rem;}
+.col-streak{font-weight:700;color:var(--accent);}
+.col-date{color:var(--muted);}
+.plink{color:var(--text);text-decoration:none;font-weight:600;}.plink:hover{color:var(--accent);}
+.foot{text-align:center;font-size:.72rem;color:var(--muted);margin-top:1.6rem;font-family:'JetBrains Mono',monospace;line-height:1.7;}
+@media(max-width:720px){
+.wrap{padding:.5rem .9rem 3rem;}.nav{padding:1rem .9rem .3rem;flex-wrap:nowrap;overflow-x:auto;}
+.nav a{flex:0 0 auto;}
+.table-card{overflow:visible;border:none;background:transparent;border-radius:0;}
+table.board,table.board tbody{display:block;width:100%;}
+table.board thead{display:none;}
+table.board tbody tr{display:block;position:relative;background:var(--surface);border:1px solid var(--border);
+border-radius:12px;padding:.7rem 3rem .7rem .9rem;margin-bottom:.6rem;}
+table.board tbody tr:hover{background:var(--surface);}
+table.board tbody td{display:block;position:relative;border:none;white-space:normal;text-align:left;
+padding:.14rem 0 .14rem 7rem;font-size:.86rem;line-height:1.4;min-height:1.5em;overflow-wrap:anywhere;}
+table.board tbody td::before{content:attr(data-label);position:absolute;left:0;top:.18rem;width:6.5rem;
+font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+table.board tbody td.col-rank{position:absolute;top:.55rem;right:.85rem;padding:0;font-size:.66rem;color:var(--muted);min-height:0;}
+table.board tbody td.col-rank::before{display:none;}
+table.board tbody td.col-player{padding:0 0 .3rem;font-family:'DM Sans',sans-serif;font-size:1.02rem;font-weight:600;}
+table.board tbody td.col-player::before{display:none;}
+table.board tbody td.col-streak{font-size:1.1rem;font-weight:700;color:var(--accent);}
+}
+</style>
+</head>
+<body>
+<nav class="nav"><a href="../index.html" class="active">Leaderboards</a><a href="../feats.html">Rarest Feats</a></nav>
+<div class="wrap">
+<a class="backtop" href="../index.html">← All streak leaderboards</a>
+<div class="psearch-wrap"><input class="psearch" type="search" placeholder="Search any player by name…" autocomplete="off" spellcheck="false"><div class="ac" role="listbox"></div></div>
+<header><h1>Ethan Thompson <img class="flag-img flag-lg" src="https://flagcdn.com/h40/pr.png" srcset="https://flagcdn.com/h40/pr.png 2x" alt="Puerto Rico" title="Puerto Rico"></h1><p class="subtitle">Longest streak of 4 10+ points in a row.</p></header>
+<h2>Consecutive-Game Streaks</h2><div class="table-card"><table class="board"><thead><tr><th>Streak</th><th class="col-streak">Best</th><th>Scope</th><th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th></tr></thead><tbody><tr><td class="col-player" data-label="Streak">10+ points</td><td class="col-streak" data-label="Best">4</td><td data-label="Scope">Regular Season</td><td class="col-date" data-label="Dates">Apr 7, 2026 – Apr 12, 2026</td><td class="col-team" data-label="Team(s)">Indiana</td><td data-label="All-time rank">—</td></tr></tbody></table></div>
+<div class="psearch-wrap"><input class="psearch" type="search" placeholder="Search any player by name…" autocomplete="off" spellcheck="false"><div class="ac" role="listbox"></div></div>
+<a class="backtop" href="../index.html">← All streak leaderboards</a>
+</div>
+<script>var PLAYER_PREFIX="../players/";</script>
+<script src="../search-index.js"></script>
+
+<script>
+(function(){
+  var idx=window.PLAYER_INDEX||[];
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
+  function build(q){q=q.toLowerCase();var st=[],co=[];
+    for(var i=0;i<idx.length;i++){var n=idx[i][0].toLowerCase(),p=n.indexOf(q);
+      if(p===0)st.push(idx[i]);else if(p>0)co.push(idx[i]);if(st.length>=15)break;}
+    return st.concat(co).slice(0,12);}
+  function wire(inp){var ac=inp.parentNode.querySelector('.ac');if(!ac)return;var sel=-1,items=[];
+    function render(){var q=inp.value.trim();if(q.length<2){ac.classList.remove('open');items=[];sel=-1;return;}
+      items=build(q);if(!items.length){ac.innerHTML='<div class="ac-empty">No players found</div>';ac.classList.add('open');return;}
+      ac.innerHTML=items.map(function(m,i){return '<a class="ac-item'+(i===sel?' sel':'')+'" href="'+PLAYER_PREFIX+m[1]+'.html">'+esc(m[0])+'</a>';}).join('');
+      ac.classList.add('open');}
+    inp.addEventListener('input',function(){sel=-1;render();});
+    inp.addEventListener('keydown',function(e){if(!items.length)return;
+      if(e.key==='ArrowDown'){e.preventDefault();sel=(sel+1)%items.length;render();}
+      else if(e.key==='ArrowUp'){e.preventDefault();sel=(sel-1+items.length)%items.length;render();}
+      else if(e.key==='Enter'&&sel>=0){e.preventDefault();location.href=PLAYER_PREFIX+items[sel][1]+'.html';}
+      else if(e.key==='Escape'){ac.classList.remove('open');}});
+    inp.addEventListener('blur',function(){setTimeout(function(){ac.classList.remove('open');},150);});}
+  document.querySelectorAll('.psearch').forEach(wire);
+})();
+</script>
+
