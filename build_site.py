@@ -27,7 +27,8 @@ PLAYERS_DIR = os.path.join(BASE, "players")
 PLAYERS_CSV = os.path.join(DATA, "Players.csv")
 NATIONALITIES_CSV = os.path.join(DATA, "nationalities.csv")
 
-SCOPES = [("regular", "Regular Season"), ("playoffs", "Playoffs"), ("combined", "Combined")]
+SCOPES = [("regular", "Regular Season"), ("playoffs", "Playoffs"),
+          ("combined", "Combined Regular Season + Playoffs")]
 SCOPE_LABEL = dict(SCOPES)
 FAMILIES = ["Scoring", "Rebounding", "Playmaking", "Defense", "Shooting", "Combo"]
 TOPN = 100
@@ -507,9 +508,9 @@ def build_player_page(pid, ctx):
             if de and de["length"] >= 2 and (headline is None or de["length"] > headline["len"]):
                 headline = {"len": de["length"], "label": label_by_id[s["id"]]}
 
-    streak_tbl = (scope_table("regular", "Regular Season")
-                  + scope_table("playoffs", "Playoffs")
-                  + scope_table("combined", "Combined"))
+    streak_tbl = (scope_table("regular", SCOPE_LABEL["regular"])
+                  + scope_table("playoffs", SCOPE_LABEL["playoffs"])
+                  + scope_table("combined", SCOPE_LABEL["combined"]))
 
     # feats
     fp = ctx["feat_player"].get(pid, {})

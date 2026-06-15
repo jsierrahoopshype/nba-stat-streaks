@@ -61,7 +61,9 @@ def trailing_active(sub, gkey, cond_col, floor, current_season):
         length = int(counts[run_id[i]])
         if length < floor:
             continue
-        out.append((int(sub["personId"].iloc[i]), length, d.isoformat(), str(sub["team_disp"].iloc[i])))
+        # the trailing run occupies contiguous positions i-length+1 .. i
+        started = sub["gameDate"].iloc[i - length + 1].date().isoformat()
+        out.append((int(sub["personId"].iloc[i]), length, d.isoformat(), str(sub["team_disp"].iloc[i]), started))
     return out
 
 
@@ -82,12 +84,12 @@ def main():
         gkey = sub["personId"].to_numpy()
         for s in E.STREAKS:
             sid = s["id"]
-            for pid, length, last_date, team in trailing_active(sub, gkey, sid, FLOORS[sid], current_season):
+            for pid, length, last_date, team, started in trailing_active(sub, gkey, sid, FLOORS[sid], current_season):
                 name = pid2name.get(pid, f"Player {pid}")
                 streaks.append({
                     "personId": pid, "player": name, "slug": BS.slugify(name, pid),
                     "type": sid, "label": label_by_id[sid], "scope": scope_key,
-                    "length": length, "last_date": last_date, "team": team,
+                    "length": length, "last_date": last_date, "started": started, "team": team,
                 })
 
     streaks.sort(key=lambda r: r["length"], reverse=True)

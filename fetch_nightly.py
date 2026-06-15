@@ -213,7 +213,7 @@ def apply_night(state, lines, date_iso):
             st["team"] = line.get("team", st["team"])
             kept.append(st)
             extended.append({**{k: st[k] for k in fields}, "old": old, "new": st["length"],
-                             "game": _game_summary(line)})
+                             "started": st.get("started"), "game": _game_summary(line)})
         else:                                # appeared and missed -> streak ends, drop it
             broken.append({**{k: st[k] for k in fields}, "had": st["length"], "game": _game_summary(line)})
     state["streaks"] = kept
@@ -301,51 +301,44 @@ def _endgame(g):
             f'{int(g["reboundsTotal"])} reb · {int(g["assists"])} ast')
 
 
-def render_lastgame(label, extended, ended):
+def render_lastgame(label, extended, ended=None):
+    """Active (trailing) streaks only, grouped scope -> stat family -> threshold,
+    one sub-table per threshold (ascending). 'ended' is accepted but not shown."""
     title = "Last Game — NBA Statistical Streaks"
     nmile = sum(1 for e in extended if e.get("milestone"))
-    desc = (f"NBA active statistical-streak status at the {label}: {len(extended)} streaks still active, "
-            f"{len(ended)} ended, {nmile} at a milestone — by scope (regular/playoffs/combined) and stat family.")
+    desc = (f"NBA active statistical-streak status at the {label}: {len(extended)} streaks still active "
+            f"({nmile} at a milestone) — by scope (regular season / playoffs / combined), stat family, and threshold.")
 
-    by_scope = {}
+    by_scope_type = {}      # (scope, type) -> [entries]
     for e in extended:
-        by_scope.setdefault(e["scope"], {}).setdefault(e["family"], {"ext": [], "end": []})["ext"].append(e)
-    for e in ended:
-        by_scope.setdefault(e["scope"], {}).setdefault(e["family"], {"ext": [], "end": []})["end"].append(e)
+        by_scope_type.setdefault((e["scope"], e["type"]), []).append(e)
 
-    summ = (f'<p class="subtitle">Season-end state ({label}). <b>{len(extended)}</b> streaks still active · '
-            f'<b>{len(ended)}</b> ended on a final game · <b>{nmile}</b> sitting at a milestone length. '
-            f'Grouped into three scopes, each split by stat family.</p>\n')
+    summ = (f'<p class="subtitle">Season-end state ({label}). <b>{len(extended)}</b> streaks still active going '
+            f'into the offseason · <b>{nmile}</b> sitting at a milestone length. Grouped by scope, then stat '
+            f'family, then threshold.</p>\n')
     sections = summ
     for scope_key, scope_label in BS.SCOPES:
         sections += f'<h2 class="scopeh">{scope_label}</h2>\n'
-        fams = by_scope.get(scope_key, {})
         shown = False
-        for fam in BS.FAMILIES:
-            grp = fams.get(fam)
-            if not grp or (not grp["ext"] and not grp["end"]):
+        cur_family = None
+        for s in E.STREAKS:                 # already ascending within each family
+            sid, fam = s["id"], s["family"]
+            entries = by_scope_type.get((scope_key, sid))
+            if not entries:
                 continue
+            if fam != cur_family:
+                sections += f'<h3 class="famh">{fam}</h3>\n'
+                cur_family = fam
             shown = True
-            sections += f'<h3 class="famh">{fam}</h3>\n'
-            if grp["ext"]:
-                rows = "".join(
-                    f'<tr><td class="col-player" data-label="Player">{_plink(e)}'
-                    + ('<span class="mbadge">★ milestone</span>' if e.get("milestone") else '')
-                    + f'</td><td data-label="Streak">{BS.esc(e["label"])}</td>'
-                    f'<td class="col-streak" data-label="Length">{e["length"]}</td>'
-                    f'<td class="col-date" data-label="Through">{BS.fmt_iso(e["last_date"])}</td></tr>'
-                    for e in sorted(grp["ext"], key=lambda x: -x["length"]))
-                sections += _lgboard("Still active", [("Player", "col-player"), ("Streak", ""),
-                                                      ("Length", "col-streak"), ("Through", "col-date")], rows)
-            if grp["end"]:
-                rows = "".join(
-                    f'<tr><td class="col-player" data-label="Player">{_plink(e)}</td>'
-                    f'<td data-label="Streak">{BS.esc(e["label"])}</td>'
-                    f'<td class="col-streak" data-label="Reached">{e["length"]}</td>'
-                    f'<td data-label="Ended on">{_endgame(e["game"])}</td></tr>'
-                    for e in sorted(grp["end"], key=lambda x: -x["length"]))
-                sections += _lgboard("Ended", [("Player", "col-player"), ("Streak", ""),
-                                               ("Reached", "col-streak"), ("Ended on", "")], rows)
+            rows = "".join(
+                f'<tr><td class="col-player" data-label="Player">{_plink(e)}'
+                + ('<span class="mbadge">★ milestone</span>' if e.get("milestone") else '')
+                + f'</td><td class="col-streak" data-label="Length">{e["length"]}</td>'
+                f'<td class="col-date" data-label="Started">'
+                f'{BS.fmt_iso(e.get("started") or e.get("last_date", ""))}</td></tr>'
+                for e in sorted(entries, key=lambda x: -x["length"]))
+            sections += _lgboard(s["label"], [("Player", "col-player"),
+                                              ("Length", "col-streak"), ("Started", "col-date")], rows)
         if not shown:
             sections += '<p class="subtitle">No active streaks in this scope.</p>\n'
 
@@ -398,10 +391,13 @@ def season_end_status(df, current_season):
                     L = int(counts[run_id[i]])
                     if L >= floor:
                         nm, pid = str(names[i]), int(pids[i])
+                        # the trailing run occupies contiguous positions i-L+1 .. i,
+                        # so the run STARTED on the game at i-L+1.
+                        started = dates[i - L + 1].isoformat()
                         extended.append({"personId": pid, "player": nm, "slug": BS.slugify(nm, pid),
                                          "type": sid, "label": LABEL_BY_ID[sid], "family": FAMILY_BY_ID[sid],
                                          "scope": scope_key, "length": L, "last_date": dates[i].isoformat(),
-                                         "team": str(teams[i]), "milestone": is_milestone(L)})
+                                         "started": started, "team": str(teams[i]), "milestone": is_milestone(L)})
                 elif i - 1 >= 0 and gkey[i - 1] == gkey[i] and c[i - 1]:
                     L = int(counts[run_id[i - 1]])
                     if L >= floor:
@@ -419,12 +415,12 @@ def season_end_demo():
     df = E.load_appearances()
     cur = nba_season(df["gameDate"].max().date())
     label = f"{season_str(df['gameDate'].max().date())} season's end"
-    extended, ended = season_end_status(df, cur)
-    html = render_lastgame(label, extended, ended)
+    extended, _ended = season_end_status(df, cur)
+    html = render_lastgame(label, extended)
     with open(os.path.join(BASE, "lastgame.html"), "w", encoding="utf-8") as f:
         f.write(html)
-    print(f"  active={len(extended)}  ended={len(ended)}  milestones={sum(1 for e in extended if e['milestone'])}"
-          f"  -> wrote lastgame.html")
+    print(f"  active={len(extended)}  milestones={sum(1 for e in extended if e['milestone'])}"
+          f"  -> wrote lastgame.html (ended tables dropped)")
 
 
 # --------------------------------------------------------------------------- #
@@ -473,18 +469,15 @@ def run(d, source="proxy", dry_run=False, force=False, write_state=True):
     if dry_run:
         return
 
-    # adapt one night's results into the lastgame.html entry shape (scope x family)
+    # adapt one night's extends into the lastgame.html entry shape (active only)
     mileset = {(e["personId"], e["type"], e["scope"]) for e in milestones}
     ext_entries = [{"personId": e["personId"], "player": e["player"], "slug": e["slug"], "type": e["type"],
                     "label": e["label"], "family": FAMILY_BY_ID[e["type"]], "scope": e["scope"],
-                    "length": e["new"], "last_date": d.isoformat(),
+                    "length": e["new"], "last_date": d.isoformat(), "started": e.get("started"),
                     "milestone": (e["personId"], e["type"], e["scope"]) in mileset} for e in extended]
-    end_entries = [{"personId": e["personId"], "player": e["player"], "slug": e["slug"], "type": e["type"],
-                    "label": e["label"], "family": FAMILY_BY_ID[e["type"]], "scope": e["scope"],
-                    "length": e["had"], "game": {"date": d.isoformat(), **e["game"]}} for e in broken]
 
     # outputs (always lastgame.html; state/daily only when write_state)
-    html = render_lastgame(f"game on {BS.fmt_iso(d.isoformat())}", ext_entries, end_entries)
+    html = render_lastgame(f"game on {BS.fmt_iso(d.isoformat())}", ext_entries)
     with open(os.path.join(BASE, "lastgame.html"), "w", encoding="utf-8") as f:
         f.write(html)
     print("  wrote lastgame.html")
