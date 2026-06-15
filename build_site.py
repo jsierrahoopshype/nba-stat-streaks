@@ -14,6 +14,7 @@ import re
 import json
 import html
 import unicodedata
+from collections import Counter, defaultdict
 
 import numpy as np
 import pandas as pd
@@ -255,11 +256,69 @@ def build_all():
     label_by_id = {s["id"]: s["label"] for s in E.STREAKS}
     feat_label = {f["id"]: f["label"] for f in FEATS}
 
+    # ----- headline (for cards) + similar players (rabbit-hole hooks) -----
+    headline = {}   # slug -> {"text":..., "val":...}
+    for pid in page_pids:
+        slug = slug_by_pid[pid]
+        best = None
+        for (sid, scope), pb in player_best.items():
+            de = pb.get(pid)
+            if de and de["length"] >= 2 and (best is None or de["length"] > best[0]):
+                best = (de["length"], label_by_id[sid])
+        if best:
+            headline[slug] = {"text": f"{best[0]:,}-game {best[1].lower()} streak", "val": best[0]}
+        else:
+            fp = feat_player.get(pid, {})
+            if fp:
+                fid = max(fp, key=lambda k: fp[k][0])
+                headline[slug] = {"text": f"{fp[fid][0]} {feat_label[fid].lower()}", "val": fp[fid][0]}
+            else:
+                headline[slug] = {"text": "", "val": 0}
+
+    # which leaderboards each player sits on, and each board's slug order (by rank)
+    boards_of = defaultdict(list)            # slug -> [(sid, scope, rank), ...]
+    for (sid, scope), rmap in rank_map.items():
+        for s, rank in rmap.items():
+            boards_of[s].append((sid, scope, rank))
+    board_order = {(sid, scope): [row[1] for row in rows]
+                   for sid, scopes in STREAK_DATA.items() for scope, rows in scopes.items()}
+
+    slugs_by_val = sorted(headline, key=lambda s: headline[s]["val"])
+    pos = {s: i for i, s in enumerate(slugs_by_val)}
+
+    def similar_for(slug):
+        # primary heuristic: players who share the most all-time leaderboards with you,
+        # nearest to your rank on each.
+        counts, prox = Counter(), {}
+        for (sid, scope, rank) in boards_of.get(slug, []):
+            order = board_order[(sid, scope)]
+            i = rank - 1
+            for j in range(max(0, i - 6), min(len(order), i + 7)):
+                o = order[j]
+                if o == slug:
+                    continue
+                counts[o] += 1
+                prox[o] = min(prox.get(o, 99), abs(j - i))
+        cands = sorted(counts, key=lambda o: (-counts[o], prox[o]))[:6]
+        # fallback: fill from nearest headline value (so every page has 6)
+        if len(cands) < 6 and slug in pos:
+            seen = set(cands) | {slug}
+            lo, hi = pos[slug] - 1, pos[slug] + 1
+            while len(cands) < 6 and (lo >= 0 or hi < len(slugs_by_val)):
+                for j in ([lo] if lo >= 0 else []) + ([hi] if hi < len(slugs_by_val) else []):
+                    o = slugs_by_val[j]
+                    if o not in seen and len(cands) < 6:
+                        cands.append(o); seen.add(o)
+                lo -= 1; hi += 1
+        return cands
+
+    similar = {slug_by_pid[pid]: similar_for(slug_by_pid[pid]) for pid in page_pids}
+
     return dict(df=df, players=players, slug_by_pid=slug_by_pid, STREAK_DATA=STREAK_DATA,
                 STREAK_META=STREAK_META, STREAK_RECORDS=STREAK_RECORDS, FEAT_DATA=FEAT_DATA,
                 FEATS=FEATS, feat_label=feat_label, label_by_id=label_by_id,
                 player_best=player_best, rank_map=rank_map, feat_player=feat_player,
-                page_pids=page_pids)
+                page_pids=page_pids, headline=headline, similar=similar)
 
 
 # --------------------------------------------------------------------------- #
@@ -289,7 +348,8 @@ def nav(active, prefix=""):
         cls = ' class="active"' if key == active else ''
         return f'<a href="{prefix}{href}"{cls}>{label}</a>'
     return (f'<nav class="nav">{a("index.html","Leaderboards","lb")}'
-            f'{a("feats.html","Rarest Feats","feats")}</nav>\n')
+            f'{a("feats.html","Rarest Feats","feats")}'
+            f'{a("lastgame.html","Last Game","lastgame")}</nav>\n')
 
 
 def search_box():
@@ -324,12 +384,12 @@ def build_index_html(meta):
         f'<h1>NBA <span class="accent">Statistical Streaks</span></h1>'
         f'<p class="subtitle">Longest runs of consecutive games hitting a statistical mark — skipping missed games, '
         f'breaking only on an appearance that falls short. 1946–present.</p></header>\n'
-        # Daily tracker panel — links to lastnight.html (written by the nightly job); the
+        # Tracker panel — links to lastgame.html (written by the nightly job); the
         # subtitle is filled in client-side from active-state.json so the panel never needs
         # the build to re-run.
-        f'<a class="lnpanel" href="lastnight.html"><span class="lnp-ic">🌙</span>'
-        f'<span class="lnp-tx"><b>Last Night\'s Streaks</b><span class="lnp-sub" id="lnp-sub">'
-        f'Daily active-streak tracker — see what extended, broke, or hit a milestone</span></span>'
+        f'<a class="lnpanel" href="lastgame.html"><span class="lnp-ic">🏀</span>'
+        f'<span class="lnp-tx"><b>Last Game</b><span class="lnp-sub" id="lnp-sub">'
+        f'Active-streak movement — see what extended, ended, or hit a milestone</span></span>'
         f'<span class="lnp-go">→</span></a>\n'
         f'<script>fetch("active-state.json").then(function(r){{return r.json();}}).then(function(s){{'
         f'document.getElementById("lnp-sub").textContent=s.count+" active streaks tracked · updated "+s.data_through;'
@@ -469,6 +529,19 @@ def build_player_page(pid, ctx):
     if not streak_tbl and not feat_tbl:
         streak_tbl = '<p class="subtitle">No qualifying streaks or feats on record.</p>'
 
+    # Similar Players — rabbit-hole hooks (players who share your all-time leaderboards).
+    sim = ctx["similar"].get(slug, [])
+    similar_html = ""
+    if sim:
+        pm, hm = ctx["players"], ctx["headline"]
+        cards = "".join(
+            f'<a class="simcard" href="{o}.html">'
+            f'<div class="sim-nm">{esc(pm[o][0])}{flag_html(pm[o][1], pm[o][2])}</div>'
+            f'<div class="sim-hl">{esc(hm.get(o, {}).get("text", ""))}</div></a>'
+            for o in sim)
+        similar_html = ('<h2>Similar Players <span class="note">(share your all-time leaderboards)</span></h2>'
+                        f'<div class="simgrid">{cards}</div>\n')
+
     hl = (f"longest streak of {headline['len']} {headline['label'].lower()} in a row"
           if headline else "career consecutive-game streaks and feats")
     title = f"{name} NBA Streaks: Consecutive Games Stats and Career Feats"
@@ -481,7 +554,7 @@ def build_player_page(pid, ctx):
         f'{search_box()}\n'
         f'<header><h1>{esc(name)}{flag_html(iso, country, big=True)}</h1>'
         f'<p class="subtitle">{esc(hl[0].upper() + hl[1:])}.</p></header>\n'
-        f'{streak_tbl}{feat_tbl}'
+        f'{streak_tbl}{feat_tbl}{similar_html}'
         f'{search_box()}\n'
         f'<a class="backtop" href="../index.html">← All streak leaderboards</a>\n'
         f'</div>\n'
@@ -550,6 +623,12 @@ border-left:3px solid var(--accent);border-radius:10px;padding:.7rem .9rem;margi
 .lnp-ic{font-size:1.3rem;}.lnp-tx{display:flex;flex-direction:column;flex:1;min-width:0;}
 .lnp-tx b{font-size:.95rem;}.lnp-sub{font-size:.76rem;color:var(--muted);}
 .lnp-go{font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700;}
+.simgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;}
+.simcard{display:block;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+padding:.7rem .8rem;color:var(--text);transition:.15s;}
+.simcard:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.sim-nm{font-weight:600;font-size:.92rem;display:flex;align-items:center;gap:.2rem;}
+.sim-hl{font-size:.76rem;color:var(--accent);margin-top:.25rem;font-family:'JetBrains Mono',monospace;}
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow-x:auto;}
 table.board{width:100%;border-collapse:collapse;font-size:.86rem;}
 table.board thead th{background:var(--surface-hover);color:var(--muted);text-align:left;font-weight:600;font-size:.66rem;
@@ -600,7 +679,7 @@ GLOBAL_SEARCH_JS = r"""
   function wire(inp){var ac=inp.parentNode.querySelector('.ac');if(!ac)return;var sel=-1,items=[];
     function render(){var q=inp.value.trim();if(q.length<2){ac.classList.remove('open');items=[];sel=-1;return;}
       items=build(q);if(!items.length){ac.innerHTML='<div class="ac-empty">No players found</div>';ac.classList.add('open');return;}
-      ac.innerHTML=items.map(function(m,i){return '<a class="ac-item'+(i===sel?' sel':'')+'" href="'+PLAYER_PREFIX+m[1]+'.html">'+esc(m[0])+'</a>';}).join('');
+      ac.innerHTML=items.map(function(m,i){var fl=m[2]?' <img class="flag-img" src="https://flagcdn.com/h20/'+m[2]+'.png" srcset="https://flagcdn.com/h40/'+m[2]+'.png 2x" height="13" alt="'+esc(m[3]||'')+'" loading="lazy">':'';return '<a class="ac-item'+(i===sel?' sel':'')+'" href="'+PLAYER_PREFIX+m[1]+'.html">'+esc(m[0])+fl+'</a>';}).join('');
       ac.classList.add('open');}
     inp.addEventListener('input',function(){sel=-1;render();});
     inp.addEventListener('keydown',function(e){if(!items.length)return;
@@ -690,7 +769,8 @@ def main():
         f.write("window.FEAT_DATA=" + json.dumps(ctx["FEAT_DATA"], separators=(",", ":")) + ";\n")
         f.write("window.STREAK_PLAYERS=" + json.dumps(players, separators=(",", ":"), ensure_ascii=False) + ";\n")
         f.write("window.FEAT_LABELS=" + json.dumps(ctx["feat_label"], separators=(",", ":"), ensure_ascii=False) + ";\n")
-    index_rows = sorted(([players[s][0], s] for s in players), key=lambda r: r[0].lower())
+    index_rows = sorted(([players[s][0], s, players[s][1], players[s][2]] for s in players),
+                        key=lambda r: r[0].lower())
     with open(os.path.join(BASE, "search-index.js"), "w", encoding="utf-8") as f:
         f.write("window.PLAYER_INDEX=" + json.dumps(index_rows, separators=(",", ":"), ensure_ascii=False) + ";\n")
 

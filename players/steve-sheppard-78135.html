@@ -62,6 +62,18 @@ border-radius:20px;background:var(--surface);color:var(--text);}
 .record{display:flex;gap:.5rem;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
 border-left:3px solid var(--gold);border-radius:8px;padding:.6rem .9rem;margin:.4rem 0 .8rem;font-size:.82rem;}
 .record b{color:var(--text);}.record .ok{color:var(--green);font-weight:700;}.record .no{color:var(--accent);font-weight:700;}
+.lnpanel{display:flex;align-items:center;gap:.7rem;background:var(--surface);border:1px solid var(--border);
+border-left:3px solid var(--accent);border-radius:10px;padding:.7rem .9rem;margin:.2rem 0 .4rem;color:var(--text);transition:.15s;}
+.lnpanel:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.lnp-ic{font-size:1.3rem;}.lnp-tx{display:flex;flex-direction:column;flex:1;min-width:0;}
+.lnp-tx b{font-size:.95rem;}.lnp-sub{font-size:.76rem;color:var(--muted);}
+.lnp-go{font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700;}
+.simgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;}
+.simcard{display:block;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+padding:.7rem .8rem;color:var(--text);transition:.15s;}
+.simcard:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.sim-nm{font-weight:600;font-size:.92rem;display:flex;align-items:center;gap:.2rem;}
+.sim-hl{font-size:.76rem;color:var(--accent);margin-top:.25rem;font-family:'JetBrains Mono',monospace;}
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow-x:auto;}
 table.board{width:100%;border-collapse:collapse;font-size:.86rem;}
 table.board thead th{background:var(--surface-hover);color:var(--muted);text-align:left;font-weight:600;font-size:.66rem;
@@ -101,13 +113,14 @@ table.board tbody td.col-streak{font-size:1.1rem;font-weight:700;color:var(--acc
 </style>
 </head>
 <body>
-<nav class="nav"><a href="../index.html" class="active">Leaderboards</a><a href="../feats.html">Rarest Feats</a></nav>
+<nav class="nav"><a href="../index.html" class="active">Leaderboards</a><a href="../feats.html">Rarest Feats</a><a href="../lastgame.html">Last Game</a></nav>
 <div class="wrap">
 <a class="backtop" href="../index.html">← All streak leaderboards</a>
 <div class="psearch-wrap"><input class="psearch" type="search" placeholder="Search any player by name…" autocomplete="off" spellcheck="false"><div class="ac" role="listbox"></div></div>
 <header><h1>Steve Sheppard <img class="flag-img flag-lg" src="https://flagcdn.com/h40/us.png" srcset="https://flagcdn.com/h40/us.png 2x" alt="United States" title="United States"></h1><p class="subtitle">Longest streak of 3 10+ points in a row.</p></header>
 <h2>Regular Season</h2><div class="table-card"><table class="board"><thead><tr><th>Streak</th><th class="col-streak">Best</th><th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th></tr></thead><tbody><tr><td class="col-player" data-label="Streak">10+ points</td><td class="col-streak" data-label="Best">3</td><td class="col-date" data-label="Dates">Feb 18, 1978 – Feb 21, 1978</td><td class="col-team" data-label="Team(s)">Chicago</td><td data-label="All-time rank">—</td></tr></tbody></table></div>
 <h2>Combined</h2><div class="table-card"><table class="board"><thead><tr><th>Streak</th><th class="col-streak">Best</th><th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th></tr></thead><tbody><tr><td class="col-player" data-label="Streak">10+ points</td><td class="col-streak" data-label="Best">3</td><td class="col-date" data-label="Dates">Feb 18, 1978 – Feb 21, 1978</td><td class="col-team" data-label="Team(s)">Chicago</td><td data-label="All-time rank">—</td></tr></tbody></table></div>
+<h2>Similar Players <span class="note">(share your all-time leaderboards)</span></h2><div class="simgrid"><a class="simcard" href="russ-schoene-78087.html"><div class="sim-nm">Russ Schoene <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">3-game 10+ points streak</div></a><a class="simcard" href="talvin-skinner-78168.html"><div class="sim-nm">Talvin Skinner <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="USA" title="USA"></div><div class="sim-hl">3-game 10+ points streak</div></a><a class="simcard" href="herm-schaefer-78071.html"><div class="sim-nm">Herm Schaefer <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">3-game 10+ points streak</div></a><a class="simcard" href="rasheer-fleming-1642853.html"><div class="sim-nm">Rasheer Fleming <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">3-game 2+ blocks streak</div></a><a class="simcard" href="frankie-sanders-78057.html"><div class="sim-nm">Frankie Sanders <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">3-game 10+ points streak</div></a><a class="simcard" href="asa-newell-1642854.html"><div class="sim-nm">Asa Newell <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">3-game 10+ points streak</div></a></div>
 <div class="psearch-wrap"><input class="psearch" type="search" placeholder="Search any player by name…" autocomplete="off" spellcheck="false"><div class="ac" role="listbox"></div></div>
 <a class="backtop" href="../index.html">← All streak leaderboards</a>
 </div>
@@ -125,7 +138,7 @@ table.board tbody td.col-streak{font-size:1.1rem;font-weight:700;color:var(--acc
   function wire(inp){var ac=inp.parentNode.querySelector('.ac');if(!ac)return;var sel=-1,items=[];
     function render(){var q=inp.value.trim();if(q.length<2){ac.classList.remove('open');items=[];sel=-1;return;}
       items=build(q);if(!items.length){ac.innerHTML='<div class="ac-empty">No players found</div>';ac.classList.add('open');return;}
-      ac.innerHTML=items.map(function(m,i){return '<a class="ac-item'+(i===sel?' sel':'')+'" href="'+PLAYER_PREFIX+m[1]+'.html">'+esc(m[0])+'</a>';}).join('');
+      ac.innerHTML=items.map(function(m,i){var fl=m[2]?' <img class="flag-img" src="https://flagcdn.com/h20/'+m[2]+'.png" srcset="https://flagcdn.com/h40/'+m[2]+'.png 2x" height="13" alt="'+esc(m[3]||'')+'" loading="lazy">':'';return '<a class="ac-item'+(i===sel?' sel':'')+'" href="'+PLAYER_PREFIX+m[1]+'.html">'+esc(m[0])+fl+'</a>';}).join('');
       ac.classList.add('open');}
     inp.addEventListener('input',function(){sel=-1;render();});
     inp.addEventListener('keydown',function(e){if(!items.length)return;

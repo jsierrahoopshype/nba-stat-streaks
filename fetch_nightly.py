@@ -28,10 +28,15 @@ import urllib.parse
 import urllib.request
 from datetime import timedelta
 
+import numpy as np
 import pandas as pd
 
 import build_streaks as E
-import build_site as BS   # read-only: reuse the design system (CSS/nav/search) for lastnight.html
+import build_site as BS   # read-only: reuse the design system (CSS/nav/search) for lastgame.html
+from export_active_state import FLOORS   # per-type floors (single source of truth)
+
+FAMILY_BY_ID = {s["id"]: s["family"] for s in E.STREAKS}
+LABEL_BY_ID = {s["id"]: s["label"] for s in E.STREAKS}
 
 PROXY = "https://nba-proxy.thejorgesierra.workers.dev/"
 BASE = r"C:\nba-stat-streaks"
@@ -253,87 +258,173 @@ def milestones_and_movers(extended, alltime):
 
 
 # --------------------------------------------------------------------------- #
-# Render lastnight.html (reuses the build_site design system)
+# Render lastgame.html — three scope sections, each split by stat family
 # --------------------------------------------------------------------------- #
-def _board(title, headers, body_rows):
-    if not body_rows:
-        return ""
-    th = "".join(f'<th class="{c}">{h}</th>' for h, c in headers)
-    return (f'<h2>{title}</h2><div class="table-card"><table class="board"><thead><tr>{th}</tr></thead>'
-            f'<tbody>{body_rows}</tbody></table></div>\n')
+_PLAYERS_FLAGS = None
+
+
+def _players_flags():
+    """slug -> [name, iso, country] from the built streaks-data.js (for flags)."""
+    global _PLAYERS_FLAGS
+    if _PLAYERS_FLAGS is None:
+        p = os.path.join(BASE, "streaks-data.js")
+        _PLAYERS_FLAGS = {}
+        if os.path.exists(p):
+            txt = open(p, encoding="utf-8").read()
+            k = "window.STREAK_PLAYERS="
+            i = txt.index(k) + len(k)
+            j = txt.index(";\nwindow.STREAK_META", i)
+            _PLAYERS_FLAGS = json.loads(txt[i:j])
+    return _PLAYERS_FLAGS
+
+
+def _flag(slug):
+    p = _players_flags().get(slug)
+    return BS.flag_html(p[1], p[2]) if p and p[1] else ""
 
 
 def _plink(e):
-    return f'<a class="plink" href="players/{e["slug"]}.html">{BS.esc(e["player"])}</a>'
+    return f'<a class="plink" href="players/{e["slug"]}.html">{BS.esc(e["player"])}</a>' + _flag(e["slug"])
 
 
-def _gline(g):
-    return (f'{BS.esc(g["matchup"])} · {int(g["points"])} pts · {int(g["reboundsTotal"])} reb · '
-            f'{int(g["assists"])} ast')
+def _lgboard(cap, headers, rows):
+    if not rows:
+        return ""
+    th = "".join(f'<th class="{c}">{h}</th>' for h, c in headers)
+    return (f'<div class="tcap">{cap}</div><div class="table-card"><table class="board"><thead><tr>{th}</tr>'
+            f'</thead><tbody>{rows}</tbody></table></div>\n')
 
 
-def render_lastnight(date_iso, extended, broken, milestones, movers, games):
-    title = f"Last Night ({date_iso}) — NBA Statistical Streaks"
-    desc = (f"NBA active statistical-streak movement for {date_iso}: "
-            f"{len(extended)} streaks extended, {len(broken)} ended, {len(milestones)} milestones.")
-    if games == 0:
-        inner = '<p class="subtitle">No NBA games on this date — nothing to update.</p>'
-    else:
-        ms = ""
-        if milestones:
-            cards = "".join(
-                f'<div class="ms"><div class="ms-n">{e["new"]}</div>'
-                f'<div class="ms-t">{_plink(e)} · {BS.esc(e["label"])} <span class="ms-s">({e["scope"]})</span></div></div>'
-                for e in sorted(milestones, key=lambda x: -x["new"]))
-            ms = f'<h2>Milestones</h2><div class="msgrid">{cards}</div>\n'
-        mv = _board("Climbing the all-time board",
-                    [("Player", "col-player"), ("Streak", ""), ("Scope", ""),
-                     ("Length", "col-streak"), ("All-time", "col-date")],
-                    "".join(
-                        f'<tr><td class="col-player" data-label="Player">{_plink(e)}</td>'
-                        f'<td data-label="Streak">{BS.esc(e["label"])}</td>'
-                        f'<td data-label="Scope">{e["scope"]}</td>'
-                        f'<td class="col-streak" data-label="Length">{e["new"]}</td>'
-                        f'<td class="col-date" data-label="All-time">#{e["rank"]} (was #{e["old_rank"]})</td></tr>'
-                        for e in sorted(movers, key=lambda x: x["rank"])))
-        ext = _board(f"Extended ({len(extended)})",
-                     [("Player", "col-player"), ("Streak", ""), ("Scope", ""), ("Now", "col-streak")],
-                     "".join(
-                         f'<tr><td class="col-player" data-label="Player">{_plink(e)}</td>'
-                         f'<td data-label="Streak">{BS.esc(e["label"])}</td>'
-                         f'<td data-label="Scope">{e["scope"]}</td>'
-                         f'<td class="col-streak" data-label="Now">{e["old"]} → {e["new"]}</td></tr>'
-                         for e in sorted(extended, key=lambda x: -x["new"])))
-        brk = _board(f"Ended ({len(broken)})",
-                     [("Player", "col-player"), ("Streak", ""), ("Scope", ""),
-                      ("Had", "col-streak"), ("The game that ended it", "")],
-                     "".join(
-                         f'<tr><td class="col-player" data-label="Player">{_plink(e)}</td>'
-                         f'<td data-label="Streak">{BS.esc(e["label"])}</td>'
-                         f'<td data-label="Scope">{e["scope"]}</td>'
-                         f'<td class="col-streak" data-label="Had">{e["had"]}</td>'
-                         f'<td data-label="The game that ended it">{_gline(e["game"])}</td></tr>'
-                         for e in sorted(broken, key=lambda x: -x["had"])))
-        summ = (f'<p class="subtitle">{len(extended)} extended · {len(broken)} ended · '
-                f'{len(milestones)} milestone{"s" if len(milestones) != 1 else ""} · '
-                f'{len(movers)} climbed the all-time board.</p>')
-        inner = summ + "\n" + ms + mv + ext + brk
+def _endgame(g):
+    mu = (BS.esc(g["matchup"]) + " · ") if g.get("matchup") else ""
+    return (f'{mu}{BS.fmt_iso(g.get("date", ""))} · {int(g["points"])} pts · '
+            f'{int(g["reboundsTotal"])} reb · {int(g["assists"])} ast')
+
+
+def render_lastgame(label, extended, ended):
+    title = "Last Game — NBA Statistical Streaks"
+    nmile = sum(1 for e in extended if e.get("milestone"))
+    desc = (f"NBA active statistical-streak status at the {label}: {len(extended)} streaks still active, "
+            f"{len(ended)} ended, {nmile} at a milestone — by scope (regular/playoffs/combined) and stat family.")
+
+    by_scope = {}
+    for e in extended:
+        by_scope.setdefault(e["scope"], {}).setdefault(e["family"], {"ext": [], "end": []})["ext"].append(e)
+    for e in ended:
+        by_scope.setdefault(e["scope"], {}).setdefault(e["family"], {"ext": [], "end": []})["end"].append(e)
+
+    summ = (f'<p class="subtitle">Season-end state ({label}). <b>{len(extended)}</b> streaks still active · '
+            f'<b>{len(ended)}</b> ended on a final game · <b>{nmile}</b> sitting at a milestone length. '
+            f'Grouped into three scopes, each split by stat family.</p>\n')
+    sections = summ
+    for scope_key, scope_label in BS.SCOPES:
+        sections += f'<h2 class="scopeh">{scope_label}</h2>\n'
+        fams = by_scope.get(scope_key, {})
+        shown = False
+        for fam in BS.FAMILIES:
+            grp = fams.get(fam)
+            if not grp or (not grp["ext"] and not grp["end"]):
+                continue
+            shown = True
+            sections += f'<h3 class="famh">{fam}</h3>\n'
+            if grp["ext"]:
+                rows = "".join(
+                    f'<tr><td class="col-player" data-label="Player">{_plink(e)}'
+                    + ('<span class="mbadge">★ milestone</span>' if e.get("milestone") else '')
+                    + f'</td><td data-label="Streak">{BS.esc(e["label"])}</td>'
+                    f'<td class="col-streak" data-label="Length">{e["length"]}</td>'
+                    f'<td class="col-date" data-label="Through">{BS.fmt_iso(e["last_date"])}</td></tr>'
+                    for e in sorted(grp["ext"], key=lambda x: -x["length"]))
+                sections += _lgboard("Still active", [("Player", "col-player"), ("Streak", ""),
+                                                      ("Length", "col-streak"), ("Through", "col-date")], rows)
+            if grp["end"]:
+                rows = "".join(
+                    f'<tr><td class="col-player" data-label="Player">{_plink(e)}</td>'
+                    f'<td data-label="Streak">{BS.esc(e["label"])}</td>'
+                    f'<td class="col-streak" data-label="Reached">{e["length"]}</td>'
+                    f'<td data-label="Ended on">{_endgame(e["game"])}</td></tr>'
+                    for e in sorted(grp["end"], key=lambda x: -x["length"]))
+                sections += _lgboard("Ended", [("Player", "col-player"), ("Streak", ""),
+                                               ("Reached", "col-streak"), ("Ended on", "")], rows)
+        if not shown:
+            sections += '<p class="subtitle">No active streaks in this scope.</p>\n'
 
     body = (
         f'<div class="wrap">\n<a class="backtop" href="index.html">← All streak leaderboards</a>\n'
         f'{BS.search_box()}\n'
         f'<header><span class="brand">HoopsHype · NBA Statistical Streaks</span>'
-        f'<h1>🌙 Last <span class="accent">Night</span></h1>'
-        f'<p class="subtitle">Active-streak movement for {date_iso}.</p></header>\n'
-        f'{inner}\n'
+        f'<h1>🏀 Last <span class="accent">Game</span></h1>'
+        f'<p class="subtitle">Active-streak status at the {label}.</p></header>\n'
+        f'{sections}\n'
+        f'{BS.search_box()}\n'
         f'<a class="backtop" href="index.html">← All streak leaderboards</a>\n</div>\n'
     )
-    extra_css = ('<style>.msgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));'
-                 'gap:.6rem;margin:.4rem 0 1rem;}.ms{background:var(--surface);border:1px solid var(--border);'
-                 'border-left:3px solid var(--accent);border-radius:10px;padding:.7rem .9rem;}'
-                 '.ms-n{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:1.4rem;color:var(--accent);}'
-                 '.ms-t{font-size:.84rem;margin-top:.2rem;}.ms-s{color:var(--muted);}</style>\n')
-    return (BS.head(title, desc) + extra_css + BS.nav(None) + body + BS.scripts_for(""))
+    extra_css = ('<style>.scopeh{border-bottom:2px solid var(--text);padding-bottom:.3rem;margin-top:2rem;}'
+                 '.famh{font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;'
+                 'font-family:"JetBrains Mono",monospace;margin:1.1rem 0 .3rem;}'
+                 '.tcap{font-size:.78rem;font-weight:700;margin:.4rem 0 .2rem;}'
+                 '.mbadge{display:inline-block;margin-left:.4rem;font-size:.58rem;font-weight:700;color:var(--accent);'
+                 'background:var(--accent-dim);border-radius:10px;padding:.1rem .4rem;vertical-align:middle;'
+                 'font-family:"JetBrains Mono",monospace;}</style>\n')
+    return BS.head(title, desc) + extra_css + BS.nav("lastgame") + body + BS.scripts_for("")
+
+
+def season_end_status(df, current_season):
+    """Season-end demo: for each (scope, streak type, player), the run ending at the
+    player's most-recent game in that scope — ACTIVE if that game met the threshold,
+    ENDED if it failed a run that was already at/above the floor."""
+    extended, ended = [], []
+    for scope_key, _ in BS.SCOPES:
+        sub = E.scope_df(df, scope_key).sort_values(["personId", "gameDate", "gameId"]).reset_index(drop=True)
+        n = len(sub)
+        if n == 0:
+            continue
+        gkey = sub["personId"].to_numpy()
+        dates = sub["gameDate"].dt.date.to_numpy()
+        names = sub["name"].to_numpy(); teams = sub["team_disp"].to_numpy(); pids = sub["personId"].to_numpy()
+        stat = {k: sub[k].to_numpy() for k in
+                ("points", "reboundsTotal", "assists", "steals", "blocks", "threePointersMade")}
+        is_last = np.empty(n, bool); is_last[-1] = True; is_last[:-1] = gkey[1:] != gkey[:-1]
+        last_idx = [i for i in np.where(is_last)[0] if nba_season(dates[i]) == current_season]
+        for sid in FAMILY_BY_ID:
+            floor = FLOORS[sid]
+            c = sub[sid].to_numpy(dtype=bool)
+            same_prev = np.empty(n, bool); same_prev[0] = False; same_prev[1:] = gkey[1:] == gkey[:-1]
+            prev_c = np.empty(n, bool); prev_c[0] = False; prev_c[1:] = c[:-1]
+            run_id = np.cumsum(c & ~(prev_c & same_prev))
+            counts = np.bincount(run_id[c]) if c.any() else np.array([0])
+            for i in last_idx:
+                if c[i]:
+                    L = int(counts[run_id[i]])
+                    if L >= floor:
+                        nm, pid = str(names[i]), int(pids[i])
+                        extended.append({"personId": pid, "player": nm, "slug": BS.slugify(nm, pid),
+                                         "type": sid, "label": LABEL_BY_ID[sid], "family": FAMILY_BY_ID[sid],
+                                         "scope": scope_key, "length": L, "last_date": dates[i].isoformat(),
+                                         "team": str(teams[i]), "milestone": is_milestone(L)})
+                elif i - 1 >= 0 and gkey[i - 1] == gkey[i] and c[i - 1]:
+                    L = int(counts[run_id[i - 1]])
+                    if L >= floor:
+                        nm, pid = str(names[i]), int(pids[i])
+                        ended.append({"personId": pid, "player": nm, "slug": BS.slugify(nm, pid),
+                                      "type": sid, "label": LABEL_BY_ID[sid], "family": FAMILY_BY_ID[sid],
+                                      "scope": scope_key, "length": L, "team": str(teams[i]),
+                                      "game": {"date": dates[i].isoformat(),
+                                               **{k: float(stat[k][i]) for k in stat}}})
+    return extended, ended
+
+
+def season_end_demo():
+    print("Building season-end Last Game page from historical data…", flush=True)
+    df = E.load_appearances()
+    cur = nba_season(df["gameDate"].max().date())
+    label = f"{season_str(df['gameDate'].max().date())} season's end"
+    extended, ended = season_end_status(df, cur)
+    html = render_lastgame(label, extended, ended)
+    with open(os.path.join(BASE, "lastgame.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"  active={len(extended)}  ended={len(ended)}  milestones={sum(1 for e in extended if e['milestone'])}"
+          f"  -> wrote lastgame.html")
 
 
 # --------------------------------------------------------------------------- #
@@ -382,11 +473,21 @@ def run(d, source="proxy", dry_run=False, force=False, write_state=True):
     if dry_run:
         return
 
-    # outputs (always lastnight.html; state/daily only when write_state)
-    html = render_lastnight(d.isoformat(), extended, broken, milestones, movers, games)
-    with open(os.path.join(BASE, "lastnight.html"), "w", encoding="utf-8") as f:
+    # adapt one night's results into the lastgame.html entry shape (scope x family)
+    mileset = {(e["personId"], e["type"], e["scope"]) for e in milestones}
+    ext_entries = [{"personId": e["personId"], "player": e["player"], "slug": e["slug"], "type": e["type"],
+                    "label": e["label"], "family": FAMILY_BY_ID[e["type"]], "scope": e["scope"],
+                    "length": e["new"], "last_date": d.isoformat(),
+                    "milestone": (e["personId"], e["type"], e["scope"]) in mileset} for e in extended]
+    end_entries = [{"personId": e["personId"], "player": e["player"], "slug": e["slug"], "type": e["type"],
+                    "label": e["label"], "family": FAMILY_BY_ID[e["type"]], "scope": e["scope"],
+                    "length": e["had"], "game": {"date": d.isoformat(), **e["game"]}} for e in broken]
+
+    # outputs (always lastgame.html; state/daily only when write_state)
+    html = render_lastgame(f"game on {BS.fmt_iso(d.isoformat())}", ext_entries, end_entries)
+    with open(os.path.join(BASE, "lastgame.html"), "w", encoding="utf-8") as f:
         f.write(html)
-    print("  wrote lastnight.html")
+    print("  wrote lastgame.html")
     if write_state:
         if source == "proxy" and raw is not None:
             os.makedirs(DAILY_DIR, exist_ok=True)
@@ -463,12 +564,17 @@ def main():
                     help="proxy = live stats.nba.com (default); historical = our own dataset (offline testing)")
     ap.add_argument("--dry-run", action="store_true", help="compute + print, write nothing")
     ap.add_argument("--no-state", action="store_true",
-                    help="write lastnight.html only; leave active-state.json and data/daily untouched")
+                    help="write lastgame.html only; leave active-state.json and data/daily untouched")
     ap.add_argument("--force", action="store_true", help="run even if not all games Final")
     ap.add_argument("--validate", metavar="YYYY-MM-DD", help="compare proxy vs historical for a past date")
+    ap.add_argument("--season-end", action="store_true",
+                    help="build lastgame.html as the season-end state from our historical data (offline demo)")
     a = ap.parse_args()
     if a.validate:
         validate(datetime.date.fromisoformat(a.validate))
+        return
+    if a.season_end:
+        season_end_demo()
         return
     d = datetime.date.fromisoformat(a.date) if a.date else eastern_yesterday()
     run(d, source=a.source, dry_run=a.dry_run, force=a.force, write_state=not a.no_state)

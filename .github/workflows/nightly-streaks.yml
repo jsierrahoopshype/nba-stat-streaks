@@ -40,20 +40,20 @@ jobs:
             python fetch_nightly.py
           fi
 
-      - name: Commit ONLY pipeline outputs (active-state.json, data/daily/, lastnight.html)
+      - name: Commit ONLY pipeline outputs (active-state.json, data/daily/, lastgame.html)
         run: |
           git config user.name  "nba-streaks-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Stage ONLY the three allowed outputs — never engine/build files or player pages.
-          git add active-state.json lastnight.html
+          git add active-state.json lastgame.html
           if [ -d data/daily ]; then git add data/daily; fi
 
           staged="$(git diff --cached --name-only)"
           echo "Staged files:"; echo "$staged"
 
           # Hard guard: abort if anything outside the allowed set got staged.
-          if echo "$staged" | grep -qvE '^(active-state\.json|lastnight\.html|data/daily/)'; then
+          if echo "$staged" | grep -qvE '^(active-state\.json|lastgame\.html|data/daily/)'; then
             echo "::error::Out-of-scope file staged — refusing to commit."
             exit 1
           fi

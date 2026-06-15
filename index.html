@@ -68,6 +68,12 @@ border-left:3px solid var(--accent);border-radius:10px;padding:.7rem .9rem;margi
 .lnp-ic{font-size:1.3rem;}.lnp-tx{display:flex;flex-direction:column;flex:1;min-width:0;}
 .lnp-tx b{font-size:.95rem;}.lnp-sub{font-size:.76rem;color:var(--muted);}
 .lnp-go{font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700;}
+.simgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;}
+.simcard{display:block;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+padding:.7rem .8rem;color:var(--text);transition:.15s;}
+.simcard:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.sim-nm{font-weight:600;font-size:.92rem;display:flex;align-items:center;gap:.2rem;}
+.sim-hl{font-size:.76rem;color:var(--accent);margin-top:.25rem;font-family:'JetBrains Mono',monospace;}
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow-x:auto;}
 table.board{width:100%;border-collapse:collapse;font-size:.86rem;}
 table.board thead th{background:var(--surface-hover);color:var(--muted);text-align:left;font-weight:600;font-size:.66rem;
@@ -107,10 +113,10 @@ table.board tbody td.col-streak{font-size:1.1rem;font-weight:700;color:var(--acc
 </style>
 </head>
 <body>
-<nav class="nav"><a href="index.html" class="active">Leaderboards</a><a href="feats.html">Rarest Feats</a></nav>
+<nav class="nav"><a href="index.html" class="active">Leaderboards</a><a href="feats.html">Rarest Feats</a><a href="lastgame.html">Last Game</a></nav>
 <div class="wrap">
 <header><span class="brand">HoopsHype · NBA Statistical Streaks</span><h1>NBA <span class="accent">Statistical Streaks</span></h1><p class="subtitle">Longest runs of consecutive games hitting a statistical mark — skipping missed games, breaking only on an appearance that falls short. 1946–present.</p></header>
-<a class="lnpanel" href="lastnight.html"><span class="lnp-ic">🌙</span><span class="lnp-tx"><b>Last Night's Streaks</b><span class="lnp-sub" id="lnp-sub">Daily active-streak tracker — see what extended, broke, or hit a milestone</span></span><span class="lnp-go">→</span></a>
+<a class="lnpanel" href="lastgame.html"><span class="lnp-ic">🏀</span><span class="lnp-tx"><b>Last Game</b><span class="lnp-sub" id="lnp-sub">Active-streak movement — see what extended, ended, or hit a milestone</span></span><span class="lnp-go">→</span></a>
 <script>fetch("active-state.json").then(function(r){return r.json();}).then(function(s){document.getElementById("lnp-sub").textContent=s.count+" active streaks tracked · updated "+s.data_through;}).catch(function(){});</script>
 <div class="psearch-wrap"><input class="psearch" type="search" placeholder="Search any player by name…" autocomplete="off" spellcheck="false"><div class="ac" role="listbox"></div></div>
 <div class="controls"><div class="tabs"><button class="tab" data-scope="regular">Regular Season</button><button class="tab" data-scope="playoffs">Playoffs</button><button class="tab" data-scope="combined">Combined</button></div></div>
@@ -169,7 +175,7 @@ render();
   function wire(inp){var ac=inp.parentNode.querySelector('.ac');if(!ac)return;var sel=-1,items=[];
     function render(){var q=inp.value.trim();if(q.length<2){ac.classList.remove('open');items=[];sel=-1;return;}
       items=build(q);if(!items.length){ac.innerHTML='<div class="ac-empty">No players found</div>';ac.classList.add('open');return;}
-      ac.innerHTML=items.map(function(m,i){return '<a class="ac-item'+(i===sel?' sel':'')+'" href="'+PLAYER_PREFIX+m[1]+'.html">'+esc(m[0])+'</a>';}).join('');
+      ac.innerHTML=items.map(function(m,i){var fl=m[2]?' <img class="flag-img" src="https://flagcdn.com/h20/'+m[2]+'.png" srcset="https://flagcdn.com/h40/'+m[2]+'.png 2x" height="13" alt="'+esc(m[3]||'')+'" loading="lazy">':'';return '<a class="ac-item'+(i===sel?' sel':'')+'" href="'+PLAYER_PREFIX+m[1]+'.html">'+esc(m[0])+fl+'</a>';}).join('');
       ac.classList.add('open');}
     inp.addEventListener('input',function(){sel=-1;render();});
     inp.addEventListener('keydown',function(e){if(!items.length)return;
