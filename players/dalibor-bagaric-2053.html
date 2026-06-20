@@ -32,6 +32,9 @@ display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;}
 h1 .accent{color:var(--accent);}
 h2{font-size:1.15rem;font-weight:700;letter-spacing:-.02em;margin:1.6rem 0 .7rem;}
 h2 .note{font-weight:400;font-size:.8rem;color:var(--muted);}
+.famh{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;
+font-family:'JetBrains Mono',monospace;margin:1rem 0 .2rem;}
+.tcap{font-size:.78rem;font-weight:700;margin:.4rem 0 .2rem;}
 .subtitle{color:var(--muted);font-size:.9rem;margin:0;max-width:60rem;}
 .backtop{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);margin:.3rem 0;}
 .backtop:hover{color:var(--accent);}
@@ -59,21 +62,18 @@ letter-spacing:.06em;color:var(--muted);min-width:6.5rem;}
 border-radius:20px;background:var(--surface);color:var(--text);}
 .chip:hover{border-color:var(--accent);color:var(--accent);}
 .chip.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
-.record{display:flex;gap:.5rem;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
-border-left:3px solid var(--gold);border-radius:8px;padding:.6rem .9rem;margin:.4rem 0 .8rem;font-size:.82rem;}
-.record b{color:var(--text);}.record .ok{color:var(--green);font-weight:700;}.record .no{color:var(--accent);font-weight:700;}
-.lnpanel{display:flex;align-items:center;gap:.7rem;background:var(--surface);border:1px solid var(--border);
-border-left:3px solid var(--accent);border-radius:10px;padding:.7rem .9rem;margin:.2rem 0 .4rem;color:var(--text);transition:.15s;}
-.lnpanel:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
-.lnp-ic{font-size:1.3rem;}.lnp-tx{display:flex;flex-direction:column;flex:1;min-width:0;}
-.lnp-tx b{font-size:.95rem;}.lnp-sub{font-size:.76rem;color:var(--muted);}
-.lnp-go{font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700;}
 .simgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;}
 .simcard{display:block;background:var(--surface);border:1px solid var(--border);border-radius:10px;
 padding:.7rem .8rem;color:var(--text);transition:.15s;}
 .simcard:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
 .sim-nm{font-weight:600;font-size:.92rem;display:flex;align-items:center;gap:.2rem;}
 .sim-hl{font-size:.76rem;color:var(--accent);margin-top:.25rem;font-family:'JetBrains Mono',monospace;}
+.teams-line{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.5rem 0 0;}
+.tl-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;text-transform:uppercase;
+letter-spacing:.06em;color:var(--muted);margin-right:.1rem;}
+.tmlink{font-size:.78rem;font-weight:600;padding:.25rem .6rem;border:1px solid var(--border);border-radius:20px;
+background:var(--surface);color:var(--text);}
+.tmlink:hover{border-color:var(--accent);color:var(--accent);}
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow-x:auto;}
 table.board{width:100%;border-collapse:collapse;font-size:.86rem;}
 table.board thead th{background:var(--surface-hover);color:var(--muted);text-align:left;font-weight:600;font-size:.66rem;
@@ -92,7 +92,7 @@ table.board tbody tr:hover{background:var(--surface-hover);}
 .plink{color:var(--text);text-decoration:none;font-weight:600;}.plink:hover{color:var(--accent);}
 .foot{text-align:center;font-size:.72rem;color:var(--muted);margin-top:1.6rem;font-family:'JetBrains Mono',monospace;line-height:1.7;}
 @media(max-width:720px){
-.wrap{padding:.5rem .9rem 3rem;}.nav{padding:1rem .9rem .3rem;flex-wrap:nowrap;overflow-x:auto;}
+.wrap{padding:.35rem .9rem 3rem;}.nav{padding:.5rem .9rem .25rem;flex-wrap:nowrap;overflow-x:auto;}
 .nav a{flex:0 0 auto;}
 .table-card{overflow:visible;border:none;background:transparent;border-radius:0;}
 table.board,table.board tbody{display:block;width:100%;}
@@ -100,26 +100,44 @@ table.board thead{display:none;}
 table.board tbody tr{display:block;position:relative;background:var(--surface);border:1px solid var(--border);
 border-radius:12px;padding:.7rem 3rem .7rem .9rem;margin-bottom:.6rem;}
 table.board tbody tr:hover{background:var(--surface);}
-table.board tbody td{display:block;position:relative;border:none;white-space:normal;text-align:left;
+table.board tbody td{display:block;position:relative;border:none;white-space:normal;text-align:center;
 padding:.14rem 0 .14rem 7rem;font-size:.86rem;line-height:1.4;min-height:1.5em;overflow-wrap:anywhere;}
-table.board tbody td::before{content:attr(data-label);position:absolute;left:0;top:.18rem;width:6.5rem;
+table.board tbody td::before{content:attr(data-label);position:absolute;left:0;top:.18rem;width:6.5rem;text-align:left;
 font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
 table.board tbody td.col-rank{position:absolute;top:.55rem;right:.85rem;padding:0;font-size:.66rem;color:var(--muted);min-height:0;}
 table.board tbody td.col-rank::before{display:none;}
-table.board tbody td.col-player{padding:0 0 .3rem;font-family:'DM Sans',sans-serif;font-size:1.02rem;font-weight:600;}
+table.board tbody td.col-player{padding:0 0 .3rem;font-family:'DM Sans',sans-serif;font-size:1.02rem;font-weight:600;text-align:left;}
 table.board tbody td.col-player::before{display:none;}
 table.board tbody td.col-streak{font-size:1.1rem;font-weight:700;color:var(--accent);}
+/* --- compact front-page top on mobile (scoped to .home-hd) --- */
+.home-hd{margin:0;}
+.home-hd h1{font-size:1.3rem;line-height:1.15;margin:0 0 .1rem;}
+.home-hd+.psearch-wrap{margin:.4rem 0;}
+.home-hd+.psearch-wrap .psearch{padding:.5rem .7rem;font-size:.85rem;}
+.home-hd~.controls{margin:.4rem 0 .2rem;}
+.home-hd~.controls .tab{padding:.36rem .68rem;}
+.home-hd~.fams{margin:.1rem 0 .3rem;gap:.3rem;}
+.home-hd~.fams .fam{gap:.3rem;}
+.home-hd~.fams .fam .flabel{min-width:5.5rem;}
+.home-hd~.fams .chip{padding:.28rem .6rem;font-size:.72rem;}
+.home-hd~#active-label{margin:.35rem 0 .3rem;font-size:1.05rem;}
 }
 </style>
 </head>
 <body>
-<nav class="nav"><a href="../index.html" class="active">Leaderboards</a><a href="../feats.html">Rarest Feats</a><a href="../lastgame.html">Last Game</a></nav>
+<nav class="nav"><a href="../index.html" class="active">Leaderboards</a><a href="../feats.html">Rarest Feats</a><a href="../active-streaks.html">Active Streaks</a><a href="../teams.html">Teams</a></nav>
 <div class="wrap">
 <a class="backtop" href="../index.html">← All streak leaderboards</a>
 <div class="psearch-wrap"><input class="psearch" type="search" placeholder="Search any player by name…" autocomplete="off" spellcheck="false"><div class="ac" role="listbox"></div></div>
-<header><h1>Dalibor Bagaric <img class="flag-img flag-lg" src="https://flagcdn.com/h40/hr.png" srcset="https://flagcdn.com/h40/hr.png 2x" alt="Croatia" title="Croatia"></h1><p class="subtitle">Longest streak of 2 2+ steals in a row.</p></header>
-<h2>Regular Season</h2><div class="table-card"><table class="board"><thead><tr><th>Streak</th><th class="col-streak">Best</th><th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th></tr></thead><tbody><tr><td class="col-player" data-label="Streak">2+ steals</td><td class="col-streak" data-label="Best">2</td><td class="col-date" data-label="Dates">Dec 8, 2000 – Dec 9, 2000</td><td class="col-team" data-label="Team(s)">Chicago</td><td data-label="All-time rank">—</td></tr><tr><td class="col-player" data-label="Streak">2+ blocks</td><td class="col-streak" data-label="Best">2</td><td class="col-date" data-label="Dates">Apr 18, 2001 – Nov 2, 2001</td><td class="col-team" data-label="Team(s)">Chicago</td><td data-label="All-time rank">—</td></tr></tbody></table></div>
-<h2>Combined Regular Season + Playoffs</h2><div class="table-card"><table class="board"><thead><tr><th>Streak</th><th class="col-streak">Best</th><th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th></tr></thead><tbody><tr><td class="col-player" data-label="Streak">2+ steals</td><td class="col-streak" data-label="Best">2</td><td class="col-date" data-label="Dates">Dec 8, 2000 – Dec 9, 2000</td><td class="col-team" data-label="Team(s)">Chicago</td><td data-label="All-time rank">—</td></tr><tr><td class="col-player" data-label="Streak">2+ blocks</td><td class="col-streak" data-label="Best">2</td><td class="col-date" data-label="Dates">Apr 18, 2001 – Nov 2, 2001</td><td class="col-team" data-label="Team(s)">Chicago</td><td data-label="All-time rank">—</td></tr></tbody></table></div>
+<header><h1>Dalibor Bagaric <img class="flag-img flag-lg" src="https://flagcdn.com/h40/hr.png" srcset="https://flagcdn.com/h40/hr.png 2x" alt="Croatia" title="Croatia"></h1><p class="subtitle">Longest streak of 2 2+ steals in a row.</p><p class="teams-line"><span class="tl-label">Teams</span><a class="tmlink" href="../teams/chicago-bulls.html">Chicago Bulls</a></p></header>
+<h2>Regular Season</h2>
+<h3 class="famh">Defense</h3>
+<div class="tcap">2+ steals</div><div class="table-card"><table class="board"><thead><tr><th class="col-rank">#</th><th class="col-streak">Length</th><th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th></tr></thead><tbody><tr><td class="col-rank" data-label="#">1</td><td class="col-streak" data-label="Length">2</td><td class="col-date" data-label="Dates">Dec 8, 2000 – Dec 9, 2000</td><td class="col-team" data-label="Team(s)"><a class="plink" href="../teams/chicago-bulls.html">Chicago</a></td><td data-label="All-time rank">—</td></tr></tbody></table></div>
+<div class="tcap">2+ blocks</div><div class="table-card"><table class="board"><thead><tr><th class="col-rank">#</th><th class="col-streak">Length</th><th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th></tr></thead><tbody><tr><td class="col-rank" data-label="#">1</td><td class="col-streak" data-label="Length">2</td><td class="col-date" data-label="Dates">Apr 18, 2001 – Nov 2, 2001</td><td class="col-team" data-label="Team(s)"><a class="plink" href="../teams/chicago-bulls.html">Chicago</a></td><td data-label="All-time rank">—</td></tr></tbody></table></div>
+<h2>Combined Regular Season + Playoffs</h2>
+<h3 class="famh">Defense</h3>
+<div class="tcap">2+ steals</div><div class="table-card"><table class="board"><thead><tr><th class="col-rank">#</th><th class="col-streak">Length</th><th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th></tr></thead><tbody><tr><td class="col-rank" data-label="#">1</td><td class="col-streak" data-label="Length">2</td><td class="col-date" data-label="Dates">Dec 8, 2000 – Dec 9, 2000</td><td class="col-team" data-label="Team(s)"><a class="plink" href="../teams/chicago-bulls.html">Chicago</a></td><td data-label="All-time rank">—</td></tr></tbody></table></div>
+<div class="tcap">2+ blocks</div><div class="table-card"><table class="board"><thead><tr><th class="col-rank">#</th><th class="col-streak">Length</th><th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th></tr></thead><tbody><tr><td class="col-rank" data-label="#">1</td><td class="col-streak" data-label="Length">2</td><td class="col-date" data-label="Dates">Apr 18, 2001 – Nov 2, 2001</td><td class="col-team" data-label="Team(s)"><a class="plink" href="../teams/chicago-bulls.html">Chicago</a></td><td data-label="All-time rank">—</td></tr></tbody></table></div>
 <h2>Similar Players <span class="note">(share your all-time leaderboards)</span></h2><div class="simgrid"><a class="simcard" href="trent-forrest-1630235.html"><div class="sim-nm">Trent Forrest <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">2-game 5+ assists streak</div></a><a class="simcard" href="erick-barkley-2057.html"><div class="sim-nm">Erick Barkley <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">2-game 10+ points streak</div></a><a class="simcard" href="wang-zhi-zhi-1917.html"><div class="sim-nm">Wang Zhi-zhi <img class="flag-img" src="https://flagcdn.com/h20/cn.png" srcset="https://flagcdn.com/h40/cn.png 2x" height="14" alt="China" title="China"></div><div class="sim-hl">2-game 10+ points streak</div></a><a class="simcard" href="mark-madsen-2058.html"><div class="sim-nm">Mark Madsen <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">2-game 10+ points streak</div></a><a class="simcard" href="evan-eschmeyer-1915.html"><div class="sim-nm">Evan Eschmeyer <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">2-game 10+ rebounds streak</div></a><a class="simcard" href="dan-langhi-2061.html"><div class="sim-nm">Dan Langhi <img class="flag-img" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x" height="14" alt="United States" title="United States"></div><div class="sim-hl">2-game 10+ points streak</div></a></div>
 <div class="psearch-wrap"><input class="psearch" type="search" placeholder="Search any player by name…" autocomplete="off" spellcheck="false"><div class="ac" role="listbox"></div></div>
 <a class="backtop" href="../index.html">← All streak leaderboards</a>

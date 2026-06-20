@@ -32,7 +32,7 @@ import numpy as np
 import pandas as pd
 
 import build_streaks as E
-import build_site as BS   # read-only: reuse the design system (CSS/nav/search) for lastgame.html
+import build_site as BS   # read-only: reuse the design system (CSS/nav/search) for active-streaks.html
 from export_active_state import FLOORS   # per-type floors (single source of truth)
 
 FAMILY_BY_ID = {s["id"]: s["family"] for s in E.STREAKS}
@@ -258,7 +258,7 @@ def milestones_and_movers(extended, alltime):
 
 
 # --------------------------------------------------------------------------- #
-# Render lastgame.html — three scope sections, each split by stat family
+# Render active-streaks.html — three scope sections, each split by stat family
 # --------------------------------------------------------------------------- #
 _PLAYERS_FLAGS = None
 
@@ -304,7 +304,7 @@ def _endgame(g):
 def render_lastgame(label, extended, ended=None):
     """Active (trailing) streaks only, grouped scope -> stat family -> threshold,
     one sub-table per threshold (ascending). 'ended' is accepted but not shown."""
-    title = "Last Game — NBA Statistical Streaks"
+    title = "Active Streaks — NBA Statistical Streaks"
     nmile = sum(1 for e in extended if e.get("milestone"))
     desc = (f"NBA active statistical-streak status at the {label}: {len(extended)} streaks still active "
             f"({nmile} at a milestone) — by scope (regular season / playoffs / combined), stat family, and threshold.")
@@ -331,13 +331,14 @@ def render_lastgame(label, extended, ended=None):
                 cur_family = fam
             shown = True
             rows = "".join(
-                f'<tr><td class="col-player" data-label="Player">{_plink(e)}'
+                f'<tr><td class="col-rank" data-label="#">{i}</td>'
+                f'<td class="col-player" data-label="Player">{_plink(e)}'
                 + ('<span class="mbadge">★ milestone</span>' if e.get("milestone") else '')
                 + f'</td><td class="col-streak" data-label="Length">{e["length"]}</td>'
                 f'<td class="col-date" data-label="Started">'
                 f'{BS.fmt_iso(e.get("started") or e.get("last_date", ""))}</td></tr>'
-                for e in sorted(entries, key=lambda x: -x["length"]))
-            sections += _lgboard(s["label"], [("Player", "col-player"),
+                for i, e in enumerate(sorted(entries, key=lambda x: -x["length"]), 1))
+            sections += _lgboard(s["label"], [("#", "col-rank"), ("Player", "col-player"),
                                               ("Length", "col-streak"), ("Started", "col-date")], rows)
         if not shown:
             sections += '<p class="subtitle">No active streaks in this scope.</p>\n'
@@ -345,8 +346,7 @@ def render_lastgame(label, extended, ended=None):
     body = (
         f'<div class="wrap">\n<a class="backtop" href="index.html">← All streak leaderboards</a>\n'
         f'{BS.search_box()}\n'
-        f'<header><span class="brand">HoopsHype · NBA Statistical Streaks</span>'
-        f'<h1>🏀 Last <span class="accent">Game</span></h1>'
+        f'<header><h1>🏀 Active <span class="accent">Streaks</span></h1>'
         f'<p class="subtitle">Active-streak status at the {label}.</p></header>\n'
         f'{sections}\n'
         f'{BS.search_box()}\n'
@@ -410,17 +410,36 @@ def season_end_status(df, current_season):
     return extended, ended
 
 
+ACTIVE_STREAKS_FILE = "active-streaks.html"
+
+
+def write_active_streaks(html):
+    """Write the active-streaks page and keep a redirect stub at the old lastgame.html URL."""
+    with open(os.path.join(BASE, ACTIVE_STREAKS_FILE), "w", encoding="utf-8") as f:
+        f.write(html)
+    url = ACTIVE_STREAKS_FILE
+    stub = (
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        f'<meta http-equiv="refresh" content="0; url={url}">'
+        f'<link rel="canonical" href="{url}">'
+        '<meta name="robots" content="noindex">'
+        '<title>Redirecting… | NBA Statistical Streaks</title>'
+        f'<script>location.replace("{url}");</script></head>'
+        f'<body>This page moved to <a href="{url}">Active Streaks →</a></body></html>\n')
+    with open(os.path.join(BASE, "lastgame.html"), "w", encoding="utf-8") as f:
+        f.write(stub)
+
+
 def season_end_demo():
-    print("Building season-end Last Game page from historical data…", flush=True)
+    print("Building season-end Active Streaks page from historical data…", flush=True)
     df = E.load_appearances()
     cur = nba_season(df["gameDate"].max().date())
     label = f"{season_str(df['gameDate'].max().date())} season's end"
     extended, _ended = season_end_status(df, cur)
     html = render_lastgame(label, extended)
-    with open(os.path.join(BASE, "lastgame.html"), "w", encoding="utf-8") as f:
-        f.write(html)
+    write_active_streaks(html)
     print(f"  active={len(extended)}  milestones={sum(1 for e in extended if e['milestone'])}"
-          f"  -> wrote lastgame.html (ended tables dropped)")
+          f"  -> wrote {ACTIVE_STREAKS_FILE} (+ lastgame.html redirect; ended tables dropped)")
 
 
 # --------------------------------------------------------------------------- #
@@ -469,18 +488,17 @@ def run(d, source="proxy", dry_run=False, force=False, write_state=True):
     if dry_run:
         return
 
-    # adapt one night's extends into the lastgame.html entry shape (active only)
+    # adapt one night's extends into the active-streaks.html entry shape (active only)
     mileset = {(e["personId"], e["type"], e["scope"]) for e in milestones}
     ext_entries = [{"personId": e["personId"], "player": e["player"], "slug": e["slug"], "type": e["type"],
                     "label": e["label"], "family": FAMILY_BY_ID[e["type"]], "scope": e["scope"],
                     "length": e["new"], "last_date": d.isoformat(), "started": e.get("started"),
                     "milestone": (e["personId"], e["type"], e["scope"]) in mileset} for e in extended]
 
-    # outputs (always lastgame.html; state/daily only when write_state)
+    # outputs (always active-streaks.html + lastgame.html redirect; state/daily only when write_state)
     html = render_lastgame(f"game on {BS.fmt_iso(d.isoformat())}", ext_entries)
-    with open(os.path.join(BASE, "lastgame.html"), "w", encoding="utf-8") as f:
-        f.write(html)
-    print("  wrote lastgame.html")
+    write_active_streaks(html)
+    print("  wrote active-streaks.html (+ lastgame.html redirect)")
     if write_state:
         if source == "proxy" and raw is not None:
             os.makedirs(DAILY_DIR, exist_ok=True)
@@ -557,11 +575,11 @@ def main():
                     help="proxy = live stats.nba.com (default); historical = our own dataset (offline testing)")
     ap.add_argument("--dry-run", action="store_true", help="compute + print, write nothing")
     ap.add_argument("--no-state", action="store_true",
-                    help="write lastgame.html only; leave active-state.json and data/daily untouched")
+                    help="write active-streaks.html only; leave active-state.json and data/daily untouched")
     ap.add_argument("--force", action="store_true", help="run even if not all games Final")
     ap.add_argument("--validate", metavar="YYYY-MM-DD", help="compare proxy vs historical for a past date")
     ap.add_argument("--season-end", action="store_true",
-                    help="build lastgame.html as the season-end state from our historical data (offline demo)")
+                    help="build active-streaks.html as the season-end state from our historical data (offline demo)")
     a = ap.parse_args()
     if a.validate:
         validate(datetime.date.fromisoformat(a.validate))

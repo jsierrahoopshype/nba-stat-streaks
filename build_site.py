@@ -20,6 +20,7 @@ import numpy as np
 import pandas as pd
 
 import build_streaks as E
+import franchises as FR
 
 BASE = r"C:\nba-stat-streaks"
 DATA = os.path.join(BASE, "data")
@@ -34,12 +35,6 @@ FAMILIES = ["Scoring", "Rebounding", "Playmaking", "Defense", "Shooting", "Combo
 TOPN = 100
 
 esc = lambda s: html.escape(str(s), quote=True)
-
-KNOWN_RECORDS = {
-    "pts10": ("LeBron James", 1290, "consecutive games scoring in double figures — the live all-time record (broke Jordan's 866)"),
-    "pts30": ("Wilt Chamberlain", 65, "consecutive 30-point games (1961-62)"),
-    "dd":    ("Wilt Chamberlain", 227, "consecutive double-doubles (1964-67)"),
-}
 
 # single-game feats, ranked by career count (regular season)
 FEATS = [
@@ -91,6 +86,19 @@ def slugify(name, pid):
     return f"{s}-{pid}"
 
 
+def team_slug(t):
+    return re.sub(r"[^a-z0-9]+", "-", str(t).lower()).strip("-")
+
+
+def team_links_html(run, prefix="../"):
+    """Render a run's Team(s) cell with each city-era label linked to its franchise page."""
+    links = run.get("team_links")
+    if not links:
+        return esc(run.get("teams") or "—")
+    return ", ".join(f'<a class="plink" href="{prefix}teams/{slug}.html">{esc(label)}</a>'
+                     for label, slug in links)
+
+
 def country_to_flag(country):
     if not country:
         return None
@@ -123,7 +131,10 @@ def load_flags():
 # --------------------------------------------------------------------------- #
 # Single pass: global top-N runs AND per-player best run, from one run_id pass
 # --------------------------------------------------------------------------- #
-def compute_all(sub, gkey, cond_col, topn=TOPN):
+def compute_all(sub, gkey, cond_col, topn=TOPN, topk=10):
+    """Returns (top_list, topk_by_pid):
+      top_list      = the all-time top-`topn` runs (for the leaderboards)
+      topk_by_pid   = {pid: [up to `topk` runs, length-desc]} (for player pages)."""
     c = sub[cond_col].to_numpy(dtype=bool)
     n = len(c)
     if n == 0:
@@ -137,28 +148,40 @@ def compute_all(sub, gkey, cond_col, topn=TOPN):
     counts = np.bincount(rid_true)
     d = pd.DataFrame({"pid": gkey[idx], "len": counts[rid_true], "rid": rid_true, "pos": idx})
 
-    best_rows = d.loc[d.groupby("pid")["len"].idxmax()]      # one row per player (their best run)
-    best_rids = set(int(r) for r in best_rows["rid"])
-    top_ids = [int(r) for r in np.argsort(counts)[::-1] if counts[r] > 0][:topn]
-    care = set(top_ids) | best_rids
+    # per-player TOP-K runs by length (one row per run, then nlargest per player)
+    run_meta = d.drop_duplicates("rid")[["pid", "len", "rid"]]
+    topk_rids = {int(pid): [int(r) for r in grp.nlargest(topk, "len")["rid"]]
+                 for pid, grp in run_meta.groupby("pid", sort=False)}
+    top_ids = [int(r) for r in np.argsort(counts)[::-1] if counts[r] > 0][:topn]   # unchanged leaderboard order
+    care = set(top_ids)
+    for v in topk_rids.values():
+        care.update(v)
     dc = d[d["rid"].isin(care)]
     g = dc.groupby("rid")
     fp = g["pos"].min(); lp = g["pos"].max()
+    names = sub["name"].to_numpy(); team_arr = sub["team_disp"].to_numpy()
+    pids = sub["personId"].to_numpy(); date_arr = sub["gameDate"].dt.date.to_numpy()
+    fr_arr = sub["franchise"].to_numpy()
 
     def detail(rid):
         f, l = int(fp[rid]), int(lp[rid])
-        sl = sub.iloc[f:l + 1]
-        teams = list(dict.fromkeys(t for t in sl["team_disp"] if t))
-        return {"length": l - f + 1, "player": sl["name"].iloc[0], "personId": int(sl["personId"].iloc[0]),
-                "start": sl["gameDate"].iloc[0].date().isoformat(),
-                "end": sl["gameDate"].iloc[-1].date().isoformat(), "teams": ", ".join(teams)}
+        # distinct city-era labels in run order, each paired with its franchise slug
+        # (resolved per-row, so an ambiguous label like "Philadelphia" maps to the right
+        #  franchise for THIS run — Warriors vs 76ers — since a run is contiguous in time)
+        links, seen = [], set()
+        for k in range(f, l + 1):
+            t = team_arr[k]
+            if t and t not in seen:
+                seen.add(t)
+                links.append([str(t), FR.team_slug(fr_arr[k])])
+        return {"length": l - f + 1, "player": str(names[f]), "personId": int(pids[f]),
+                "start": date_arr[f].isoformat(), "end": date_arr[l].isoformat(),
+                "teams": ", ".join(t for t, _ in links), "team_links": links}
 
-    top_list = [detail(rid) for rid in top_ids]
-    best_by_pid = {}
-    for rid in best_rids:
-        de = detail(rid)
-        best_by_pid[de["personId"]] = de
-    return top_list, best_by_pid
+    cache = {rid: detail(rid) for rid in care}
+    top_list = [cache[rid] for rid in top_ids]
+    topk_by_pid = {pid: [cache[r] for r in rids] for pid, rids in topk_rids.items()}
+    return top_list, topk_by_pid
 
 
 # --------------------------------------------------------------------------- #
@@ -166,7 +189,7 @@ def compute_all(sub, gkey, cond_col, topn=TOPN):
 # --------------------------------------------------------------------------- #
 def build_all():
     print("Loading appearances…", flush=True)
-    df = E.load_appearances()
+    df = FR.add_franchise(E.load_appearances())
     country_by_pid, name_by_pid, nat = load_flags()
 
     players = {}        # slug -> [name, iso, country]
@@ -186,7 +209,8 @@ def build_all():
         return slug
 
     STREAK_DATA = {s["id"]: {} for s in E.STREAKS}
-    player_best = {}     # (sid, scope) -> {pid: detail}
+    player_best = {}     # (sid, scope) -> {pid: best run}
+    player_top = {}      # (sid, scope) -> {pid: [top-10 runs, length-desc]}
     rank_map = {}        # (sid, scope) -> {slug: rank}
 
     for scope_key, _ in SCOPES:
@@ -194,15 +218,16 @@ def build_all():
         sub = E.scope_df(df, scope_key).sort_values(["personId", "gameDate", "gameId"]).reset_index(drop=True)
         gkey = sub["personId"].to_numpy()
         for s in E.STREAKS:
-            top, best = compute_all(sub, gkey, s["id"], topn=TOPN)
+            top, topk = compute_all(sub, gkey, s["id"], topn=TOPN)
             out, rmap = [], {}
             for i, r in enumerate(top, 1):
                 slug = reg_player(r["personId"], r["player"])
-                out.append([i, slug, r["length"], r["start"], r["end"], r["teams"]])
+                out.append([i, slug, r["length"], r["start"], r["end"], r["teams"], r["team_links"]])
                 rmap.setdefault(slug, i)
             STREAK_DATA[s["id"]][scope_key] = out
             rank_map[(s["id"], scope_key)] = rmap
-            player_best[(s["id"], scope_key)] = best
+            player_best[(s["id"], scope_key)] = {pid: runs[0] for pid, runs in topk.items() if runs}
+            player_top[(s["id"], scope_key)] = topk
 
     # ----- feats (regular season career counts) -----
     print("  feats (regular season)…", flush=True)
@@ -238,7 +263,6 @@ def build_all():
             feat_player.setdefault(int(pid), {})[f["id"]] = [int(row["count"]), int(row["fy"]), int(row["ly"])]
 
     STREAK_META = [{"id": s["id"], "label": s["label"], "family": s["family"]} for s in E.STREAKS]
-    STREAK_RECORDS = {k: {"holder": v[0], "num": v[1], "note": v[2]} for k, v in KNOWN_RECORDS.items()}
 
     # ----- assemble per-player page payloads -----
     page_pids = set()
@@ -256,6 +280,25 @@ def build_all():
 
     label_by_id = {s["id"]: s["label"] for s in E.STREAKS}
     feat_label = {f["id"]: f["label"] for f in FEATS}
+
+    # per-run all-time rank lookup: (sid,scope) -> {(slug, length): rank} from the
+    # top-100 leaderboards, so each of a player's top-10 runs can show its rank if it
+    # made the all-time board.
+    alltime_rank = {}
+    for sid, scopes in STREAK_DATA.items():
+        for scope, rows in scopes.items():
+            m = {}
+            for r in rows:          # r = [rank, slug, length, start, end, teams]
+                m.setdefault((r[1], r[2]), r[0])
+            alltime_rank[(sid, scope)] = m
+
+    # ----- per-player franchises (for player->franchise cross-links) -----
+    tc = (df.groupby(["personId", "franchise"]).size().reset_index(name="n")
+            .sort_values("n", ascending=False))
+    player_teams = {}                     # pid -> [(franchise, franchise_slug), ...] most games first
+    for r in tc.itertuples(index=False):
+        if r.franchise:
+            player_teams.setdefault(int(r.personId), []).append((r.franchise, FR.team_slug(r.franchise)))
 
     # ----- headline (for cards) + similar players (rabbit-hole hooks) -----
     headline = {}   # slug -> {"text":..., "val":...}
@@ -316,10 +359,11 @@ def build_all():
     similar = {slug_by_pid[pid]: similar_for(slug_by_pid[pid]) for pid in page_pids}
 
     return dict(df=df, players=players, slug_by_pid=slug_by_pid, STREAK_DATA=STREAK_DATA,
-                STREAK_META=STREAK_META, STREAK_RECORDS=STREAK_RECORDS, FEAT_DATA=FEAT_DATA,
+                STREAK_META=STREAK_META, FEAT_DATA=FEAT_DATA,
                 FEATS=FEATS, feat_label=feat_label, label_by_id=label_by_id,
                 player_best=player_best, rank_map=rank_map, feat_player=feat_player,
-                page_pids=page_pids, headline=headline, similar=similar)
+                page_pids=page_pids, headline=headline, similar=similar, player_teams=player_teams,
+                player_top=player_top, alltime_rank=alltime_rank)
 
 
 # --------------------------------------------------------------------------- #
@@ -350,7 +394,8 @@ def nav(active, prefix=""):
         return f'<a href="{prefix}{href}"{cls}>{label}</a>'
     return (f'<nav class="nav">{a("index.html","Leaderboards","lb")}'
             f'{a("feats.html","Rarest Feats","feats")}'
-            f'{a("lastgame.html","Last Game","lastgame")}</nav>\n')
+            f'{a("active-streaks.html","Active Streaks","lastgame")}'
+            f'{a("teams.html","Teams","teams")}</nav>\n')
 
 
 def search_box():
@@ -381,24 +426,10 @@ def build_index_html(meta):
     tabs = "".join(f'<button class="tab" data-scope="{k}">{lbl}</button>' for k, lbl in SCOPES)
     body = (
         f'<div class="wrap">\n'
-        f'<header><span class="brand">HoopsHype · NBA Statistical Streaks</span>'
-        f'<h1>NBA <span class="accent">Statistical Streaks</span></h1>'
-        f'<p class="subtitle">Longest runs of consecutive games hitting a statistical mark — skipping missed games, '
-        f'breaking only on an appearance that falls short. 1946–present.</p></header>\n'
-        # Tracker panel — links to lastgame.html (written by the nightly job); the
-        # subtitle is filled in client-side from active-state.json so the panel never needs
-        # the build to re-run.
-        f'<a class="lnpanel" href="lastgame.html"><span class="lnp-ic">🏀</span>'
-        f'<span class="lnp-tx"><b>Last Game</b><span class="lnp-sub" id="lnp-sub">'
-        f'Active-streak movement — see what extended, ended, or hit a milestone</span></span>'
-        f'<span class="lnp-go">→</span></a>\n'
-        f'<script>fetch("active-state.json").then(function(r){{return r.json();}}).then(function(s){{'
-        f'document.getElementById("lnp-sub").textContent=s.count+" active streaks tracked · updated "+s.data_through;'
-        f'}}).catch(function(){{}});</script>\n'
+        f'<header class="home-hd"><h1>NBA <span class="accent">Statistical Streaks</span></h1></header>\n'
         f'{search_box()}\n'
         f'<div class="controls"><div class="tabs">{tabs}</div></div>\n'
         f'{family_chips_html(meta)}\n'
-        f'<div class="record" id="record-flag" style="display:none"></div>\n'
         f'<h2 id="active-label">10+ points</h2>\n'
         f'<div class="table-card"><table class="board"><thead><tr>'
         f'<th class="col-rank">Rank</th><th>Player</th><th class="col-streak">Streak</th>'
@@ -477,29 +508,37 @@ def build_player_page(pid, ctx):
     headline = None
 
     def scope_table(scope_key, scope_label):
-        rrows = []
-        for s in ctx["STREAK_META"]:
+        # Same nesting as the team pages: family (h3) -> one sub-table per threshold
+        # (ascending). Each sub-table lists this player's TOP 10 longest runs for that
+        # threshold, ranked 1..N on the left; the right column is the league-wide rank.
+        inner = ""
+        cur_fam = None
+        for s in ctx["STREAK_META"]:        # E.STREAKS order = family-grouped, ascending
             sid = s["id"]
-            de = ctx["player_best"].get((sid, scope_key), {}).get(pid)
-            if de and de["length"] >= 2:
-                rank = ctx["rank_map"].get((sid, scope_key), {}).get(slug)
-                rrows.append({"label": label_by_id[sid], "len": de["length"], "start": de["start"],
-                              "end": de["end"], "teams": de["teams"], "rank": rank})
-        rrows.sort(key=lambda r: r["len"], reverse=True)
-        if not rrows:
+            runs = [r for r in ctx["player_top"].get((sid, scope_key), {}).get(pid, []) if r["length"] >= 2]
+            if not runs:
+                continue
+            runs = sorted(runs, key=lambda r: -r["length"])[:10]
+            if s["family"] != cur_fam:
+                inner += f'<h3 class="famh">{s["family"]}</h3>\n'
+                cur_fam = s["family"]
+            arank = ctx["alltime_rank"].get((sid, scope_key), {})
+            body_rows = "".join(
+                f'<tr><td class="col-rank" data-label="#">{i}</td>'
+                f'<td class="col-streak" data-label="Length">{r["length"]}</td>'
+                f'<td class="col-date" data-label="Dates">{fmt_iso(r["start"])} – {fmt_iso(r["end"])}</td>'
+                f'<td class="col-team" data-label="Team(s)">{team_links_html(r)}</td>'
+                f'<td data-label="All-time rank">'
+                f'{("#"+str(arank[(slug, r["length"])])) if (slug, r["length"]) in arank else "—"}</td></tr>'
+                for i, r in enumerate(runs, 1))
+            inner += (f'<div class="tcap">{esc(label_by_id[sid])}</div><div class="table-card">'
+                      '<table class="board"><thead><tr><th class="col-rank">#</th>'
+                      '<th class="col-streak">Length</th><th class="col-date">Dates</th>'
+                      '<th class="col-team">Team(s)</th><th>All-time rank</th>'
+                      f'</tr></thead><tbody>{body_rows}</tbody></table></div>\n')
+        if not inner:
             return ""
-        body_rows = "".join(
-            f'<tr><td class="col-player" data-label="Streak">{esc(r["label"])}</td>'
-            f'<td class="col-streak" data-label="Best">{r["len"]}</td>'
-            f'<td class="col-date" data-label="Dates">{fmt_iso(r["start"])} – {fmt_iso(r["end"])}</td>'
-            f'<td class="col-team" data-label="Team(s)">{esc(r["teams"] or "—")}</td>'
-            f'<td data-label="All-time rank">{("#"+str(r["rank"])) if r["rank"] else "—"}</td></tr>'
-            for r in rrows)
-        return (f'<h2>{scope_label}</h2>'
-                '<div class="table-card"><table class="board"><thead><tr>'
-                '<th>Streak</th><th class="col-streak">Best</th>'
-                '<th class="col-date">Dates</th><th class="col-team">Team(s)</th><th>All-time rank</th>'
-                f'</tr></thead><tbody>{body_rows}</tbody></table></div>\n')
+        return f'<h2>{scope_label}</h2>\n{inner}'
 
     # headline = single longest streak across every type/scope (for the SEO blurb)
     for s in ctx["STREAK_META"]:
@@ -549,12 +588,19 @@ def build_player_page(pid, ctx):
     desc = (f"{name}'s NBA consecutive-game streaks and career feats — {hl}. "
             f"Regular season, playoffs and combined, with all-time ranks.")
 
+    # player -> team cross-links (city-era teams the player compiled streaks with)
+    teams = ctx["player_teams"].get(pid, [])[:9]
+    teams_line = ""
+    if teams:
+        chips = "".join(f'<a class="tmlink" href="../teams/{ts}.html">{esc(t)}</a>' for t, ts in teams)
+        teams_line = f'<p class="teams-line"><span class="tl-label">Teams</span>{chips}</p>'
+
     body = (
         f'<div class="wrap">\n'
         f'<a class="backtop" href="../index.html">← All streak leaderboards</a>\n'
         f'{search_box()}\n'
         f'<header><h1>{esc(name)}{flag_html(iso, country, big=True)}</h1>'
-        f'<p class="subtitle">{esc(hl[0].upper() + hl[1:])}.</p></header>\n'
+        f'<p class="subtitle">{esc(hl[0].upper() + hl[1:])}.</p>{teams_line}</header>\n'
         f'{streak_tbl}{feat_tbl}{similar_html}'
         f'{search_box()}\n'
         f'<a class="backtop" href="../index.html">← All streak leaderboards</a>\n'
@@ -588,6 +634,9 @@ display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;}
 h1 .accent{color:var(--accent);}
 h2{font-size:1.15rem;font-weight:700;letter-spacing:-.02em;margin:1.6rem 0 .7rem;}
 h2 .note{font-weight:400;font-size:.8rem;color:var(--muted);}
+.famh{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;
+font-family:'JetBrains Mono',monospace;margin:1rem 0 .2rem;}
+.tcap{font-size:.78rem;font-weight:700;margin:.4rem 0 .2rem;}
 .subtitle{color:var(--muted);font-size:.9rem;margin:0;max-width:60rem;}
 .backtop{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);margin:.3rem 0;}
 .backtop:hover{color:var(--accent);}
@@ -615,21 +664,18 @@ letter-spacing:.06em;color:var(--muted);min-width:6.5rem;}
 border-radius:20px;background:var(--surface);color:var(--text);}
 .chip:hover{border-color:var(--accent);color:var(--accent);}
 .chip.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
-.record{display:flex;gap:.5rem;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
-border-left:3px solid var(--gold);border-radius:8px;padding:.6rem .9rem;margin:.4rem 0 .8rem;font-size:.82rem;}
-.record b{color:var(--text);}.record .ok{color:var(--green);font-weight:700;}.record .no{color:var(--accent);font-weight:700;}
-.lnpanel{display:flex;align-items:center;gap:.7rem;background:var(--surface);border:1px solid var(--border);
-border-left:3px solid var(--accent);border-radius:10px;padding:.7rem .9rem;margin:.2rem 0 .4rem;color:var(--text);transition:.15s;}
-.lnpanel:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
-.lnp-ic{font-size:1.3rem;}.lnp-tx{display:flex;flex-direction:column;flex:1;min-width:0;}
-.lnp-tx b{font-size:.95rem;}.lnp-sub{font-size:.76rem;color:var(--muted);}
-.lnp-go{font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700;}
 .simgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;}
 .simcard{display:block;background:var(--surface);border:1px solid var(--border);border-radius:10px;
 padding:.7rem .8rem;color:var(--text);transition:.15s;}
 .simcard:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
 .sim-nm{font-weight:600;font-size:.92rem;display:flex;align-items:center;gap:.2rem;}
 .sim-hl{font-size:.76rem;color:var(--accent);margin-top:.25rem;font-family:'JetBrains Mono',monospace;}
+.teams-line{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.5rem 0 0;}
+.tl-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;text-transform:uppercase;
+letter-spacing:.06em;color:var(--muted);margin-right:.1rem;}
+.tmlink{font-size:.78rem;font-weight:600;padding:.25rem .6rem;border:1px solid var(--border);border-radius:20px;
+background:var(--surface);color:var(--text);}
+.tmlink:hover{border-color:var(--accent);color:var(--accent);}
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow-x:auto;}
 table.board{width:100%;border-collapse:collapse;font-size:.86rem;}
 table.board thead th{background:var(--surface-hover);color:var(--muted);text-align:left;font-weight:600;font-size:.66rem;
@@ -648,7 +694,7 @@ table.board tbody tr:hover{background:var(--surface-hover);}
 .plink{color:var(--text);text-decoration:none;font-weight:600;}.plink:hover{color:var(--accent);}
 .foot{text-align:center;font-size:.72rem;color:var(--muted);margin-top:1.6rem;font-family:'JetBrains Mono',monospace;line-height:1.7;}
 @media(max-width:720px){
-.wrap{padding:.5rem .9rem 3rem;}.nav{padding:1rem .9rem .3rem;flex-wrap:nowrap;overflow-x:auto;}
+.wrap{padding:.35rem .9rem 3rem;}.nav{padding:.5rem .9rem .25rem;flex-wrap:nowrap;overflow-x:auto;}
 .nav a{flex:0 0 auto;}
 .table-card{overflow:visible;border:none;background:transparent;border-radius:0;}
 table.board,table.board tbody{display:block;width:100%;}
@@ -656,15 +702,27 @@ table.board thead{display:none;}
 table.board tbody tr{display:block;position:relative;background:var(--surface);border:1px solid var(--border);
 border-radius:12px;padding:.7rem 3rem .7rem .9rem;margin-bottom:.6rem;}
 table.board tbody tr:hover{background:var(--surface);}
-table.board tbody td{display:block;position:relative;border:none;white-space:normal;text-align:left;
+table.board tbody td{display:block;position:relative;border:none;white-space:normal;text-align:center;
 padding:.14rem 0 .14rem 7rem;font-size:.86rem;line-height:1.4;min-height:1.5em;overflow-wrap:anywhere;}
-table.board tbody td::before{content:attr(data-label);position:absolute;left:0;top:.18rem;width:6.5rem;
+table.board tbody td::before{content:attr(data-label);position:absolute;left:0;top:.18rem;width:6.5rem;text-align:left;
 font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
 table.board tbody td.col-rank{position:absolute;top:.55rem;right:.85rem;padding:0;font-size:.66rem;color:var(--muted);min-height:0;}
 table.board tbody td.col-rank::before{display:none;}
-table.board tbody td.col-player{padding:0 0 .3rem;font-family:'DM Sans',sans-serif;font-size:1.02rem;font-weight:600;}
+table.board tbody td.col-player{padding:0 0 .3rem;font-family:'DM Sans',sans-serif;font-size:1.02rem;font-weight:600;text-align:left;}
 table.board tbody td.col-player::before{display:none;}
 table.board tbody td.col-streak{font-size:1.1rem;font-weight:700;color:var(--accent);}
+/* --- compact front-page top on mobile (scoped to .home-hd) --- */
+.home-hd{margin:0;}
+.home-hd h1{font-size:1.3rem;line-height:1.15;margin:0 0 .1rem;}
+.home-hd+.psearch-wrap{margin:.4rem 0;}
+.home-hd+.psearch-wrap .psearch{padding:.5rem .7rem;font-size:.85rem;}
+.home-hd~.controls{margin:.4rem 0 .2rem;}
+.home-hd~.controls .tab{padding:.36rem .68rem;}
+.home-hd~.fams{margin:.1rem 0 .3rem;gap:.3rem;}
+.home-hd~.fams .fam{gap:.3rem;}
+.home-hd~.fams .fam .flabel{min-width:5.5rem;}
+.home-hd~.fams .chip{padding:.28rem .6rem;font-size:.72rem;}
+.home-hd~#active-label{margin:.35rem 0 .3rem;font-size:1.05rem;}
 }
 """
 
@@ -696,21 +754,20 @@ GLOBAL_SEARCH_JS = r"""
 
 RENDER_JS = r"""
 <script>
-var DATA=window.STREAK_DATA,PLAYERS=window.STREAK_PLAYERS,META=window.STREAK_META,RECORDS=window.STREAK_RECORDS;
+var DATA=window.STREAK_DATA,PLAYERS=window.STREAK_PLAYERS,META=window.STREAK_META;
 var activeStreak='pts10',activeScope='regular';
 var MM=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function eh(s){return String(s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
 function fd(s){if(!s)return'';var p=s.split('-');return MM[(+p[1])-1]+' '+(+p[2])+', '+p[0];}
 function metaOf(id){for(var i=0;i<META.length;i++)if(META[i].id===id)return META[i];return null;}
 function flagImg(iso,c){if(!iso)return'';return ' <img class="flag-img" src="https://flagcdn.com/h20/'+iso+'.png" srcset="https://flagcdn.com/h40/'+iso+'.png 2x" height="14" alt="'+eh(c)+'" title="'+eh(c)+'" loading="lazy">';}
+function teamCell(links,fallback){if(!links||!links.length)return eh(fallback||'—');
+  return links.map(function(t){return '<a class="plink" href="teams/'+t[1]+'.html">'+eh(t[0])+'</a>';}).join(', ');}
 function render(){
   var m=metaOf(activeStreak);document.getElementById('active-label').textContent=m?m.label:activeStreak;
   document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.scope===activeScope);});
   document.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('active',c.dataset.streak===activeStreak);});
-  var rf=document.getElementById('record-flag'),rec=RECORDS[activeStreak],rows=(DATA[activeStreak]&&DATA[activeStreak][activeScope])||[];
-  if(rec&&activeScope==='regular'&&rows.length){var tn=PLAYERS[rows[0][1]][0],tl=rows[0][2],ok=(tn===rec.holder);
-    rf.style.display='';rf.innerHTML='<span>🏆</span><div>Official record: <b>'+eh(rec.holder)+' '+rec.num.toLocaleString()+'</b> ('+eh(rec.note)+'). Our engine: <b>'+eh(tn)+' '+tl.toLocaleString()+'</b> — '+(ok?'<span class="ok">MATCH</span>':'<span class="no">differs</span>')+'.</div>';
-  }else{rf.style.display='none';}
+  var rows=(DATA[activeStreak]&&DATA[activeStreak][activeScope])||[];
   var tb=document.getElementById('tbody');
   if(!rows.length){tb.innerHTML='<tr><td class="col-player">No streaks of this type in '+activeScope+' play.</td></tr>';return;}
   var out=[];for(var i=0;i<rows.length;i++){var r=rows[i],pl=PLAYERS[r[1]];
@@ -719,7 +776,7 @@ function render(){
      '<td class="col-streak" data-label="Streak">'+r[2]+'</td>'+
      '<td class="col-date" data-label="Start">'+fd(r[3])+'</td>'+
      '<td class="col-date" data-label="End">'+fd(r[4])+'</td>'+
-     '<td class="col-team" data-label="Team(s)">'+eh(r[5]||'—')+'</td></tr>');}
+     '<td class="col-team" data-label="Team(s)">'+teamCell(r[6],r[5])+'</td></tr>');}
   tb.innerHTML=out.join('');
 }
 document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){activeScope=t.dataset.scope;render();});});
@@ -765,7 +822,6 @@ def main():
         f.write("window.STREAK_DATA=" + json.dumps(ctx["STREAK_DATA"], separators=(",", ":")) + ";\n")
         f.write("window.STREAK_PLAYERS=" + json.dumps(players, separators=(",", ":"), ensure_ascii=False) + ";\n")
         f.write("window.STREAK_META=" + json.dumps(ctx["STREAK_META"], separators=(",", ":"), ensure_ascii=False) + ";\n")
-        f.write("window.STREAK_RECORDS=" + json.dumps(ctx["STREAK_RECORDS"], separators=(",", ":"), ensure_ascii=False) + ";\n")
     with open(os.path.join(BASE, "feats-data.js"), "w", encoding="utf-8") as f:
         f.write("window.FEAT_DATA=" + json.dumps(ctx["FEAT_DATA"], separators=(",", ":")) + ";\n")
         f.write("window.STREAK_PLAYERS=" + json.dumps(players, separators=(",", ":"), ensure_ascii=False) + ";\n")
