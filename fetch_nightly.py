@@ -313,10 +313,7 @@ def render_lastgame(label, extended, ended=None):
     for e in extended:
         by_scope_type.setdefault((e["scope"], e["type"]), []).append(e)
 
-    summ = (f'<p class="subtitle">Season-end state ({label}). <b>{len(extended)}</b> streaks still active going '
-            f'into the offseason · <b>{nmile}</b> sitting at a milestone length. Grouped by scope, then stat '
-            f'family, then threshold.</p>\n')
-    sections = summ
+    sections = ""
     for scope_key, scope_label in BS.SCOPES:
         sections += f'<h2 class="scopeh">{scope_label}</h2>\n'
         shown = False
@@ -330,14 +327,16 @@ def render_lastgame(label, extended, ended=None):
                 sections += f'<h3 class="famh">{fam}</h3>\n'
                 cur_family = fam
             shown = True
+            ents = sorted(entries, key=lambda x: -x["length"])
+            positions = BS.competition_positions([e["length"] for e in ents])
             rows = "".join(
-                f'<tr><td class="col-rank" data-label="#">{i}</td>'
+                f'<tr><td class="col-rank" data-label="#">{pos}</td>'
                 f'<td class="col-player" data-label="Player">{_plink(e)}'
                 + ('<span class="mbadge">★ milestone</span>' if e.get("milestone") else '')
                 + f'</td><td class="col-streak" data-label="Length">{e["length"]}</td>'
                 f'<td class="col-date" data-label="Started">'
                 f'{BS.fmt_iso(e.get("started") or e.get("last_date", ""))}</td></tr>'
-                for i, e in enumerate(sorted(entries, key=lambda x: -x["length"]), 1))
+                for pos, e in zip(positions, ents))
             sections += _lgboard(s["label"], [("#", "col-rank"), ("Player", "col-player"),
                                               ("Length", "col-streak"), ("Started", "col-date")], rows)
         if not shown:

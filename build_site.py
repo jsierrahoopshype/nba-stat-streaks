@@ -131,10 +131,22 @@ def load_flags():
 # --------------------------------------------------------------------------- #
 # Single pass: global top-N runs AND per-player best run, from one run_id pass
 # --------------------------------------------------------------------------- #
+def competition_positions(lengths):
+    """Standard competition ranking (1,2,2,2,5,…) for a length-DESC list:
+    equal lengths share a position; the next distinct length skips ahead."""
+    pos = []
+    for i, L in enumerate(lengths):
+        pos.append(pos[i - 1] if i and L == lengths[i - 1] else i + 1)
+    return pos
+
+
 def compute_all(sub, gkey, cond_col, topn=TOPN, topk=10):
-    """Returns (top_list, topk_by_pid):
+    """Returns (top_list, topk_by_pid, length_rank):
       top_list      = the all-time top-`topn` runs (for the leaderboards)
-      topk_by_pid   = {pid: [up to `topk` runs, length-desc]} (for player pages)."""
+      topk_by_pid   = {pid: [up to `topk` runs, length-desc]} (for player pages)
+      length_rank   = {length: all-time rank} using STANDARD COMPETITION RANKING —
+                      every run is ranked by its LENGTH (ties share a rank, the next
+                      distinct length skips ahead); only lengths with rank <= topn."""
     c = sub[cond_col].to_numpy(dtype=bool)
     n = len(c)
     if n == 0:
@@ -181,7 +193,19 @@ def compute_all(sub, gkey, cond_col, topn=TOPN, topk=10):
     cache = {rid: detail(rid) for rid in care}
     top_list = [cache[rid] for rid in top_ids]
     topk_by_pid = {pid: [cache[r] for r in rids] for pid, rids in topk_rids.items()}
-    return top_list, topk_by_pid
+
+    # all-time rank by LENGTH (competition ranking): rank(L) = 1 + #runs strictly longer.
+    all_len = counts[counts > 0]
+    uniq, cnt = np.unique(all_len, return_counts=True)   # ascending
+    length_rank = {}
+    cum = 0
+    for L, ccount in zip(uniq[::-1], cnt[::-1]):          # longest first
+        rank = cum + 1
+        if rank > topn:
+            break
+        length_rank[int(L)] = rank
+        cum += int(ccount)
+    return top_list, topk_by_pid, length_rank
 
 
 # --------------------------------------------------------------------------- #
@@ -212,20 +236,23 @@ def build_all():
     player_best = {}     # (sid, scope) -> {pid: best run}
     player_top = {}      # (sid, scope) -> {pid: [top-10 runs, length-desc]}
     rank_map = {}        # (sid, scope) -> {slug: rank}
+    alltime_rank = {}    # (sid, scope) -> {length: competition rank} (all-time)
 
     for scope_key, _ in SCOPES:
         print(f"  streaks scope: {scope_key}", flush=True)
         sub = E.scope_df(df, scope_key).sort_values(["personId", "gameDate", "gameId"]).reset_index(drop=True)
         gkey = sub["personId"].to_numpy()
         for s in E.STREAKS:
-            top, topk = compute_all(sub, gkey, s["id"], topn=TOPN)
+            top, topk, lrank = compute_all(sub, gkey, s["id"], topn=TOPN)
             out, rmap = [], {}
-            for i, r in enumerate(top, 1):
+            for r in top:               # competition rank by LENGTH (ties share a rank)
                 slug = reg_player(r["personId"], r["player"])
-                out.append([i, slug, r["length"], r["start"], r["end"], r["teams"], r["team_links"]])
-                rmap.setdefault(slug, i)
+                rank = lrank[r["length"]]
+                out.append([rank, slug, r["length"], r["start"], r["end"], r["teams"], r["team_links"]])
+                rmap.setdefault(slug, rank)
             STREAK_DATA[s["id"]][scope_key] = out
             rank_map[(s["id"], scope_key)] = rmap
+            alltime_rank[(s["id"], scope_key)] = lrank
             player_best[(s["id"], scope_key)] = {pid: runs[0] for pid, runs in topk.items() if runs}
             player_top[(s["id"], scope_key)] = topk
 
@@ -281,16 +308,7 @@ def build_all():
     label_by_id = {s["id"]: s["label"] for s in E.STREAKS}
     feat_label = {f["id"]: f["label"] for f in FEATS}
 
-    # per-run all-time rank lookup: (sid,scope) -> {(slug, length): rank} from the
-    # top-100 leaderboards, so each of a player's top-10 runs can show its rank if it
-    # made the all-time board.
-    alltime_rank = {}
-    for sid, scopes in STREAK_DATA.items():
-        for scope, rows in scopes.items():
-            m = {}
-            for r in rows:          # r = [rank, slug, length, start, end, teams]
-                m.setdefault((r[1], r[2]), r[0])
-            alltime_rank[(sid, scope)] = m
+    # all-time rank lookup is built per (sid,scope) above as {length: competition rank}.
 
     # ----- per-player franchises (for player->franchise cross-links) -----
     tc = (df.groupby(["personId", "franchise"]).size().reset_index(name="n")
@@ -436,8 +454,6 @@ def build_index_html(meta):
         f'<th class="col-date">Start</th><th class="col-date">End</th><th class="col-team">Team(s)</th>'
         f'</tr></thead><tbody id="tbody"></tbody></table></div>\n'
         f'{search_box()}\n'
-        f'<div class="foot">Engine validated vs official records — Wilt 65 (30+), Wilt 227 (double-doubles), '
-        f'LeBron 1,290 &amp; Jordan 866 (10+). Appearance = a game played; missed games are skipped, not breaks.</div>\n'
         f'</div>\n'
     )
     desc = ("All-time NBA consecutive-game statistical streak leaderboards: 10+/20+/30+ points, double-doubles, "
@@ -523,14 +539,15 @@ def build_player_page(pid, ctx):
                 inner += f'<h3 class="famh">{s["family"]}</h3>\n'
                 cur_fam = s["family"]
             arank = ctx["alltime_rank"].get((sid, scope_key), {})
+            positions = competition_positions([r["length"] for r in runs])
             body_rows = "".join(
-                f'<tr><td class="col-rank" data-label="#">{i}</td>'
+                f'<tr><td class="col-rank" data-label="#">{pos}</td>'
                 f'<td class="col-streak" data-label="Length">{r["length"]}</td>'
                 f'<td class="col-date" data-label="Dates">{fmt_iso(r["start"])} – {fmt_iso(r["end"])}</td>'
                 f'<td class="col-team" data-label="Team(s)">{team_links_html(r)}</td>'
                 f'<td data-label="All-time rank">'
-                f'{("#"+str(arank[(slug, r["length"])])) if (slug, r["length"]) in arank else "—"}</td></tr>'
-                for i, r in enumerate(runs, 1))
+                f'{("#"+str(arank[r["length"]])) if r["length"] in arank else "—"}</td></tr>'
+                for pos, r in zip(positions, runs))
             inner += (f'<div class="tcap">{esc(label_by_id[sid])}</div><div class="table-card">'
                       '<table class="board"><thead><tr><th class="col-rank">#</th>'
                       '<th class="col-streak">Length</th><th class="col-date">Dates</th>'

@@ -50,13 +50,15 @@ def load_streakdata():
 
     data = block("window.STREAK_DATA=", ";\nwindow.STREAK_PLAYERS")
     players = block("window.STREAK_PLAYERS=", ";\nwindow.STREAK_META")
-    # (type,scope) -> {slug: (rank, length)} — keep each player's BEST (first) entry
+    # (type,scope) -> {length: rank} — STANDARD COMPETITION RANKING by length: every run
+    # of a given length shares the same all-time rank (the leaderboard rows already carry
+    # competition ranks, so equal lengths map to one rank).
     ranks = {}
     for typ, scopes in data.items():
         for sc, rows in scopes.items():
             m = {}
-            for r in rows:
-                m.setdefault(r[1], (r[0], r[2]))
+            for r in rows:                 # r = [rank, slug, length, ...]
+                m.setdefault(r[2], r[0])
             ranks[(typ, sc)] = m
     return ranks, players
 
@@ -144,7 +146,8 @@ def _render_section(by_scope_type, columns, row_fn, empty):
                 cur_fam = s["family"]
             ts = (s["id"], scope_key)
             th = "".join(f'<th class="{c}">{h}</th>' for h, c in columns)
-            rows = "".join(row_fn(i, e, ts) for i, e in enumerate(entries, 1))
+            positions = BS.competition_positions([e["length"] for e in entries])
+            rows = "".join(row_fn(pos, e, ts) for pos, e in zip(positions, entries))
             html += (f'<div class="tcap">{BS.esc(s["label"])}</div><div class="table-card">'
                      f'<table class="board"><thead><tr>{th}</tr></thead><tbody>{rows}</tbody></table></div>\n')
     return html
@@ -166,8 +169,8 @@ def build_team_page(target, best, active, ranks, players, eras=None):
                 + flag(e["slug"]))
 
     def best_row(i, e, ts):
-        rl = ranks.get(ts, {}).get(e["slug"])
-        rank = f'#{rl[0]}' if rl and rl[1] == e["length"] else "—"
+        r = ranks.get(ts, {}).get(e["length"])
+        rank = f'#{r}' if r else "—"
         return (f'<tr><td class="col-rank" data-label="#">{i}</td>'
                 f'<td class="col-player" data-label="Player">{plink(e)}</td>'
                 f'<td class="col-streak" data-label="Length">{e["length"]}</td>'
@@ -197,17 +200,12 @@ def build_team_page(target, best, active, ranks, players, eras=None):
     multi = eras and len(eras) > 1
     eras_html = (f'<p class="erasln"><span class="tl-label">Eras</span>{eras_line(eras)}</p>'
                  if multi else "")
-    sub_extra = (' Earlier city-era names are merged into the modern franchise '
-                 '(e.g. a Seattle run lives here on Oklahoma City Thunder).' if multi else '')
     body = (
         f'<div class="wrap">\n<a class="backtop" href="../teams.html">← All franchises</a>\n'
         f'{BS.search_box()}\n'
         f'<header><span class="brand">HoopsHype · NBA Statistical Streaks</span>'
         f'<h1>{BS.esc(target)}</h1>'
-        f'{eras_html}'
-        f'<p class="subtitle">Streaks compiled by players <b>while on the {BS.esc(target)}</b> '
-        f'franchise.{sub_extra} '
-        f'Each sub-table is ranked 1–N; the right "All-time rank" column is the league-wide standing.</p></header>\n'
+        f'{eras_html}</header>\n'
         f'<h2 class="sech">🏆 Best ever <span class="note">— career-best runs on this team ({n_best})</span></h2>\n'
         f'{best_html}'
         f'<h2 class="sech">🔥 Active into the offseason <span class="note">— CURRENT trailing runs, not bests ({n_active})</span></h2>\n'
@@ -256,10 +254,7 @@ def teams_index_html(best_all, active_all, appcounts, players, active_set):
     body = (
         f'<div class="wrap">\n'
         f'<header><span class="brand">HoopsHype · NBA Statistical Streaks</span>'
-        f'<h1>NBA <span class="accent">Franchises</span></h1>'
-        f'<p class="subtitle">Players\' consecutive-game streaks grouped by <b>modern franchise lineage</b>. '
-        f'City-era names are merged into today\'s franchise — Seattle lives on Oklahoma City Thunder, '
-        f'New Jersey on Brooklyn, Vancouver on Memphis.</p></header>\n'
+        f'<h1>NBA <span class="accent">Franchises</span></h1></header>\n'
         f'{BS.search_box()}\n'
         f'<h2 class="sech">Franchises <span class="note">— all 30 active NBA teams ({len(active)})</span></h2>\n'
         f'{table(active)}'
