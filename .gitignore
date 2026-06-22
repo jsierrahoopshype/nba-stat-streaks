@@ -14,3 +14,7 @@ __pycache__/
 _*.py
 node_modules/
 *.png
+_b2_backup/
+*.log
+_preview_*.html
+_b3_*
