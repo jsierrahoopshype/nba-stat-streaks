@@ -24,6 +24,7 @@ import pandas as pd
 
 import build_streaks as E
 import build_site as BS
+import build_droughts as D  # B2: negative-streak engine (config + gating + era-gate)
 import fetch_nightly as F   # season_end_status, nba_season
 import franchises as FR     # city-era -> modern-franchise map
 
@@ -61,6 +62,20 @@ def load_streakdata():
                 m.setdefault(r[2], r[0])
             ranks[(typ, sc)] = m
     return ranks, players
+
+
+def load_droughtranks():
+    """Read the era-gated drought all-time ranks written by build_site (droughts-data.js):
+    {did:{scope:{len:rank}}} -> {(did, scope): {length: rank}}."""
+    path = os.path.join(BASE, "droughts-data.js")
+    txt = open(path, encoding="utf-8").read()
+    key = "window.DROUGHT_RANKS="
+    obj = json.loads(txt[txt.index(key) + len(key): txt.rindex(";")])
+    ranks = {}
+    for did, scopes in obj.items():
+        for sc, lr in scopes.items():
+            ranks[(did, sc)] = {int(L): r for L, r in lr.items()}
+    return ranks
 
 
 def flagger(players):
@@ -112,6 +127,58 @@ def all_teams_best(df, top=25):
     return out
 
 
+def all_teams_best_droughts(df, elig, top=25):
+    """Parallel to all_teams_best, but for DROUGHTS. Same player-team(franchise)
+    attribution (a drought counts for the franchise the player was on during it; it
+    breaks on a trade to a different franchise, continues across a relocation/rename).
+    Era-gating (steals/blocks pre-1973-74, threes pre-1979-80) and the universal/gated
+    100-game rules are applied per drought type BEFORE the run pass, exactly as the
+    leaderboard engine does — so team boards only ever show tracked-era, eligible runs.
+    Returns {franchise: {(scope, did): [rows length-desc, length>=2]}}."""
+    out = {}
+    for scope_key, _ in BS.SCOPES:
+        base = (E.scope_df(df, scope_key)
+                .sort_values(["personId", "gameDate", "gameId"]).reset_index(drop=True))
+        for d in D.DROUGHTS:
+            did = d["id"]
+            since = D.ERA_SINCE.get(d.get("stat"))
+            sub = base
+            if since is not None:                       # era gate: pre-tracking games skipped
+                sub = sub[sub["season"] >= since]
+            if not d["universal"]:                      # gated floor: only eligible players
+                sub = sub[sub["personId"].isin(elig[did])]
+            sub = sub.reset_index(drop=True)
+            n = len(sub)
+            if n == 0:
+                continue
+            c = sub[did].to_numpy(dtype=bool)
+            if not c.any():
+                continue
+            gkey = pd.factorize(sub["personId"].astype(str).str.cat(sub["franchise"], sep="|"))[0]
+            team_arr = sub["franchise"].to_numpy(); names = sub["name"].to_numpy()
+            pids = sub["personId"].to_numpy(); dates = sub["gameDate"].dt.date.to_numpy()
+            same = np.empty(n, bool); same[0] = False; same[1:] = gkey[1:] == gkey[:-1]
+            prev = np.empty(n, bool); prev[0] = False; prev[1:] = c[:-1]
+            run_start = c & ~(prev & same)
+            run_id = np.cumsum(run_start)
+            counts = np.bincount(run_id[c])
+            starts = np.where(run_start)[0]
+            run_len = counts[run_id[starts]]
+            run_end = starts + run_len - 1
+            rdf = pd.DataFrame({"team": team_arr[starts], "len": run_len, "player": names[starts],
+                                "pid": pids[starts], "sp": starts, "ep": run_end})
+            rdf = rdf[rdf["len"] >= 2]
+            for team, grp in rdf.groupby("team", sort=False):
+                rows = []
+                for r in grp.nlargest(top, "len").itertuples(index=False):
+                    rows.append({"player": str(r.player), "slug": BS.slugify(str(r.player), int(r.pid)),
+                                 "length": int(r.len), "start": dates[int(r.sp)].isoformat(),
+                                 "end": dates[int(r.ep)].isoformat()})
+                rows.sort(key=lambda x: -x["length"])
+                out.setdefault(team, {})[(scope_key, did)] = rows
+    return out
+
+
 def all_teams_active(df, current_season):
     """{franchise: {(scope, type): [entries sorted desc]}} from the Last-Game trailing runs."""
     extended, _ended = F.season_end_status(df, current_season)
@@ -153,6 +220,51 @@ def _render_section(by_scope_type, columns, row_fn, empty):
     return html
 
 
+def _render_drought_section(by_scope_type, drought_ranks, players):
+    """Droughts view for a team: scope -> family -> threshold, top runs ranked 1..N.
+    Columns # / Player / Length / Dates / All-time rank (the rank is the global
+    era-gated drought rank by length). Players without a page render as plain text."""
+    flag = flagger(players)
+
+    def plink(e):
+        if e["slug"] in players:
+            return (f'<a class="plink" href="../players/{e["slug"]}.html">{BS.esc(e["player"])}</a>'
+                    + flag(e["slug"]))
+        return BS.esc(e["player"])          # no player page -> plain text (avoid 404)
+
+    html = ""
+    for scope_key, scope_label in BS.SCOPES:
+        present = any(by_scope_type.get((scope_key, m["id"])) for m in D.DROUGHT_META)
+        html += f'<h3 class="scopeh">{scope_label}</h3>\n'
+        if not present:
+            html += '<p class="subtitle">No qualifying droughts on this team.</p>\n'
+            continue
+        cur_fam = None
+        for m in D.DROUGHT_META:
+            entries = by_scope_type.get((scope_key, m["id"]))
+            if not entries:
+                continue
+            if m["family"] != cur_fam:
+                html += f'<h4 class="famh">{m["family"]}</h4>\n'
+                cur_fam = m["family"]
+            rmap = drought_ranks.get((m["id"], scope_key), {})
+            positions = BS.competition_positions([e["length"] for e in entries])
+            rows = ""
+            for i, e in zip(positions, entries):
+                rr = rmap.get(e["length"])
+                rank = f'#{rr}' if rr else "—"
+                rows += (f'<tr><td class="col-rank" data-label="#">{i}</td>'
+                         f'<td class="col-player" data-label="Player">{plink(e)}</td>'
+                         f'<td class="col-streak" data-label="Length">{e["length"]}</td>'
+                         f'<td class="col-date" data-label="Dates">{BS.fmt_iso(e["start"])} – {BS.fmt_iso(e["end"])}</td>'
+                         f'<td data-label="All-time rank">{rank}</td></tr>')
+            th = ('<th class="col-rank">#</th><th class="col-player">Player</th>'
+                  '<th class="col-streak">Length</th><th class="col-date">Dates</th><th>All-time rank</th>')
+            html += (f'<div class="tcap">{BS.esc(m["label"])}</div><div class="table-card">'
+                     f'<table class="board"><thead><tr>{th}</tr></thead><tbody>{rows}</tbody></table></div>\n')
+    return html
+
+
 def eras_line(eras):
     """eras = [(label, smin, smax)] -> human 'Seattle (1967–2008), Oklahoma City (2005–2026)'."""
     parts = []
@@ -161,7 +273,8 @@ def eras_line(eras):
     return " · ".join(parts)
 
 
-def build_team_page(target, best, active, ranks, players, eras=None):
+def build_team_page(target, best, active, ranks, players, eras=None,
+                    best_droughts=None, drought_ranks=None):
     flag = flagger(players)
 
     def plink(e):
@@ -200,20 +313,35 @@ def build_team_page(target, best, active, ranks, players, eras=None):
     multi = eras and len(eras) > 1
     eras_html = (f'<p class="erasln"><span class="tl-label">Eras</span>{eras_line(eras)}</p>'
                  if multi else "")
+
+    # ----- Droughts view (B2) -----
+    drought_html = _render_drought_section(best_droughts or {}, drought_ranks or {}, players)
+    n_drought = sum(len(v) for v in (best_droughts or {}).values())
+    seg = ('<div class="seg" id="player-seg">'
+           '<button class="tab active" data-view="streaks">Streaks</button>'
+           '<button class="tab" data-view="droughts">Droughts</button></div>\n')
+    streaks_view = (
+        f'<h2 class="sech">🏆 Best ever <span class="note">— career-best runs on this team ({n_best})</span></h2>\n'
+        f'{best_html}'
+        f'<h2 class="sech">🔥 Active into the offseason <span class="note">— CURRENT trailing runs, not bests ({n_active})</span></h2>\n'
+        f'{active_html}')
+    droughts_view = (
+        f'<h2 class="sech">🥶 Droughts <span class="note">— longest career runs STRICTLY UNDER a '
+        f'threshold ({n_drought})</span></h2>\n{drought_html}')
     body = (
         f'<div class="wrap">\n<a class="backtop" href="../teams.html">← All franchises</a>\n'
         f'{BS.search_box()}\n'
         f'<header><span class="brand">HoopsHype · NBA Statistical Streaks</span>'
         f'<h1>{BS.esc(target)}</h1>'
         f'{eras_html}</header>\n'
-        f'<h2 class="sech">🏆 Best ever <span class="note">— career-best runs on this team ({n_best})</span></h2>\n'
-        f'{best_html}'
-        f'<h2 class="sech">🔥 Active into the offseason <span class="note">— CURRENT trailing runs, not bests ({n_active})</span></h2>\n'
-        f'{active_html}'
+        f'{seg}'
+        f'<div id="view-streaks">{streaks_view}</div>\n'
+        f'<div id="view-droughts">{droughts_view}</div>\n'
         f'{BS.search_box()}\n'
         f'<a class="backtop" href="../teams.html">← All franchises</a>\n</div>\n'
     )
-    return BS.head(title, desc, prefix="../") + TEAM_CSS + BS.nav("teams", prefix="../") + body + BS.scripts_for("../")
+    return (BS.head(title, desc, prefix="../") + TEAM_CSS + BS.DROUGHT_TOGGLE_CSS
+            + BS.nav("teams", prefix="../") + body + BS.DROUGHT_TOGGLE_JS + BS.scripts_for("../"))
 
 
 # --------------------------------------------------------------------------- #
@@ -330,6 +458,7 @@ def main():
 
     print("Loading appearances…", flush=True)
     df = FR.add_franchise(E.load_appearances())
+    D.drought_condition_columns(df)                 # B2: add negative condition columns
     appcounts = df["franchise"].value_counts().to_dict()
 
     # constituent city-eras per franchise (for the page subtitle), chronological
@@ -352,9 +481,13 @@ def main():
     active_set = set(last_season[last_season == current_season].index)
 
     ranks, players = load_streakdata()
+    drought_ranks = load_droughtranks()             # B2: era-gated drought all-time ranks
     os.makedirs(TEAMS_DIR, exist_ok=True)
     print("Computing best runs for all franchises (one pass)…", flush=True)
     best_all = all_teams_best(df)
+    print("Computing best DROUGHTS for all franchises (B2)…", flush=True)
+    drought_elig = D.gate_eligibility(df)
+    best_droughts_all = all_teams_best_droughts(df, drought_elig)
     print("Computing active trailing runs…", flush=True)
     active_all = all_teams_active(df, current_season)
 
@@ -362,7 +495,8 @@ def main():
         teams = sorted(set(best_all) | set(active_all))
         for t in teams:
             html = build_team_page(t, best_all.get(t, {}), active_all.get(t, {}),
-                                   ranks, players, eras_by_fr.get(t))
+                                   ranks, players, eras_by_fr.get(t),
+                                   best_droughts_all.get(t, {}), drought_ranks)
             with open(os.path.join(TEAMS_DIR, f"{team_slug(t)}.html"), "w", encoding="utf-8") as f:
                 f.write(html)
         with open(os.path.join(BASE, "teams.html"), "w", encoding="utf-8") as f:
@@ -380,7 +514,8 @@ def main():
                 print(f"'{a.team}' not found. Try --list.")
                 return
         html = build_team_page(t, best_all.get(t, {}), active_all.get(t, {}),
-                               ranks, players, eras_by_fr.get(t))
+                               ranks, players, eras_by_fr.get(t),
+                               best_droughts_all.get(t, {}), drought_ranks)
         with open(os.path.join(TEAMS_DIR, f"{team_slug(t)}.html"), "w", encoding="utf-8") as f:
             f.write(html)
         print(f"Wrote teams/{team_slug(t)}.html")

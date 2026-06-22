@@ -212,8 +212,10 @@ def compute_all(sub, gkey, cond_col, topn=TOPN, topk=10):
 # Build all data
 # --------------------------------------------------------------------------- #
 def build_all():
+    import build_droughts as D                      # local import avoids an import cycle
     print("Loading appearances…", flush=True)
     df = FR.add_franchise(E.load_appearances())
+    D.drought_condition_columns(df)                 # add negative condition columns (additive)
     country_by_pid, name_by_pid, nat = load_flags()
 
     players = {}        # slug -> [name, iso, country]
@@ -376,12 +378,23 @@ def build_all():
 
     similar = {slug_by_pid[pid]: similar_for(slug_by_pid[pid]) for pid in page_pids}
 
+    # ----- DROUGHTS (B2 negative pass) -----------------------------------------
+    # A fully separate pass (positive structures above are untouched). Produces the
+    # per-player top-10 drought runs + era-gated all-time ranks + gated-floor
+    # eligibility used to render each player page's Droughts view. The player SET is
+    # NOT expanded — droughts are shown only on existing pages — so streaks-data.js /
+    # feats-data.js / search-index.js stay byte-identical.
+    print("  droughts (negative pass)…", flush=True)
+    drought_top, player_top_drought, alltime_rank_drought, drought_elig = D.build_full(df)
+
     return dict(df=df, players=players, slug_by_pid=slug_by_pid, STREAK_DATA=STREAK_DATA,
                 STREAK_META=STREAK_META, FEAT_DATA=FEAT_DATA,
                 FEATS=FEATS, feat_label=feat_label, label_by_id=label_by_id,
                 player_best=player_best, rank_map=rank_map, feat_player=feat_player,
                 page_pids=page_pids, headline=headline, similar=similar, player_teams=player_teams,
-                player_top=player_top, alltime_rank=alltime_rank)
+                player_top=player_top, alltime_rank=alltime_rank,
+                DROUGHT_META=D.DROUGHT_META, player_top_drought=player_top_drought,
+                alltime_rank_drought=alltime_rank_drought, drought_elig=drought_elig)
 
 
 # --------------------------------------------------------------------------- #
@@ -568,6 +581,51 @@ def build_player_page(pid, ctx):
                   + scope_table("playoffs", SCOPE_LABEL["playoffs"])
                   + scope_table("combined", SCOPE_LABEL["combined"]))
 
+    # ----- Droughts view (B2) — same structure as Streaks, negative runs --------
+    # Universal floors always shown; gated floors only if this player clears the
+    # 100-game positive-mark gate. Era-gating (no pre-1974 steal/block droughts,
+    # no pre-1980 three droughts) is already baked into the engine's data.
+    def drought_scope_table(scope_key, scope_label):
+        inner = ""
+        cur_fam = None
+        for m in ctx["DROUGHT_META"]:               # family-grouped, ascending threshold
+            did = m["id"]
+            if not m["universal"] and pid not in ctx["drought_elig"].get(did, set()):
+                continue                            # gated out for this player
+            runs = [r for r in ctx["player_top_drought"].get((did, scope_key), {}).get(pid, [])
+                    if r["length"] >= 2]
+            if not runs:
+                continue
+            runs = sorted(runs, key=lambda r: -r["length"])[:10]
+            if m["family"] != cur_fam:
+                inner += f'<h3 class="famh">{m["family"]}</h3>\n'
+                cur_fam = m["family"]
+            arank = ctx["alltime_rank_drought"].get((did, scope_key), {})
+            positions = competition_positions([r["length"] for r in runs])
+            body_rows = "".join(
+                f'<tr><td class="col-rank" data-label="#">{pos}</td>'
+                f'<td class="col-streak" data-label="Length">{r["length"]}</td>'
+                f'<td class="col-date" data-label="Dates">{fmt_iso(r["start"])} – {fmt_iso(r["end"])}</td>'
+                f'<td class="col-team" data-label="Team(s)">{team_links_html(r)}</td>'
+                f'<td data-label="All-time rank">'
+                f'{("#"+str(arank[r["length"]])) if r["length"] in arank else "—"}</td></tr>'
+                for pos, r in zip(positions, runs))
+            inner += (f'<div class="tcap">{esc(m["label"])}</div><div class="table-card">'
+                      '<table class="board"><thead><tr><th class="col-rank">#</th>'
+                      '<th class="col-streak">Length</th><th class="col-date">Dates</th>'
+                      '<th class="col-team">Team(s)</th><th>All-time rank</th>'
+                      f'</tr></thead><tbody>{body_rows}</tbody></table></div>\n')
+        if not inner:
+            return ""
+        return f'<h2>{scope_label}</h2>\n{inner}'
+
+    drought_tbl = (drought_scope_table("regular", SCOPE_LABEL["regular"])
+                   + drought_scope_table("playoffs", SCOPE_LABEL["playoffs"])
+                   + drought_scope_table("combined", SCOPE_LABEL["combined"]))
+    if not drought_tbl:
+        drought_tbl = ('<p class="subtitle">No qualifying droughts on record — this player '
+                       'cleared every tracked threshold often enough.</p>')
+
     # feats
     fp = ctx["feat_player"].get(pid, {})
     feat_tbl = ""
@@ -612,18 +670,27 @@ def build_player_page(pid, ctx):
         chips = "".join(f'<a class="tmlink" href="../teams/{ts}.html">{esc(t)}</a>' for t, ts in teams)
         teams_line = f'<p class="teams-line"><span class="tl-label">Teams</span>{chips}</p>'
 
+    # Streaks | Droughts toggle (client-side). Default = Streaks: the existing positive
+    # view (streak tables + feats + similar) is rendered byte-for-byte as before, just
+    # wrapped in #view-streaks. Droughts content lives in #view-droughts (hidden by CSS).
+    seg = ('<div class="seg" id="player-seg">'
+           '<button class="tab active" data-view="streaks">Streaks</button>'
+           '<button class="tab" data-view="droughts">Droughts</button></div>\n')
     body = (
         f'<div class="wrap">\n'
         f'<a class="backtop" href="../index.html">← All streak leaderboards</a>\n'
         f'{search_box()}\n'
         f'<header><h1>{esc(name)}{flag_html(iso, country, big=True)}</h1>'
         f'<p class="subtitle">{esc(hl[0].upper() + hl[1:])}.</p>{teams_line}</header>\n'
-        f'{streak_tbl}{feat_tbl}{similar_html}'
+        f'{seg}'
+        f'<div id="view-streaks">{streak_tbl}{feat_tbl}{similar_html}</div>\n'
+        f'<div id="view-droughts">{drought_tbl}</div>\n'
         f'{search_box()}\n'
         f'<a class="backtop" href="../index.html">← All streak leaderboards</a>\n'
         f'</div>\n'
     )
-    return head(title, desc, prefix="../") + nav("lb", prefix="../") + body + scripts_for("../")
+    return (head(title, desc, prefix="../") + DROUGHT_TOGGLE_CSS + nav("lb", prefix="../")
+            + body + DROUGHT_TOGGLE_JS + scripts_for("../"))
 
 
 # --------------------------------------------------------------------------- #
@@ -827,6 +894,36 @@ render();
 
 
 # --------------------------------------------------------------------------- #
+# Droughts toggle — injected ONLY on player/team pages (so index.html / feats.html
+# stay byte-identical). Reuses the existing .tab styling for the segment buttons.
+# --------------------------------------------------------------------------- #
+DROUGHT_TOGGLE_CSS = (
+    '<style>'
+    '.seg{display:flex;gap:.4rem;margin:1.1rem 0 .8rem;}'
+    '.seg .tab{font-size:.8rem;padding:.5rem 1.1rem;}'
+    '#view-droughts{display:none;}'
+    '</style>\n')
+
+DROUGHT_TOGGLE_JS = r"""
+<script>
+(function(){
+  var seg=document.getElementById('player-seg');
+  var vs=document.getElementById('view-streaks'),vd=document.getElementById('view-droughts');
+  if(!seg||!vs||!vd)return;
+  function show(v){
+    // explicit 'block' (not '') so it overrides the default-hidden CSS on #view-droughts
+    vs.style.display=(v==='droughts')?'none':'block';
+    vd.style.display=(v==='droughts')?'block':'none';
+    seg.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.view===v);});
+  }
+  seg.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){show(t.dataset.view);});});
+  show('streaks');
+})();
+</script>
+"""
+
+
+# --------------------------------------------------------------------------- #
 # Main
 # --------------------------------------------------------------------------- #
 def main():
@@ -847,6 +944,14 @@ def main():
                         key=lambda r: r[0].lower())
     with open(os.path.join(BASE, "search-index.js"), "w", encoding="utf-8") as f:
         f.write("window.PLAYER_INDEX=" + json.dumps(index_rows, separators=(",", ":"), ensure_ascii=False) + ";\n")
+
+    # droughts-data.js (NEW): era-gated drought all-time rank maps, consumed by
+    # build_teams to fill the Droughts "All-time rank" column. Nested {did:{scope:{len:rank}}}.
+    drank = {}
+    for (did, scope), lrank in ctx["alltime_rank_drought"].items():
+        drank.setdefault(did, {})[scope] = {str(L): r for L, r in lrank.items()}
+    with open(os.path.join(BASE, "droughts-data.js"), "w", encoding="utf-8") as f:
+        f.write("window.DROUGHT_RANKS=" + json.dumps(drank, separators=(",", ":")) + ";\n")
 
     with open(os.path.join(BASE, "index.html"), "w", encoding="utf-8") as f:
         f.write(build_index_html(ctx["STREAK_META"]))
