@@ -192,6 +192,28 @@ def build_full(df, min_len=2):
     return top_lists, player_top, alltime_rank, elig
 
 
+def build_leaderboard_ungated(df):
+    """UNGATED global drought leaderboards for the PUBLIC droughts.html page.
+
+    The 100-game player gate is REMOVED here (eligible=None for every type), so the
+    under-20/30 boards include career non-scorers whose whole careers are sub-threshold
+    droughts — "longest droughts, period." The ERA gate is still applied (steals/blocks
+    pre-1973-74, threes pre-1979-80 skipped) because that's data correctness, not a
+    player gate. This is SEPARATE from build_full's gated rankings (used by the
+    per-player / per-team Droughts tabs); neither affects the other.
+
+    Returns {(did, scope): (top_list, length_rank)}."""
+    out = {}
+    for scope_key, _ in S.SCOPES:
+        sub = (E.scope_df(df, scope_key)
+               .sort_values(["personId", "gameDate", "gameId"]).reset_index(drop=True))
+        for d in DROUGHTS:
+            since = ERA_SINCE.get(d.get("stat"))
+            top, _topk, lrank = _compute(sub, d["id"], eligible=None, since=since)  # eligible=None => ungated
+            out[(d["id"], scope_key)] = (top, lrank)
+    return out
+
+
 def load():
     """Appearances with positive + drought condition columns and franchise info."""
     df = E.load_appearances()

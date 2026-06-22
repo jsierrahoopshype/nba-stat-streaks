@@ -387,6 +387,34 @@ def build_all():
     print("  droughts (negative pass)…", flush=True)
     drought_top, player_top_drought, alltime_rank_drought, drought_elig = D.build_full(df)
 
+    # ----- PUBLIC droughts.html leaderboard data (UNGATED, era-gated) -----------
+    # A second, ungated global ranking (no 100-game gate) for the public leaderboard
+    # only. Player meta is resolved into a SEPARATE map (DROUGHT_PLAYERS) so the
+    # positive STREAK_PLAYERS / search-index stay byte-identical; non-page non-scorers
+    # carry has_page=0 and render as plain text (no dead link).
+    print("  droughts (ungated public leaderboard)…", flush=True)
+    ungated = D.build_leaderboard_ungated(df)
+
+    def drought_player_entry(pid, nm):
+        key = normname(name_by_pid.get(pid, nm))
+        country = nat.get(key) or country_by_pid.get(pid)
+        iso = country_to_flag(country) or ""
+        return [nm, iso, country if iso else "", 1 if pid in page_pids else 0]
+
+    DROUGHT_LB_META = [{"id": d["id"], "label": d["label"], "family": d["family"]} for d in D.DROUGHTS]
+    DROUGHT_LB_DATA = {d["id"]: {} for d in D.DROUGHTS}
+    DROUGHT_PLAYERS = {}
+    for (did, scope), (top, lrank) in ungated.items():
+        rows = []
+        for r in top:
+            pid, nm = r["personId"], r["player"]
+            slug = slug_by_pid.get(pid) or slugify(nm, pid)
+            if slug not in DROUGHT_PLAYERS:
+                DROUGHT_PLAYERS[slug] = drought_player_entry(pid, nm)
+            rows.append([lrank[r["length"]], slug, r["length"], r["start"], r["end"],
+                         r["teams"], r["team_links"]])
+        DROUGHT_LB_DATA[did][scope] = rows
+
     return dict(df=df, players=players, slug_by_pid=slug_by_pid, STREAK_DATA=STREAK_DATA,
                 STREAK_META=STREAK_META, FEAT_DATA=FEAT_DATA,
                 FEATS=FEATS, feat_label=feat_label, label_by_id=label_by_id,
@@ -394,7 +422,9 @@ def build_all():
                 page_pids=page_pids, headline=headline, similar=similar, player_teams=player_teams,
                 player_top=player_top, alltime_rank=alltime_rank,
                 DROUGHT_META=D.DROUGHT_META, player_top_drought=player_top_drought,
-                alltime_rank_drought=alltime_rank_drought, drought_elig=drought_elig)
+                alltime_rank_drought=alltime_rank_drought, drought_elig=drought_elig,
+                DROUGHT_LB_META=DROUGHT_LB_META, DROUGHT_LB_DATA=DROUGHT_LB_DATA,
+                DROUGHT_PLAYERS=DROUGHT_PLAYERS)
 
 
 # --------------------------------------------------------------------------- #
@@ -426,6 +456,7 @@ def nav(active, prefix=""):
     return (f'<nav class="nav">{a("index.html","Leaderboards","lb")}'
             f'{a("feats.html","Rarest Feats","feats")}'
             f'{a("active-streaks.html","Active Streaks","lastgame")}'
+            f'{a("droughts.html","Droughts","droughts")}'
             f'{a("teams.html","Teams","teams")}</nav>\n')
 
 
@@ -474,6 +505,38 @@ def build_index_html(meta):
     return (head("NBA Statistical Streaks — Consecutive-Game Leaderboards", desc)
             + nav("lb") + body
             + scripts_for("", '<script src="streaks-data.js"></script>\n' + RENDER_JS + "\n"))
+
+
+# --------------------------------------------------------------------------- #
+# droughts.html — public negative-streak leaderboard (UNGATED). Same structure as
+# index.html, but ranks the longest sub-threshold runs with no 100-game player gate.
+# --------------------------------------------------------------------------- #
+def build_droughts_html(meta):
+    tabs = "".join(f'<button class="tab" data-scope="{k}">{lbl}</button>' for k, lbl in SCOPES)
+    body = (
+        f'<div class="wrap">\n'
+        f'<header class="home-hd"><h1>NBA <span class="accent">Statistical Droughts</span></h1></header>\n'
+        f'{search_box()}\n'
+        f'<div class="controls"><div class="tabs">{tabs}</div></div>\n'
+        f'{family_chips_html(meta)}\n'
+        f'<h2 id="active-label">Under 10 points</h2>\n'
+        f'<div class="table-card"><table class="board"><thead><tr>'
+        f'<th class="col-rank">Rank</th><th>Player</th><th class="col-streak">Length</th>'
+        f'<th class="col-date">Start</th><th class="col-date">End</th><th class="col-team">Team(s)</th>'
+        f'</tr></thead><tbody id="tbody"></tbody></table></div>\n'
+        f'{search_box()}\n'
+        f'<div class="foot">A drought = consecutive appearances STRICTLY UNDER a threshold; missed games '
+        f'(DNPs) are skipped, and the drought breaks only on a game at or above the line. These boards are '
+        f'UNGATED — every player qualifies — so career non-scorers fill the under-20 / under-30 boards. '
+        f'Steals &amp; blocks are tracked from 1973-74, three-pointers from 1979-80 (earlier games skipped).</div>\n'
+        f'</div>\n'
+    )
+    desc = ("All-time NBA consecutive-game DROUGHT leaderboards — the longest runs strictly under a threshold: "
+            "under 10/20/30 points, single-digit rebounds/assists, zero steals/blocks/threes and no double-doubles "
+            "in a row, regular season, playoffs and combined. Ungated: career non-scorers included.")
+    return (head("NBA Statistical Droughts — Longest Sub-Threshold Streaks", desc)
+            + nav("droughts") + body
+            + scripts_for("", '<script src="droughts-leaderboard-data.js"></script>\n' + DROUGHT_RENDER_JS + "\n"))
 
 
 # --------------------------------------------------------------------------- #
@@ -869,6 +932,42 @@ render();
 </script>
 """
 
+DROUGHT_RENDER_JS = r"""
+<script>
+var DATA=window.DROUGHT_LB_DATA,PLAYERS=window.DROUGHT_PLAYERS,META=window.DROUGHT_META;
+var activeStreak='u_pts10',activeScope='regular';
+var MM=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function eh(s){return String(s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
+function fd(s){if(!s)return'';var p=s.split('-');return MM[(+p[1])-1]+' '+(+p[2])+', '+p[0];}
+function metaOf(id){for(var i=0;i<META.length;i++)if(META[i].id===id)return META[i];return null;}
+function flagImg(iso,c){if(!iso)return'';return ' <img class="flag-img" src="https://flagcdn.com/h20/'+iso+'.png" srcset="https://flagcdn.com/h40/'+iso+'.png 2x" height="14" alt="'+eh(c)+'" title="'+eh(c)+'" loading="lazy">';}
+function teamCell(links,fallback){if(!links||!links.length)return eh(fallback||'—');
+  return links.map(function(t){return '<a class="plink" href="teams/'+t[1]+'.html">'+eh(t[0])+'</a>';}).join(', ');}
+function playerCell(slug){var pl=PLAYERS[slug];if(!pl)return eh(slug);
+  var nm=eh(pl[0]),fl=flagImg(pl[1],pl[2]);
+  return pl[3]?('<a class="plink" href="players/'+slug+'.html">'+nm+'</a>'+fl):(nm+fl);}
+function render(){
+  var m=metaOf(activeStreak);document.getElementById('active-label').textContent=m?m.label:activeStreak;
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.scope===activeScope);});
+  document.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('active',c.dataset.streak===activeStreak);});
+  var rows=(DATA[activeStreak]&&DATA[activeStreak][activeScope])||[];
+  var tb=document.getElementById('tbody');
+  if(!rows.length){tb.innerHTML='<tr><td class="col-player">No droughts of this type in '+activeScope+' play.</td></tr>';return;}
+  var out=[];for(var i=0;i<rows.length;i++){var r=rows[i];
+    out.push('<tr><td class="col-rank" data-label="Rank">'+r[0]+'</td>'+
+     '<td class="col-player" data-label="Player">'+playerCell(r[1])+'</td>'+
+     '<td class="col-streak" data-label="Length">'+r[2]+'</td>'+
+     '<td class="col-date" data-label="Start">'+fd(r[3])+'</td>'+
+     '<td class="col-date" data-label="End">'+fd(r[4])+'</td>'+
+     '<td class="col-team" data-label="Team(s)">'+teamCell(r[6],r[5])+'</td></tr>');}
+  tb.innerHTML=out.join('');
+}
+document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){activeScope=t.dataset.scope;render();});});
+document.querySelectorAll('.chip').forEach(function(c){c.addEventListener('click',function(){activeStreak=c.dataset.streak;render();});});
+render();
+</script>
+"""
+
 FEATS_RENDER_JS = r"""
 <script>
 var FD=window.FEAT_DATA,PLAYERS=window.STREAK_PLAYERS,LBL=window.FEAT_LABELS;
@@ -957,6 +1056,14 @@ def main():
         f.write(build_index_html(ctx["STREAK_META"]))
     with open(os.path.join(BASE, "feats.html"), "w", encoding="utf-8") as f:
         f.write(build_feats_html(ctx["FEATS"]))
+
+    # droughts.html + its UNGATED leaderboard data (separate from droughts-data.js)
+    with open(os.path.join(BASE, "droughts-leaderboard-data.js"), "w", encoding="utf-8") as f:
+        f.write("window.DROUGHT_LB_DATA=" + json.dumps(ctx["DROUGHT_LB_DATA"], separators=(",", ":")) + ";\n")
+        f.write("window.DROUGHT_PLAYERS=" + json.dumps(ctx["DROUGHT_PLAYERS"], separators=(",", ":"), ensure_ascii=False) + ";\n")
+        f.write("window.DROUGHT_META=" + json.dumps(ctx["DROUGHT_LB_META"], separators=(",", ":"), ensure_ascii=False) + ";\n")
+    with open(os.path.join(BASE, "droughts.html"), "w", encoding="utf-8") as f:
+        f.write(build_droughts_html(ctx["DROUGHT_LB_META"]))
 
     # player pages
     print(f"Writing {len(ctx['page_pids'])} player pages…", flush=True)
