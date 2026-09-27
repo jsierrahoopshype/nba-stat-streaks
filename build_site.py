@@ -540,7 +540,7 @@ def build_droughts_html(meta):
     desc = ("All-time NBA consecutive-game DROUGHT leaderboards — the longest runs strictly under a threshold: "
             "under 10/20/30 points, single-digit rebounds/assists, zero steals/blocks/threes and no double-doubles "
             "in a row, regular season, playoffs and combined. Ungated: career non-scorers included.")
-    return (head("NBA Statistical Droughts — Longest Sub-Threshold Streaks", desc, path="droughts.html")
+    return (head("NBA Statistical Droughts — Longest Sub-Threshold Streaks | HoopsMatic", desc, path="droughts.html")
             + nav("droughts") + body
             + scripts_for("", '<script src="droughts-leaderboard-data.js"></script>\n' + DROUGHT_RENDER_JS + "\n"))
 
@@ -568,7 +568,7 @@ def build_feats_html(feats):
     )
     desc = ("NBA single-game feat leaders by career count: triple-doubles, 5×5 games, 40/50/60-point games, "
             "20-rebound and 20-assist games — regular-season totals.")
-    return (head("NBA Rarest Feats — Triple-Doubles, 50-Point Games & More", desc, path="feats.html")
+    return (head("NBA Rarest Feats — Triple-Doubles, 50-Point Games & More | HoopsMatic", desc, path="feats.html")
             + nav("feats") + body
             + scripts_for("", '<script src="feats-data.js"></script>\n' + FEATS_RENDER_JS + "\n"))
 
@@ -728,7 +728,7 @@ def build_player_page(pid, ctx):
 
     hl = (f"longest streak of {headline['len']} {headline['label'].lower()} in a row"
           if headline else "career consecutive-game streaks and feats")
-    title = f"{name} NBA Streaks: Consecutive Games Stats and Career Feats"
+    title = f"{name} NBA Streaks: Consecutive Games Stats and Career Feats | HoopsMatic"
     desc = (f"{name}'s NBA consecutive-game streaks and career feats — {hl}. "
             f"Regular season, playoffs and combined, with all-time ranks.")
 

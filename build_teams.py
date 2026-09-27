@@ -391,7 +391,7 @@ def teams_index_html(best_all, active_all, appcounts, players, active_set):
     )
     desc = ("Every NBA franchise's player streak leaders, merged by lineage (Seattle→Oklahoma City, "
             "New Jersey→Brooklyn, Vancouver→Memphis) — best consecutive-game runs and current active streaks.")
-    return (BS.head("NBA Franchises — Player Streaks by Team", desc, path="teams.html") + TEAM_CSS
+    return (BS.head("NBA Franchises — Player Streaks by Team | HoopsMatic", desc, path="teams.html") + TEAM_CSS
             + BS.nav("teams") + body + BS.scripts_for(""))
 
 
