@@ -304,7 +304,7 @@ def _endgame(g):
 def render_lastgame(label, extended, ended=None):
     """Active (trailing) streaks only, grouped scope -> stat family -> threshold,
     one sub-table per threshold (ascending). 'ended' is accepted but not shown."""
-    title = "Active Streaks — NBA Statistical Streaks"
+    title = "Active Streaks | HoopsMatic"
     nmile = sum(1 for e in extended if e.get("milestone"))
     desc = (f"NBA active statistical-streak status at the {label}: {len(extended)} streaks still active "
             f"({nmile} at a milestone) — by scope (regular season / playoffs / combined), stat family, and threshold.")
@@ -358,7 +358,7 @@ def render_lastgame(label, extended, ended=None):
                  '.mbadge{display:inline-block;margin-left:.4rem;font-size:.58rem;font-weight:700;color:var(--accent);'
                  'background:var(--accent-dim);border-radius:10px;padding:.1rem .4rem;vertical-align:middle;'
                  'font-family:"JetBrains Mono",monospace;}</style>\n')
-    return BS.head(title, desc) + extra_css + BS.nav("lastgame") + body + BS.scripts_for("")
+    return BS.head(title, desc, path=ACTIVE_STREAKS_FILE) + extra_css + BS.nav("lastgame") + body + BS.scripts_for("")
 
 
 def season_end_status(df, current_season):
@@ -420,9 +420,9 @@ def write_active_streaks(html):
     stub = (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         f'<meta http-equiv="refresh" content="0; url={url}">'
-        f'<link rel="canonical" href="{url}">'
+        f'<link rel="canonical" href="{BS.SITE_URL}{url}">'
         '<meta name="robots" content="noindex">'
-        '<title>Redirecting… | NBA Statistical Streaks</title>'
+        '<title>Redirecting… | HoopsMatic</title>'
         f'<script>location.replace("{url}");</script></head>'
         f'<body>This page moved to <a href="{url}">Active Streaks →</a></body></html>\n')
     with open(os.path.join(BASE, "lastgame.html"), "w", encoding="utf-8") as f:

@@ -434,7 +434,12 @@ def css():
     return CSS
 
 
-def head(title, desc, prefix=""):
+# Production home of the site; every page declares an absolute canonical under it.
+SITE_URL = "https://hoopsmatic.com/streaks-droughts/"
+
+
+def head(title, desc, prefix="", path=""):
+    """path = page location relative to SITE_URL ("" = homepage)."""
     return (
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n"
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
@@ -442,6 +447,7 @@ def head(title, desc, prefix=""):
         f"<meta name=\"description\" content=\"{esc(desc)}\">\n"
         f"<meta property=\"og:title\" content=\"{esc(title)}\">\n"
         f"<meta property=\"og:description\" content=\"{esc(desc)}\">\n"
+        f"<link rel=\"canonical\" href=\"{SITE_URL}{path}\">\n"
         "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n"
         "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n"
         "<link href=\"https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap\" rel=\"stylesheet\">\n"
@@ -502,7 +508,7 @@ def build_index_html(meta):
     )
     desc = ("All-time NBA consecutive-game statistical streak leaderboards: 10+/20+/30+ points, double-doubles, "
             "rebounds, assists, steals, blocks and threes in a row — regular season, playoffs and combined.")
-    return (head("NBA Statistical Streaks — Consecutive-Game Leaderboards", desc)
+    return (head("NBA Statistical Streaks: every consecutive-game streak | HoopsMatic", desc)
             + nav("lb") + body
             + scripts_for("", '<script src="streaks-data.js"></script>\n' + RENDER_JS + "\n"))
 
@@ -534,7 +540,7 @@ def build_droughts_html(meta):
     desc = ("All-time NBA consecutive-game DROUGHT leaderboards — the longest runs strictly under a threshold: "
             "under 10/20/30 points, single-digit rebounds/assists, zero steals/blocks/threes and no double-doubles "
             "in a row, regular season, playoffs and combined. Ungated: career non-scorers included.")
-    return (head("NBA Statistical Droughts — Longest Sub-Threshold Streaks", desc)
+    return (head("NBA Statistical Droughts — Longest Sub-Threshold Streaks", desc, path="droughts.html")
             + nav("droughts") + body
             + scripts_for("", '<script src="droughts-leaderboard-data.js"></script>\n' + DROUGHT_RENDER_JS + "\n"))
 
@@ -562,7 +568,7 @@ def build_feats_html(feats):
     )
     desc = ("NBA single-game feat leaders by career count: triple-doubles, 5×5 games, 40/50/60-point games, "
             "20-rebound and 20-assist games — regular-season totals.")
-    return (head("NBA Rarest Feats — Triple-Doubles, 50-Point Games & More", desc)
+    return (head("NBA Rarest Feats — Triple-Doubles, 50-Point Games & More", desc, path="feats.html")
             + nav("feats") + body
             + scripts_for("", '<script src="feats-data.js"></script>\n' + FEATS_RENDER_JS + "\n"))
 
@@ -752,7 +758,7 @@ def build_player_page(pid, ctx):
         f'<a class="backtop" href="../index.html">← All streak leaderboards</a>\n'
         f'</div>\n'
     )
-    return (head(title, desc, prefix="../") + DROUGHT_TOGGLE_CSS + nav("lb", prefix="../")
+    return (head(title, desc, prefix="../", path=f"players/{slug}.html") + DROUGHT_TOGGLE_CSS + nav("lb", prefix="../")
             + body + DROUGHT_TOGGLE_JS + scripts_for("../"))
 
 

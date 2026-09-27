@@ -307,7 +307,7 @@ def build_team_page(target, best, active, ranks, players, eras=None,
 
     n_best = sum(len(v) for v in best.values())
     n_active = sum(len(v) for v in active.values())
-    title = f"{target} — Player Streaks by Franchise | NBA Statistical Streaks"
+    title = f"{target} — Player Streaks by Franchise | HoopsMatic"
     desc = (f"{target} players' consecutive-game statistical streaks across the full franchise lineage: "
             f"career-best runs and current runs active into the offseason, by scope and stat family.")
     multi = eras and len(eras) > 1
@@ -340,7 +340,7 @@ def build_team_page(target, best, active, ranks, players, eras=None,
         f'{BS.search_box()}\n'
         f'<a class="backtop" href="../teams.html">← All franchises</a>\n</div>\n'
     )
-    return (BS.head(title, desc, prefix="../") + TEAM_CSS + BS.DROUGHT_TOGGLE_CSS
+    return (BS.head(title, desc, prefix="../", path=f"teams/{team_slug(target)}.html") + TEAM_CSS + BS.DROUGHT_TOGGLE_CSS
             + BS.nav("teams", prefix="../") + body + BS.DROUGHT_TOGGLE_JS + BS.scripts_for("../"))
 
 
@@ -391,7 +391,7 @@ def teams_index_html(best_all, active_all, appcounts, players, active_set):
     )
     desc = ("Every NBA franchise's player streak leaders, merged by lineage (Seattle→Oklahoma City, "
             "New Jersey→Brooklyn, Vancouver→Memphis) — best consecutive-game runs and current active streaks.")
-    return (BS.head("NBA Franchises — Player Streaks by Team", desc) + TEAM_CSS
+    return (BS.head("NBA Franchises — Player Streaks by Team", desc, path="teams.html") + TEAM_CSS
             + BS.nav("teams") + body + BS.scripts_for(""))
 
 
@@ -437,9 +437,9 @@ def write_redirects():
         html = (
             '<!doctype html><html lang="en"><head><meta charset="utf-8">'
             f'<meta http-equiv="refresh" content="0; url={url}">'
-            f'<link rel="canonical" href="{url}">'
+            f'<link rel="canonical" href="{BS.SITE_URL}teams/{url}">'
             '<meta name="robots" content="noindex">'
-            f'<title>Redirecting… | NBA Statistical Streaks</title>'
+            f'<title>Redirecting… | HoopsMatic</title>'
             f'<script>location.replace("{url}");</script></head>'
             f'<body>This franchise page moved. <a href="{url}">Continue →</a></body></html>\n')
         with open(os.path.join(TEAMS_DIR, f"{old}.html"), "w", encoding="utf-8") as f:
