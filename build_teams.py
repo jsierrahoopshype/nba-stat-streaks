@@ -331,7 +331,7 @@ def build_team_page(target, best, active, ranks, players, eras=None,
     body = (
         f'<div class="wrap">\n<a class="backtop" href="../teams.html">← All franchises</a>\n'
         f'{BS.search_box()}\n'
-        f'<header><span class="brand">HoopsHype · NBA Statistical Streaks</span>'
+        f'<header><span class="brand">HoopsMatic · NBA Statistical Streaks</span>'
         f'<h1>{BS.esc(target)}</h1>'
         f'{eras_html}</header>\n'
         f'{seg}'
@@ -381,7 +381,7 @@ def teams_index_html(best_all, active_all, appcounts, players, active_set):
                      f'({len(defunct)})</span></h2>\n{table(defunct)}') if defunct else ""
     body = (
         f'<div class="wrap">\n'
-        f'<header><span class="brand">HoopsHype · NBA Statistical Streaks</span>'
+        f'<header><span class="brand">HoopsMatic · NBA Statistical Streaks</span>'
         f'<h1>NBA <span class="accent">Franchises</span></h1></header>\n'
         f'{BS.search_box()}\n'
         f'<h2 class="sech">Franchises <span class="note">— all 30 active NBA teams ({len(active)})</span></h2>\n'
