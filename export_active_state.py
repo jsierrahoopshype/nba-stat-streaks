@@ -17,7 +17,7 @@ import numpy as np
 import build_streaks as E
 import build_site as BS
 
-BASE = r"C:\nba-stat-streaks"
+BASE = os.path.dirname(os.path.abspath(__file__))   # repo folder (works on Windows and in CI)
 
 
 def nba_season(d):

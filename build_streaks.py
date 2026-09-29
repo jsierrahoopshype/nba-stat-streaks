@@ -17,6 +17,7 @@ Every streak is computed at two LEVELS and three SCOPES:
   scope  = Regular Season | Playoffs | Combined (Regular+Playoffs)
 """
 
+import os
 import re
 import sys
 from datetime import date
@@ -26,8 +27,9 @@ import pandas as pd
 
 sys.stdout.reconfigure(encoding="utf-8")  # Windows console: allow arrows/unicode
 
-DATA = r"C:\nba-stat-streaks\data"
-PLAYERSTATS = DATA + r"\PlayerStatistics.csv"
+# Kaggle CSVs (gitignored). NBA_STREAKS_DATA overrides, e.g. C:\nba-stat-streaks\data
+DATA = os.environ.get("NBA_STREAKS_DATA") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+PLAYERSTATS = os.path.join(DATA, "PlayerStatistics.csv")
 
 REGULAR, PLAYOFFS = "Regular Season", "Playoffs"
 

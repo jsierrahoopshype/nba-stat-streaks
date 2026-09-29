@@ -39,7 +39,7 @@ FAMILY_BY_ID = {s["id"]: s["family"] for s in E.STREAKS}
 LABEL_BY_ID = {s["id"]: s["label"] for s in E.STREAKS}
 
 PROXY = "https://nba-proxy.thejorgesierra.workers.dev/"
-BASE = r"C:\nba-stat-streaks"
+BASE = os.path.dirname(os.path.abspath(__file__))   # repo folder (works on Windows and in CI)
 DAILY_DIR = os.path.join(BASE, "data", "daily")
 STATE_PATH = os.path.join(BASE, "active-state.json")
 STREAK_IDS = [s["id"] for s in E.STREAKS]
