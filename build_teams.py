@@ -30,7 +30,7 @@ import franchises as FR     # city-era -> modern-franchise map
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-BASE = r"C:\nba-stat-streaks"
+BASE = os.path.dirname(os.path.abspath(__file__))   # repo folder (works on Windows and in CI)
 TEAMS_DIR = os.path.join(BASE, "teams")
 LABEL_BY_ID = {s["id"]: s["label"] for s in E.STREAKS}
 

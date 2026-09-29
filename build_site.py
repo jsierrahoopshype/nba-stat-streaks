@@ -22,8 +22,9 @@ import pandas as pd
 import build_streaks as E
 import franchises as FR
 
-BASE = r"C:\nba-stat-streaks"
-DATA = os.path.join(BASE, "data")
+BASE = os.path.dirname(os.path.abspath(__file__))   # repo folder (works on Windows and in CI)
+# Kaggle CSVs (gitignored). NBA_STREAKS_DATA overrides, e.g. C:\nba-stat-streaks\data
+DATA = os.environ.get("NBA_STREAKS_DATA") or os.path.join(BASE, "data")
 PLAYERS_DIR = os.path.join(BASE, "players")
 PLAYERS_CSV = os.path.join(DATA, "Players.csv")
 NATIONALITIES_CSV = os.path.join(DATA, "nationalities.csv")
