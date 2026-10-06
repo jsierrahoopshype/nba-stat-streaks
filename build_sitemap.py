@@ -30,6 +30,7 @@ STATE_FILE = os.path.join(ROOT, "sitemap-lastmod.json")
 
 SKIP_DIRS = {".git", ".github", "data", "node_modules", "__pycache__"}
 NOINDEX_RE = re.compile(r'<meta[^>]+name=["\']robots["\'][^>]*noindex', re.I)
+PAGE_TAIL = b"</body></html>\n"
 CANON_RE = re.compile(r'<link[^>]+rel=["\']canonical["\'][^>]*href=["\']([^"\']+)["\']', re.I)
 
 
@@ -57,6 +58,10 @@ def public_pages():
             # Normalise line endings so a Windows (CRLF) build and a Linux CI checkout
             # of the same page hash identically.
             raw = raw.replace(b"\r\n", b"\n")
+            # Closing tags are boilerplate, not content: excluded from the hash so adding
+            # them (build_site.scripts_for) did not move any page's lastmod.
+            if raw.endswith(PAGE_TAIL):
+                raw = raw[: -len(PAGE_TAIL)]
             text = raw.decode("utf-8", errors="replace")
             if NOINDEX_RE.search(text):
                 continue

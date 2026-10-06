@@ -475,7 +475,8 @@ def search_box():
 
 def scripts_for(prefix, extra=""):
     return (f'<script>var PLAYER_PREFIX="{prefix}players/";</script>\n'
-            f'<script src="{prefix}search-index.js"></script>\n{extra}{GLOBAL_SEARCH_JS}\n')
+            f'<script src="{prefix}search-index.js"></script>\n{extra}{GLOBAL_SEARCH_JS}\n'
+            '</body></html>\n')
 
 
 # --------------------------------------------------------------------------- #
