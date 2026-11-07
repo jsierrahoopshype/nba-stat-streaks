@@ -1,13 +1,18 @@
 name: Nightly streak update
 
-# MANUAL ONLY for now — no `on: schedule:` block, so this never runs automatically.
-# Trigger it by hand from the Actions tab (workflow_dispatch). Add a schedule later
-# once the live proxy is verified.
+# Daily at 11:37 UTC, after the nba-editorial-bots 10:23 UTC build republishes the
+# season box-score file this reads (no token), with a 15:37 UTC retry. Both run
+# nightly_catchup.py, which applies only the nights active-state.json is missing, so
+# a run with nothing new changes nothing. Also by hand from the Actions tab: a blank
+# date catches up to last night, a date applies that one night only.
 on:
+  schedule:
+    - cron: "37 11 * * *"
+    - cron: "37 15 * * *"
   workflow_dispatch:
     inputs:
       date:
-        description: "Date to process (YYYY-MM-DD). Blank = last night, US Eastern."
+        description: "One night to apply (YYYY-MM-DD). Blank = every missing night through last night, US Eastern."
         required: false
         default: ""
 
@@ -37,7 +42,11 @@ jobs:
           if [ -n "${{ inputs.date }}" ]; then
             python fetch_nightly.py --date "${{ inputs.date }}"
           else
-            python fetch_nightly.py
+            # exit 4 = the season file has not been republished for the next night yet:
+            # nothing is applied and the next run retries, so the run stays green.
+            rc=0; python nightly_catchup.py || rc=$?
+            if [ "$rc" = "4" ]; then echo "::warning title=Season file not ready::Nothing applied; the next run retries."; rc=0; fi
+            exit $rc
           fi
 
       # Hash-compares every public page against sitemap-lastmod.json; only new or
