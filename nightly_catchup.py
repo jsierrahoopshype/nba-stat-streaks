@@ -11,12 +11,19 @@ active-state.json and walks forward to last night (US Eastern):
                                             -> only advance data_through, so the
                                                Active Streaks page is not replaced
                                                by an empty night
-  games not Final yet / fetch error         -> stop; state stays at the last good night
+  season file not republished for the night yet (fetch_nightly.NotReady)
+                                            -> stop with exit 4; state stays at the
+                                               last good night, the next run retries
+  fetch error                               -> stop; state stays at the last good night
+
+Game counts come from the nba-editorial-bots season file (fetch_nightly.games_on),
+not the stats.nba.com scoreboard (blocked through nba-proxy since Oct 2026).
 
   python nightly_catchup.py              # normal daily run
   python nightly_catchup.py --allow-gap  # needed once when more than MAX_GAP_DAYS behind
 
-Exit codes: 0 = done or already up to date, 1 = failed, 3 = big gap, rerun with --allow-gap.
+Exit codes: 0 = done or already up to date, 1 = failed, 3 = big gap, rerun with --allow-gap,
+            4 = season file not ready for the next night yet (try again later).
 """
 import os
 import sys
@@ -29,10 +36,6 @@ from datetime import timedelta
 import fetch_nightly as F
 
 MAX_GAP_DAYS = 7
-# stats.nba.com GAME_ID prefixes that fetch_nightly actually pulls lines for
-COUNTED_PREFIXES = ("002", "004")   # 002 = Regular Season, 004 = Playoffs
-
-
 def read_state():
     with open(F.STATE_PATH, encoding="utf-8") as f:
         return json.load(f)
@@ -45,9 +48,8 @@ def write_state(state):
 
 
 def counted_games(d):
-    rs = F.scoreboard_check(d)["raw"]
-    gi = rs["headers"].index("GAME_ID")
-    return sum(1 for row in rs["rowSet"] if str(row[gi]).startswith(COUNTED_PREFIXES))
+    """Regular Season / Playoff games on night d (the season file holds only those)."""
+    return F.games_on(d)
 
 
 def main():
@@ -74,8 +76,12 @@ def main():
     while d <= last_night:
         try:
             n = counted_games(d)
+        except F.NotReady as e:
+            print(f"NOT READY: {e}. State stays through {read_state()['data_through']}; "
+                  f"the next run picks it up.")
+            return 4
         except Exception as e:
-            print(f"ERROR: scoreboard check for {d.isoformat()} failed: {e}")
+            print(f"ERROR: game count for {d.isoformat()} failed: {e}")
             return 1
         if n == 0:
             state = read_state()

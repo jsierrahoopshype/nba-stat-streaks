@@ -3,9 +3,13 @@ fetch_nightly.py — Task 2 / Stage 2: nightly active-streak updater.
 
 Flow (run after games are Final):
   1. "Last night" = previous day, US Eastern.
-  2. scoreboardv2 pre-check (via the proxy) that the date's games are Final.
-  3. Pull that date's player lines via leaguegamelog (Regular Season + Playoffs)
-     through the proxy, URL-encoded.
+  2. Read the season's box lines from the public file the nba-editorial-bots
+     repo publishes on GitHub Pages (cdn.nba.com box scores, final games only,
+     Regular Season + Playoffs; no token). stats.nba.com through nba-proxy is
+     blocked since Oct 2026, so the proxy is no longer the default source.
+  3. Readiness check: the file must have been published after 10:00 UTC the
+     morning after the night (the bots' 10:23 UTC build always republishes it),
+     and every game that night must have lines for both teams.
   4. For each streak in active-state.json: extend if the player met the threshold,
      break if they appeared and missed, leave unchanged if they didn't play.
      Threshold logic is the ENGINE's own (build_streaks.condition_columns) — not
@@ -25,6 +29,7 @@ import copy
 import argparse
 import datetime
 import urllib.parse
+import urllib.error
 import urllib.request
 from datetime import timedelta
 
@@ -38,7 +43,16 @@ from export_active_state import FLOORS   # per-type floors (single source of tru
 FAMILY_BY_ID = {s["id"]: s["family"] for s in E.STREAKS}
 LABEL_BY_ID = {s["id"]: s["label"] for s in E.STREAKS}
 
-PROXY = "https://nba-proxy.thejorgesierra.workers.dev/"
+PROXY = "https://nba-proxy.thejorgesierra.workers.dev/"   # --source proxy only (blocked since Oct 2026)
+
+# Season box lines published by jsierrahoopshype/nba-editorial-bots (GitHub Pages).
+# Columns used: PLAYER_ID, PLAYER_NAME, TEAM_ID, TEAM_ABBREVIATION, GAME_ID, GAME_DATE,
+# MATCHUP, MIN, PTS, REB, AST, STL, BLK, FG3M, SEASON_TYPE (RS / PO).
+SEASON_CSV_URL = "https://jsierrahoopshype.github.io/nba-editorial-bots/data/player_games_{season}.csv"
+# Optional local folder with player_games_<season>.csv files in the same format; when a
+# file for the season is there it is used instead of the URL (one-off backfills).
+SEASON_CSV_DIR = os.environ.get("NBA_STREAKS_SEASON_CSV_DIR", "")
+READY_HOUR_UTC = 10   # night D counts only if the file was published at/after D+1 10:00 UTC
 BASE = os.path.dirname(os.path.abspath(__file__))   # repo folder (works on Windows and in CI)
 DAILY_DIR = os.path.join(BASE, "data", "daily")
 STATE_PATH = os.path.join(BASE, "active-state.json")
@@ -145,6 +159,101 @@ def fetch_lines(d):
                 "points": _num(row[ix["PTS"]]), "reboundsTotal": _num(row[ix["REB"]]),
                 "assists": _num(row[ix["AST"]]), "steals": _num(row[ix["STL"]]),
                 "blocks": _num(row[ix["BLK"]]), "threePointersMade": _num(row[ix["FG3M"]]),
+            }
+    return out, raw
+
+
+# --------------------------------------------------------------------------- #
+# Season-file source (default)
+# --------------------------------------------------------------------------- #
+_SEASON_CACHE = {}
+
+
+class NotReady(Exception):
+    """The season file cannot vouch for this night yet (published too early,
+    or a game is missing one team's lines). Try again after the next publish."""
+
+
+def load_season(season):
+    """(DataFrame of the season's box lines, published-at UTC datetime or None for a
+    local file). Cached per process."""
+    if season in _SEASON_CACHE:
+        return _SEASON_CACHE[season]
+    local = os.path.join(SEASON_CSV_DIR, f"player_games_{season}.csv") if SEASON_CSV_DIR else ""
+    if local and os.path.exists(local):
+        df = pd.read_csv(local, dtype=str)
+        published = None
+        print(f"  season file: {local} (local)")
+    else:
+        url = SEASON_CSV_URL.format(season=season)
+        req = urllib.request.Request(
+            url + "?t=" + datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S"),
+            headers={"User-Agent": "nba-stat-streaks/1.0", "Cache-Control": "no-cache"})
+        last = None
+        for _ in range(3):
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    body = r.read()
+                    lm = r.headers.get("Last-Modified")
+                break
+            except urllib.error.HTTPError as e:
+                if e.code == 404:
+                    raise RuntimeError(f"no published season file for {season} ({url})")
+                last = e
+            except Exception as e:
+                last = e
+        else:
+            raise last
+        import io
+        from email.utils import parsedate_to_datetime
+        df = pd.read_csv(io.BytesIO(body), dtype=str)
+        published = parsedate_to_datetime(lm).astimezone(datetime.timezone.utc) if lm else None
+        print(f"  season file: {url} ({len(df)} lines, published {lm})")
+    _SEASON_CACHE[season] = (df, published)
+    return _SEASON_CACHE[season]
+
+
+def night_rows(d):
+    """The season file's rows for night d (Regular Season + Playoffs). Raises NotReady
+    if the file cannot vouch for the night yet."""
+    df, published = load_season(season_str(d))
+    if published is not None:
+        ready_at = datetime.datetime.combine(d + timedelta(days=1), datetime.time(READY_HOUR_UTC),
+                                             tzinfo=datetime.timezone.utc)
+        if published < ready_at:
+            raise NotReady(f"season file published {published:%Y-%m-%d %H:%M} UTC, before "
+                           f"{ready_at:%Y-%m-%d %H:%M} UTC; {d.isoformat()} may be incomplete")
+    sub = df[(df["GAME_DATE"] == d.isoformat()) & df["SEASON_TYPE"].isin(["RS", "PO"])]
+    teams = sub.groupby("GAME_ID")["TEAM_ID"].nunique()
+    short = sorted(teams[teams < 2].index)
+    if short:
+        raise NotReady(f"{d.isoformat()}: game(s) {', '.join(short)} have only one team's lines")
+    return sub
+
+
+def games_on(d):
+    """Number of Regular Season / Playoff games on night d in the season file."""
+    return int(night_rows(d)["GAME_ID"].nunique())
+
+
+def fetch_lines_csv(d):
+    """Same shape as fetch_lines, from the season file."""
+    sub = night_rows(d)
+    out = {"regular": {}, "playoffs": {}}
+    raw = {}
+    for scope, stype in (("regular", "RS"), ("playoffs", "PO")):
+        part = sub[sub["SEASON_TYPE"] == stype]
+        raw[scope] = {"headers": list(part.columns), "rowSet": part.fillna("").values.tolist()}
+        for r in part.to_dict("records"):
+            pid = int(r["PLAYER_ID"])
+            tid = int(r["TEAM_ID"])
+            out[scope][pid] = {
+                "personId": pid, "name": r["PLAYER_NAME"],
+                "team": TEAM_CITY.get(tid, r["TEAM_ABBREVIATION"]), "team_id": tid,
+                "game_id": r["GAME_ID"], "matchup": r["MATCHUP"], "min": r["MIN"],
+                "points": _num(r["PTS"]), "reboundsTotal": _num(r["REB"]),
+                "assists": _num(r["AST"]), "steals": _num(r["STL"]),
+                "blocks": _num(r["BLK"]), "threePointersMade": _num(r["FG3M"]),
             }
     return out, raw
 
@@ -444,7 +553,7 @@ def season_end_demo():
 # --------------------------------------------------------------------------- #
 # Main nightly run
 # --------------------------------------------------------------------------- #
-def run(d, source="proxy", dry_run=False, force=False, write_state=True):
+def run(d, source="csv", dry_run=False, force=False, write_state=True):
     print(f"Nightly update for {d.isoformat()}  (season {season_str(d)}, source={source})")
     games = None
     raw = None
@@ -455,6 +564,18 @@ def run(d, source="proxy", dry_run=False, force=False, write_state=True):
         games = len(set(l["personId"] for l in {**lines["regular"], **lines["playoffs"]}.values())) and \
             (1 if (lines["regular"] or lines["playoffs"]) else 0)
         games = 1 if (lines["regular"] or lines["playoffs"]) else 0
+    elif source == "csv":
+        try:
+            lines, raw = fetch_lines_csv(d)
+        except NotReady as e:
+            print(f"  not ready: {e} - nothing written (use --force to override).")
+            if not force:
+                return
+            season = season_str(d)
+            _SEASON_CACHE[season] = (load_season(season)[0], None)   # --force: skip the publish-time check
+            lines, raw = fetch_lines_csv(d)
+        games = len({l["game_id"] for sc_ in lines.values() for l in sc_.values()})
+        print(f"  season file: {games} game(s) that night")
     else:
         sc = scoreboard_check(d)
         games = sc["games"]
@@ -499,10 +620,12 @@ def run(d, source="proxy", dry_run=False, force=False, write_state=True):
     write_active_streaks(html)
     print("  wrote active-streaks.html (+ lastgame.html redirect)")
     if write_state:
-        if source == "proxy" and raw is not None:
+        if source in ("proxy", "csv") and raw is not None:
             os.makedirs(DAILY_DIR, exist_ok=True)
+            key = "leaguegamelog" if source == "proxy" else "season_file"
             with open(os.path.join(DAILY_DIR, f"{d.isoformat()}.json"), "w", encoding="utf-8") as f:
-                json.dump({"date": d.isoformat(), "season": season_str(d), "leaguegamelog": raw}, f, ensure_ascii=False)
+                json.dump({"date": d.isoformat(), "season": season_str(d), "source": source, key: raw},
+                          f, ensure_ascii=False)
             print(f"  wrote data/daily/{d.isoformat()}.json")
         with open(STATE_PATH, "w", encoding="utf-8") as f:
             json.dump(state, f, ensure_ascii=False, indent=1)
@@ -570,12 +693,14 @@ def validate(d):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", help="YYYY-MM-DD (default: last night US Eastern)")
-    ap.add_argument("--source", choices=["proxy", "historical"], default="proxy",
-                    help="proxy = live stats.nba.com (default); historical = our own dataset (offline testing)")
+    ap.add_argument("--source", choices=["csv", "proxy", "historical"], default="csv",
+                    help="csv = nba-editorial-bots season file on GitHub Pages (default); proxy = stats.nba.com "
+                         "through nba-proxy (blocked since Oct 2026); historical = our own dataset (offline testing)")
     ap.add_argument("--dry-run", action="store_true", help="compute + print, write nothing")
     ap.add_argument("--no-state", action="store_true",
                     help="write active-streaks.html only; leave active-state.json and data/daily untouched")
-    ap.add_argument("--force", action="store_true", help="run even if not all games Final")
+    ap.add_argument("--force", action="store_true",
+                    help="run even if not all games Final (csv: skip the readiness check)")
     ap.add_argument("--validate", metavar="YYYY-MM-DD", help="compare proxy vs historical for a past date")
     ap.add_argument("--season-end", action="store_true",
                     help="build active-streaks.html as the season-end state from our historical data (offline demo)")
