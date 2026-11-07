@@ -464,7 +464,7 @@ def main():
     # constituent city-eras per franchise (for the page subtitle), chronological
     eras_by_fr = {}
     er = (df.groupby(["franchise", "team_disp"])["season"].agg(["min", "max"]).reset_index()
-            .sort_values("min"))
+            .sort_values("min", kind="stable"))
     for r in er.itertuples(index=False):
         eras_by_fr.setdefault(r.franchise, []).append((r.team_disp, int(r.min), int(r.max)))
 

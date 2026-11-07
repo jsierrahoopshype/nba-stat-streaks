@@ -165,7 +165,7 @@ def compute_all(sub, gkey, cond_col, topn=TOPN, topk=10):
     run_meta = d.drop_duplicates("rid")[["pid", "len", "rid"]]
     topk_rids = {int(pid): [int(r) for r in grp.nlargest(topk, "len")["rid"]]
                  for pid, grp in run_meta.groupby("pid", sort=False)}
-    top_ids = [int(r) for r in np.argsort(counts)[::-1] if counts[r] > 0][:topn]   # unchanged leaderboard order
+    top_ids = [int(r) for r in np.argsort(-counts, kind="stable") if counts[r] > 0][:topn]   # ties: stable order (same on every machine)
     care = set(top_ids)
     for v in topk_rids.values():
         care.update(v)
@@ -283,7 +283,7 @@ def build_all():
         agg = grp.agg(count=("points", "size"), name=("name", "first"))
         years = m.groupby("personId")["gameDate"].agg(["min", "max"])
         agg["fy"] = years["min"].dt.year; agg["ly"] = years["max"].dt.year
-        agg = agg.sort_values("count", ascending=False)
+        agg = agg.sort_values("count", ascending=False, kind="stable")
         out = []
         for i, (pid, row) in enumerate(agg.head(TOPN).iterrows(), 1):
             slug = reg_player(int(pid), row["name"])
@@ -315,7 +315,7 @@ def build_all():
 
     # ----- per-player franchises (for player->franchise cross-links) -----
     tc = (df.groupby(["personId", "franchise"]).size().reset_index(name="n")
-            .sort_values("n", ascending=False))
+            .sort_values("n", ascending=False, kind="stable"))
     player_teams = {}                     # pid -> [(franchise, franchise_slug), ...] most games first
     for r in tc.itertuples(index=False):
         if r.franchise:
