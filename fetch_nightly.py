@@ -38,7 +38,7 @@ import pandas as pd
 
 import build_streaks as E
 import build_site as BS   # read-only: reuse the design system (CSS/nav/search) for active-streaks.html
-from export_active_state import FLOORS   # per-type floors (single source of truth)
+from export_active_state import FLOORS, current_season_players, still_active   # single source of truth
 
 FAMILY_BY_ID = {s["id"]: s["family"] for s in E.STREAKS}
 LABEL_BY_ID = {s["id"]: s["label"] for s in E.STREAKS}
@@ -475,6 +475,7 @@ def season_end_status(df, current_season):
     player's most-recent game in that scope — ACTIVE if that game met the threshold,
     ENDED if it failed a run that was already at/above the floor."""
     extended, ended = [], []
+    playing_now = current_season_players(df, current_season)
     for scope_key, _ in BS.SCOPES:
         sub = E.scope_df(df, scope_key).sort_values(["personId", "gameDate", "gameId"]).reset_index(drop=True)
         n = len(sub)
@@ -486,7 +487,8 @@ def season_end_status(df, current_season):
         stat = {k: sub[k].to_numpy() for k in
                 ("points", "reboundsTotal", "assists", "steals", "blocks", "threePointersMade")}
         is_last = np.empty(n, bool); is_last[-1] = True; is_last[:-1] = gkey[1:] != gkey[:-1]
-        last_idx = [i for i in np.where(is_last)[0] if nba_season(dates[i]) == current_season]
+        last_idx = [i for i in np.where(is_last)[0]
+                    if still_active(scope_key, dates[i], int(pids[i]), current_season, playing_now)]
         for sid in FAMILY_BY_ID:
             floor = FLOORS[sid]
             c = sub[sid].to_numpy(dtype=bool)
@@ -536,6 +538,20 @@ def write_active_streaks(html):
         f'<body>This page moved to <a href="{url}">Active Streaks →</a></body></html>\n')
     with open(os.path.join(BASE, "lastgame.html"), "w", encoding="utf-8") as f:
         f.write(stub)
+
+
+def active_page():
+    """active-streaks.html from the full dataset: every current active streak (same
+    runs the player and team pages show), labelled with the last date played."""
+    print("Building Active Streaks page from the full dataset…", flush=True)
+    df = E.load_appearances()
+    last = df["gameDate"].max().date()
+    cur = nba_season(last)
+    extended, _ended = season_end_status(df, cur)
+    html = render_lastgame(f"end of play on {BS.fmt_iso(last.isoformat())}", extended)
+    write_active_streaks(html)
+    print(f"  active={len(extended)}  milestones={sum(1 for e in extended if e['milestone'])}"
+          f"  through {last.isoformat()} -> wrote {ACTIVE_STREAKS_FILE} (+ lastgame.html redirect)")
 
 
 def season_end_demo():
@@ -704,7 +720,12 @@ def main():
     ap.add_argument("--validate", metavar="YYYY-MM-DD", help="compare proxy vs historical for a past date")
     ap.add_argument("--season-end", action="store_true",
                     help="build active-streaks.html as the season-end state from our historical data (offline demo)")
+    ap.add_argument("--active-page", action="store_true",
+                    help="build active-streaks.html from the full dataset (nightly_build.py step 5)")
     a = ap.parse_args()
+    if a.active_page:
+        active_page()
+        return
     if a.validate:
         validate(datetime.date.fromisoformat(a.validate))
         return

@@ -26,6 +26,23 @@ def nba_season(d):
     return d.year if d.month >= 7 else d.year - 1
 
 
+def current_season_players(df, current_season):
+    """personIds with at least one appearance (any scope) in the current season."""
+    d = df["gameDate"]
+    start = d.dt.year.where(d.dt.month >= 7, d.dt.year - 1)
+    return set(df.loc[start == current_season, "personId"].astype(int))
+
+
+def still_active(scope, last_date, pid, current_season, playing_now):
+    """A trailing run is current when its last game is in the current season. A PLAYOFF
+    run also stays current through the next regular season while the player is still
+    playing (it can only continue or end in his next playoff game)."""
+    s = nba_season(last_date)
+    if s == current_season:
+        return True
+    return scope == "playoffs" and s == current_season - 1 and pid in playing_now
+
+
 # per-type floors (keep the state file small)
 FLOORS = {
     "pts10": 10, "pts20": 5, "pts30": 3, "pts40": 2,
@@ -36,7 +53,7 @@ FLOORS = {
 }
 
 
-def trailing_active(sub, gkey, cond_col, floor, current_season):
+def trailing_active(sub, gkey, cond_col, floor, current_season, scope="regular", playing_now=frozenset()):
     """Each player's current trailing run of consecutive True in cond_col, i.e. the
     run that ends at their most recent appearance — IF that last game qualifies and
     falls in the current season and the run length clears the floor."""
@@ -56,7 +73,9 @@ def trailing_active(sub, gkey, cond_col, floor, current_season):
         if not c[i]:
             continue
         d = sub["gameDate"].iloc[i].date()
-        if nba_season(d) != current_season:
+        # same rule as the Active Streaks page (fetch_nightly.still_active): a playoff
+        # run stays current through the next regular season while the player plays
+        if not still_active(scope, d, int(sub["personId"].iloc[i]), current_season, playing_now):
             continue
         length = int(counts[run_id[i]])
         if length < floor:
@@ -78,13 +97,15 @@ def main():
     pid2name = df.drop_duplicates("personId").set_index("personId")["name"].to_dict()
     label_by_id = {s["id"]: s["label"] for s in E.STREAKS}
 
+    playing_now = current_season_players(df, current_season)
     streaks = []
     for scope_key, _ in BS.SCOPES:
         sub = E.scope_df(df, scope_key).sort_values(["personId", "gameDate", "gameId"]).reset_index(drop=True)
         gkey = sub["personId"].to_numpy()
         for s in E.STREAKS:
             sid = s["id"]
-            for pid, length, last_date, team, started in trailing_active(sub, gkey, sid, FLOORS[sid], current_season):
+            for pid, length, last_date, team, started in trailing_active(sub, gkey, sid, FLOORS[sid], current_season,
+                                                                         scope_key, playing_now):
                 name = pid2name.get(pid, f"Player {pid}")
                 streaks.append({
                     "personId": pid, "player": name, "slug": BS.slugify(name, pid),

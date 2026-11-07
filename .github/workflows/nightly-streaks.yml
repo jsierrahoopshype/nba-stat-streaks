@@ -1,24 +1,28 @@
 name: Nightly streak update
 
 # Daily at 11:37 UTC, after the nba-editorial-bots 10:23 UTC build republishes the
-# season box-score file this reads (no token), with a 15:37 UTC retry. Both run
-# nightly_catchup.py, which applies only the nights active-state.json is missing, so
-# a run with nothing new changes nothing. Also by hand from the Actions tab: a blank
-# date catches up to last night, a date applies that one night only.
+# season box-score file this reads (no token), with a 15:37 UTC retry. Each run
+# rebuilds the whole section from history/ (committed Kaggle extract through 2025-26)
+# plus the season file: active streaks and droughts (including ones that began this
+# season), leaderboards, player pages, team pages, Active Streaks and the sitemap.
+# Only pages whose content changed get a new sitemap lastmod, and a run with nothing
+# new commits nothing. Also by hand from the Actions tab.
 on:
   schedule:
     - cron: "37 11 * * *"
     - cron: "37 15 * * *"
   workflow_dispatch:
     inputs:
-      date:
-        description: "One night to apply (YYYY-MM-DD). Blank = every missing night through last night, US Eastern."
-        required: false
-        default: ""
+      skip_ready_check:
+        description: "Build even if the season file may not cover last night yet"
+        type: boolean
+        default: false
 
-# Only the contents scope; the commit step below is further restricted to 3 paths.
+# contents: the commit below (restricted to build outputs). pages: request a Pages
+# build after the push (pushes made with this token may not start one on their own).
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: nightly-streaks
@@ -27,6 +31,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -37,38 +42,38 @@ jobs:
       - name: Install deps
         run: pip install pandas numpy
 
-      - name: Run nightly fetcher
+      - name: Rebuild the section
+        id: build
         run: |
-          if [ -n "${{ inputs.date }}" ]; then
-            python fetch_nightly.py --date "${{ inputs.date }}"
-          else
-            # exit 4 = the season file has not been republished for the next night yet:
-            # nothing is applied and the next run retries, so the run stays green.
-            rc=0; python nightly_catchup.py || rc=$?
-            if [ "$rc" = "4" ]; then echo "::warning title=Season file not ready::Nothing applied; the next run retries."; rc=0; fi
-            exit $rc
+          # exit 4 = the season file has not been republished for last night yet:
+          # nothing is built and the next run retries, so the run stays green.
+          set +e
+          python nightly_build.py ${{ inputs.skip_ready_check && '--no-ready-check' || '' }} 2>&1 | tee /tmp/build.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          if [ "$rc" = "4" ]; then
+            echo "::warning title=Season file not ready::Nothing built; the next run retries."
+            echo "skip=1" >> "$GITHUB_OUTPUT"; exit 0
           fi
+          exit $rc
 
-      # Hash-compares every public page against sitemap-lastmod.json; only new or
-      # changed pages get today's (UTC) lastmod, unchanged pages keep theirs.
-      - name: Update sitemap
-        run: python build_sitemap.py
-
-      - name: Commit ONLY pipeline outputs (active-state.json, data/daily/, active-streaks.html, lastgame.html, sitemap)
+      - name: Commit ONLY build outputs
+        if: steps.build.outputs.skip != '1'
+        id: commit
         run: |
           git config user.name  "nba-streaks-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Stage ONLY the allowed outputs — never engine/build files or player pages.
-          # (lastgame.html is the static redirect stub kept for old links.)
-          git add active-state.json active-streaks.html lastgame.html sitemap.xml sitemap-lastmod.json
-          if [ -d data/daily ]; then git add data/daily; fi
+          # Stage ONLY the build outputs — never scripts, history/ or data/.
+          git add -A -- active-state.json active-streaks.html lastgame.html index.html feats.html \
+            droughts.html teams.html players teams streaks-data.js feats-data.js search-index.js \
+            droughts-data.js droughts-leaderboard-data.js sitemap.xml sitemap-lastmod.json
 
           staged="$(git diff --cached --name-only)"
-          echo "Staged files:"; echo "$staged"
+          echo "Staged $(echo "$staged" | grep -c . || true) file(s)"
 
           # Hard guard: abort if anything outside the allowed set got staged.
-          if echo "$staged" | grep -qvE '^(active-state\.json|active-streaks\.html|lastgame\.html|sitemap\.xml|sitemap-lastmod\.json|data/daily/)'; then
+          if echo "$staged" | grep -v '^$' | grep -qvE '^(active-state\.json|active-streaks\.html|lastgame\.html|index\.html|feats\.html|droughts\.html|teams\.html|players/[^/]+\.html|teams/[^/]+\.html|streaks-data\.js|feats-data\.js|search-index\.js|droughts-data\.js|droughts-leaderboard-data\.js|sitemap\.xml|sitemap-lastmod\.json)$'; then
             echo "::error::Out-of-scope file staged — refusing to commit."
             exit 1
           fi
@@ -78,5 +83,13 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Nightly streak update ($(date -u +%F))"
+          through=$(python -c "import json;print(json.load(open('active-state.json'))['data_through'])")
+          git commit -q -m "Nightly streak update (games through $through)"
           git push
+          echo "pushed=1" >> "$GITHUB_OUTPUT"
+
+      - name: Request a GitHub Pages build
+        if: steps.commit.outputs.pushed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo "::warning::Pages build request failed; the push may still trigger one."

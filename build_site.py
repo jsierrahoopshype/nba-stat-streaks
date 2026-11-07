@@ -624,14 +624,34 @@ def build_player_page(pid, ctx):
                 cur_fam = s["family"]
             arank = ctx["alltime_rank"].get((sid, scope_key), {})
             positions = competition_positions([r["length"] for r in runs])
+            # The current run (as listed on the Active Streaks page) is marked "active";
+            # when it is shorter than the top 10 it is added as an extra row.
+            act = ctx.get("active_runs", {}).get((pid, sid, scope_key))
+            act_i = None
+            if act:
+                for i, r in enumerate(runs):
+                    if r["length"] == act["length"] and str(r["end"]) == act["last_date"]:
+                        act_i = i
+                        break
+            badge = ('<span style="display:inline-block;margin-left:.35rem;font-size:.6rem;font-weight:700;'
+                     'color:var(--accent);background:var(--accent-dim);border-radius:10px;padding:.05rem .4rem;'
+                     'vertical-align:middle;">active</span>')
             body_rows = "".join(
                 f'<tr><td class="col-rank" data-label="#">{pos}</td>'
-                f'<td class="col-streak" data-label="Length">{r["length"]}</td>'
+                f'<td class="col-streak" data-label="Length">{r["length"]}{badge if i == act_i else ""}</td>'
                 f'<td class="col-date" data-label="Dates">{fmt_iso(r["start"])} – {fmt_iso(r["end"])}</td>'
                 f'<td class="col-team" data-label="Team(s)">{team_links_html(r)}</td>'
                 f'<td data-label="All-time rank">'
                 f'{("#"+str(arank[r["length"]])) if r["length"] in arank else "—"}</td></tr>'
-                for pos, r in zip(positions, runs))
+                for i, (pos, r) in enumerate(zip(positions, runs)))
+            if act and act_i is None:
+                body_rows += (
+                    f'<tr><td class="col-rank" data-label="#">—</td>'
+                    f'<td class="col-streak" data-label="Length">{act["length"]}{badge}</td>'
+                    f'<td class="col-date" data-label="Dates">{fmt_iso(act["started"])} – {fmt_iso(act["last_date"])}</td>'
+                    f'<td class="col-team" data-label="Team(s)">{esc(act.get("team") or "—")}</td>'
+                    f'<td data-label="All-time rank">'
+                    f'{("#"+str(arank[act["length"]])) if act["length"] in arank else "—"}</td></tr>')
             inner += (f'<div class="tcap">{esc(label_by_id[sid])}</div><div class="table-card">'
                       '<table class="board"><thead><tr><th class="col-rank">#</th>'
                       '<th class="col-streak">Length</th><th class="col-date">Dates</th>'
@@ -1033,9 +1053,28 @@ DROUGHT_TOGGLE_JS = r"""
 # --------------------------------------------------------------------------- #
 # Main
 # --------------------------------------------------------------------------- #
+def load_active_runs(data_through):
+    """{(personId, type, scope): streak} from active-state.json -- the same current runs
+    (same floors) the Active Streaks page lists -- so player pages can mark them. Used only
+    when the file is from this same data (nightly_build.py writes it just before this)."""
+    path = os.path.join(BASE, "active-state.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            state = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    if state.get("data_through") != data_through:
+        print(f"  active-state.json is through {state.get('data_through')}, data through "
+              f"{data_through}: player pages carry no active marks")
+        return {}
+    return {(int(r["personId"]), r["type"], r["scope"]): r for r in state.get("streaks", [])}
+
+
 def main():
     os.makedirs(PLAYERS_DIR, exist_ok=True)
     ctx = build_all()
+    ctx["active_runs"] = load_active_runs(ctx["df"]["gameDate"].max().date().isoformat())
+    print(f"  {len(ctx['active_runs'])} active streaks marked on player pages", flush=True)
     players = ctx["players"]
 
     # data files
