@@ -9,7 +9,8 @@ This writes those three files to data/build/ (gitignored) from:
                                          player-box-scores) Regular Season + Playoffs rows
                                          through 2025-26, only the columns the engine reads
   history/Players.csv.gz                 Kaggle Players.csv (personId, names, country)
-  history/nationalities.csv.gz           nationality lookup used for flags
+  history/nationalities.csv.gz           nationality lookup used for flags (Alberto (HoopsMatic),
+                                         own compilation; see history/SOURCES.md)
   history/patch_missing_games.csv.gz     6 postponed 2024-25 games the Kaggle file lacks
                                          (stats.nba.com box lines, season-file columns)
   season files from 2026-27 on           player_games_<season>.csv published by
