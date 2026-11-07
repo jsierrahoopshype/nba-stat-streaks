@@ -151,7 +151,7 @@ def compute_streaks(sub, group_key, cond_col, top=25):
     run_id = np.cumsum(run_start)
     rid_true = run_id[c]
     counts = np.bincount(rid_true)
-    top_ids = [r for r in np.argsort(counts)[::-1] if counts[r] > 0][:top]
+    top_ids = [r for r in np.argsort(-counts, kind="stable") if counts[r] > 0][:top]   # stable ties
     top_set = set(int(r) for r in top_ids)
 
     idx = np.where(c)[0]
