@@ -303,13 +303,13 @@ def build_team_page(target, best, active, ranks, players, eras=None,
                ("Dates", "col-date"), ("All-time rank", "")], best_row, "No career-best runs of note.")
     active_html = _render_section(
         active, [("#", "col-rank"), ("Player", "col-player"), ("Length", "col-streak"),
-                 ("Started", "col-date")], active_row, "No active streaks into the offseason.")
+                 ("Started", "col-date")], active_row, "No active streaks right now.")
 
     n_best = sum(len(v) for v in best.values())
     n_active = sum(len(v) for v in active.values())
     title = f"{target} — Player Streaks by Franchise | HoopsMatic"
     desc = (f"{target} players' consecutive-game statistical streaks across the full franchise lineage: "
-            f"career-best runs and current runs active into the offseason, by scope and stat family.")
+            f"career-best runs and current active runs, by scope and stat family.")
     multi = eras and len(eras) > 1
     eras_html = (f'<p class="erasln"><span class="tl-label">Eras</span>{eras_line(eras)}</p>'
                  if multi else "")
@@ -323,7 +323,7 @@ def build_team_page(target, best, active, ranks, players, eras=None,
     streaks_view = (
         f'<h2 class="sech">🏆 Best ever <span class="note">— career-best runs on this team ({n_best})</span></h2>\n'
         f'{best_html}'
-        f'<h2 class="sech">🔥 Active into the offseason <span class="note">— CURRENT trailing runs, not bests ({n_active})</span></h2>\n'
+        f'<h2 class="sech">🔥 Active streaks <span class="note">— CURRENT trailing runs, not bests ({n_active})</span></h2>\n'
         f'{active_html}')
     droughts_view = (
         f'<h2 class="sech">🥶 Droughts <span class="note">— longest career runs STRICTLY UNDER a '

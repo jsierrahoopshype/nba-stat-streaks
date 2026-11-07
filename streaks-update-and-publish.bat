@@ -2,10 +2,10 @@
 rem ==========================================================================
 rem  streaks-update-and-publish.bat  -  double-click to update and publish.
 rem
-rem  1. nightly_catchup.py   apply every missing night via fetch_nightly.py
-rem  2. build_site.py        leaderboards, feats, droughts, player pages
-rem  3. build_teams.py --all team pages
-rem  4. build_sitemap.py     sitemap.xml + sitemap-lastmod.json
+rem  FALLBACK ONLY: the "Nightly streak update" GitHub Action does this daily.
+rem
+rem  1-4. nightly_build.py   history\ + season file -> every page, active
+rem                          streaks, team pages, sitemap (same as the Action)
 rem  5. git add (build outputs only) + commit + push
 rem
 rem  Any failure stops the script BEFORE anything is committed or pushed.
@@ -34,45 +34,13 @@ echo [0/5] Pulling latest main from GitHub...
 git pull --ff-only || (set "MSG=git pull failed. Local changes may conflict with GitHub; nothing was changed." & goto fail)
 echo.
 
-rem ---- Kaggle data: repo data\ first, then the old C:\nba-stat-streaks\data --
-if exist "data\PlayerStatistics.csv" goto data_ok
-if exist "C:\nba-stat-streaks\data\PlayerStatistics.csv" (
-    set "NBA_STREAKS_DATA=C:\nba-stat-streaks\data"
-    echo Using data from C:\nba-stat-streaks\data
-    goto data_ok
-)
-set "MSG=PlayerStatistics.csv not found in %CD%\data or C:\nba-stat-streaks\data"
-goto fail
-:data_ok
-
-rem ---- 1. Fetch -------------------------------------------------------------
-echo [1/5] Fetching last night's games...
-%PY% nightly_catchup.py
-if "%ERRORLEVEL%"=="3" goto gap
-if errorlevel 1 (set "MSG=Step 1 fetch failed. Nothing was committed or pushed." & goto fail)
-goto build
-:gap
-echo.
-choice /C YN /M "The streak state is more than a week behind. Catch up every missing night now"
-if errorlevel 2 (set "MSG=Catch-up declined. Nothing was committed or pushed." & goto fail)
-%PY% nightly_catchup.py --allow-gap
-if errorlevel 1 (set "MSG=Step 1 catch-up failed. Nothing was committed or pushed." & goto fail)
-
-:build
-echo.
-echo [2/5] Building site pages - this takes a while...
-%PY% build_site.py
-if errorlevel 1 (set "MSG=Step 2 build_site.py failed. Nothing was committed or pushed." & goto fail)
-
-echo.
-echo [3/5] Building team pages...
-%PY% build_teams.py --all
-if errorlevel 1 (set "MSG=Step 3 build_teams.py failed. Nothing was committed or pushed." & goto fail)
-
-echo.
-echo [4/5] Updating sitemap...
-%PY% build_sitemap.py
-if errorlevel 1 (set "MSG=Step 4 build_sitemap.py failed. Nothing was committed or pushed." & goto fail)
+rem ---- 1-4. Rebuild everything (same script as the daily GitHub Action) ------
+rem  nightly_build.py builds from history\ (committed Kaggle extract) plus the
+rem  season file nba-editorial-bots publishes, so no local Kaggle download is
+rem  needed. Fallback only: the Action normally does this every day.
+echo [1/5] Rebuilding streaks, droughts, player, team and Active Streaks pages - this takes a while...
+%PY% nightly_build.py --no-ready-check
+if errorlevel 1 (set "MSG=nightly_build.py failed. Nothing was committed or pushed." & goto fail)
 
 rem ---- 5. Commit + push (build outputs only, never scripts or data CSVs) -----
 echo.
