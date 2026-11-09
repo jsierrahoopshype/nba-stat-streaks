@@ -1,7 +1,8 @@
 name: Nightly streak update
 
-# Daily at 11:37 UTC, after the nba-editorial-bots 10:23 UTC build republishes the
-# season box-score file this reads (no token), with a 15:37 UTC retry. Each run
+# Daily at 11:37 UTC with a 15:37 UTC retry. A night is applied once the season
+# box-score file this reads (no token) was republished by nba-editorial-bots after
+# 07:00 UTC the next morning and every game has both teams' lines. Each run
 # rebuilds the whole section from history/ (committed Kaggle extract through 2025-26)
 # plus the season file: active streaks and droughts (including ones that began this
 # season), leaderboards, player pages, team pages, Active Streaks and the sitemap.

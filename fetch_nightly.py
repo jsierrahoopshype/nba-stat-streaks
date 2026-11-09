@@ -7,8 +7,9 @@ Flow (run after games are Final):
      repo publishes on GitHub Pages (cdn.nba.com box scores, final games only,
      Regular Season + Playoffs; no token). stats.nba.com through nba-proxy is
      blocked since Oct 2026, so the proxy is no longer the default source.
-  3. Readiness check: the file must have been published after 10:00 UTC the
-     morning after the night (the bots' 10:23 UTC build always republishes it),
+  3. Readiness check: the file must have been published after 07:00 UTC the
+     morning after the night (the night's last games are final by then; the bots
+     republish it after every post and on their own builds),
      and every game that night must have lines for both teams.
   4. For each streak in active-state.json: extend if the player met the threshold,
      break if they appeared and missed, leave unchanged if they didn't play.
@@ -52,7 +53,7 @@ SEASON_CSV_URL = "https://jsierrahoopshype.github.io/nba-editorial-bots/data/pla
 # Optional local folder with player_games_<season>.csv files in the same format; when a
 # file for the season is there it is used instead of the URL (one-off backfills).
 SEASON_CSV_DIR = os.environ.get("NBA_STREAKS_SEASON_CSV_DIR", "")
-READY_HOUR_UTC = 10   # night D counts only if the file was published at/after D+1 10:00 UTC
+READY_HOUR_UTC = 7    # night D counts only if the file was published at/after D+1 07:00 UTC
 BASE = os.path.dirname(os.path.abspath(__file__))   # repo folder (works on Windows and in CI)
 DAILY_DIR = os.path.join(BASE, "data", "daily")
 STATE_PATH = os.path.join(BASE, "active-state.json")

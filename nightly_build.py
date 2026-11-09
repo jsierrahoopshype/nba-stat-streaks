@@ -5,7 +5,7 @@ Every run recomputes everything from scratch, so streaks and droughts that began
 season are picked up the same way as old ones (no incremental state to drift):
 
   0. readiness: last night (US Eastern) must be covered by the season file
-     (fetch_nightly.night_rows; published after 10:00 UTC the next morning, every game
+     (fetch_nightly.night_rows; published after 07:00 UTC the next morning, every game
      with both teams' lines). Not ready -> exit 4, nothing is written.
   1. prepare_data.py       history/ + season file -> data/build/ (Kaggle format)
   2. export_active_state   active-state.json (every current trailing run over its floor)
