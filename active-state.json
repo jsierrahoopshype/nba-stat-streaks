@@ -1,7 +1,7 @@
 {
  "season": "2026-27",
  "current_season_year": 2026,
- "data_through": "2026-11-10",
+ "data_through": "2026-11-11",
  "floors": {
   "pts10": 10,
   "pts20": 5,
@@ -24,7 +24,7 @@
   "p20r10": 3,
   "p30r5a5": 3
  },
- "count": 185,
+ "count": 199,
  "streaks": [
   {
    "personId": 201142,
@@ -33,8 +33,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 371,
-   "last_date": "2026-11-09",
+   "length": 372,
+   "last_date": "2026-11-11",
    "started": "2021-04-25",
    "team": "Houston"
   },
@@ -45,8 +45,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 339,
-   "last_date": "2026-11-09",
+   "length": 340,
+   "last_date": "2026-11-11",
    "started": "2021-04-25",
    "team": "Houston"
   },
@@ -57,8 +57,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 276,
-   "last_date": "2026-11-10",
+   "length": 277,
+   "last_date": "2026-11-11",
    "started": "2023-10-30",
    "team": "Oklahoma City"
   },
@@ -69,8 +69,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 242,
-   "last_date": "2026-11-09",
+   "length": 243,
+   "last_date": "2026-11-11",
    "started": "2023-01-30",
    "team": "LA Lakers"
   },
@@ -81,8 +81,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 228,
-   "last_date": "2026-11-10",
+   "length": 229,
+   "last_date": "2026-11-11",
    "started": "2023-10-30",
    "team": "Oklahoma City"
   },
@@ -93,8 +93,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 215,
-   "last_date": "2026-11-09",
+   "length": 216,
+   "last_date": "2026-11-11",
    "started": "2023-01-30",
    "team": "LA Lakers"
   },
@@ -117,8 +117,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 170,
-   "last_date": "2026-11-10",
+   "length": 171,
+   "last_date": "2026-11-11",
    "started": "2024-01-13",
    "team": "Boston"
   },
@@ -141,8 +141,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 137,
-   "last_date": "2026-11-10",
+   "length": 138,
+   "last_date": "2026-11-11",
    "started": "2024-01-13",
    "team": "Boston"
   },
@@ -159,6 +159,18 @@
    "team": "Toronto"
   },
   {
+   "personId": 1627783,
+   "player": "Pascal Siakam",
+   "slug": "pascal-siakam-1627783",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "combined",
+   "length": 106,
+   "last_date": "2026-11-11",
+   "started": "2025-03-22",
+   "team": "Indiana"
+  },
+  {
    "personId": 1627759,
    "player": "Jaylen Brown",
    "slug": "jaylen-brown-1627759",
@@ -169,18 +181,6 @@
    "last_date": "2026-05-02",
    "started": "2019-04-19",
    "team": "Boston"
-  },
-  {
-   "personId": 1627783,
-   "player": "Pascal Siakam",
-   "slug": "pascal-siakam-1627783",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "combined",
-   "length": 105,
-   "last_date": "2026-11-09",
-   "started": "2025-03-22",
-   "team": "Indiana"
   },
   {
    "personId": 202695,
@@ -213,8 +213,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 82,
-   "last_date": "2026-11-09",
+   "length": 83,
+   "last_date": "2026-11-11",
    "started": "2025-03-22",
    "team": "Indiana"
   },
@@ -225,8 +225,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 81,
-   "last_date": "2026-11-08",
+   "length": 82,
+   "last_date": "2026-11-11",
    "started": "2025-03-08",
    "team": "LA Lakers"
   },
@@ -249,8 +249,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 69,
-   "last_date": "2026-11-09",
+   "length": 70,
+   "last_date": "2026-11-11",
    "started": "2025-11-05",
    "team": "San Antonio"
   },
@@ -345,8 +345,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 44,
-   "last_date": "2026-11-10",
+   "length": 45,
+   "last_date": "2026-11-11",
    "started": "2026-03-08",
    "team": "New York"
   },
@@ -369,8 +369,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 41,
-   "last_date": "2026-11-10",
+   "length": 42,
+   "last_date": "2026-11-11",
    "started": "2026-01-30",
    "team": "New York"
   },
@@ -429,8 +429,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 34,
-   "last_date": "2026-11-09",
+   "length": 35,
+   "last_date": "2026-11-11",
    "started": "2025-03-14",
    "team": "Memphis"
   },
@@ -441,8 +441,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 34,
-   "last_date": "2026-11-09",
+   "length": 35,
+   "last_date": "2026-11-11",
    "started": "2026-03-30",
    "team": "Cleveland"
   },
@@ -453,8 +453,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 33,
-   "last_date": "2026-11-10",
+   "length": 34,
+   "last_date": "2026-11-11",
    "started": "2026-03-08",
    "team": "Portland"
   },
@@ -519,6 +519,18 @@
    "team": "Minnesota"
   },
   {
+   "personId": 1630166,
+   "player": "Deni Avdija",
+   "slug": "deni-avdija-1630166",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "regular",
+   "length": 29,
+   "last_date": "2026-11-11",
+   "started": "2026-03-08",
+   "team": "Portland"
+  },
+  {
    "personId": 1630178,
    "player": "Tyrese Maxey",
    "slug": "tyrese-maxey-1630178",
@@ -531,26 +543,14 @@
    "team": "Philadelphia"
   },
   {
-   "personId": 1630166,
-   "player": "Deni Avdija",
-   "slug": "deni-avdija-1630166",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "regular",
-   "length": 28,
-   "last_date": "2026-11-10",
-   "started": "2026-03-08",
-   "team": "Portland"
-  },
-  {
    "personId": 1629627,
    "player": "Zion Williamson",
    "slug": "zion-williamson-1629627",
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 27,
-   "last_date": "2026-11-08",
+   "length": 28,
+   "last_date": "2026-11-11",
    "started": "2026-03-03",
    "team": "New Orleans"
   },
@@ -561,8 +561,8 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 27,
-   "last_date": "2026-11-09",
+   "length": 28,
+   "last_date": "2026-11-11",
    "started": "2026-03-18",
    "team": "Denver"
   },
@@ -573,10 +573,22 @@
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 27,
-   "last_date": "2026-11-08",
+   "length": 28,
+   "last_date": "2026-11-11",
    "started": "2026-03-03",
    "team": "New Orleans"
+  },
+  {
+   "personId": 1628973,
+   "player": "Jalen Brunson",
+   "slug": "jalen-brunson-1628973",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "regular",
+   "length": 26,
+   "last_date": "2026-11-11",
+   "started": "2026-03-08",
+   "team": "New York"
   },
   {
    "personId": 1630552,
@@ -591,16 +603,16 @@
    "team": "Atlanta"
   },
   {
-   "personId": 1628973,
-   "player": "Jalen Brunson",
-   "slug": "jalen-brunson-1628973",
+   "personId": 1641705,
+   "player": "Victor Wembanyama",
+   "slug": "victor-wembanyama-1641705",
    "type": "pts10",
    "label": "10+ points",
-   "scope": "regular",
-   "length": 25,
-   "last_date": "2026-11-10",
-   "started": "2026-03-08",
-   "team": "New York"
+   "scope": "combined",
+   "length": 26,
+   "last_date": "2026-11-11",
+   "started": "2026-05-12",
+   "team": "San Antonio"
   },
   {
    "personId": 1627750,
@@ -615,16 +627,16 @@
    "team": "Denver"
   },
   {
-   "personId": 1641705,
-   "player": "Victor Wembanyama",
-   "slug": "victor-wembanyama-1641705",
+   "personId": 1629660,
+   "player": "Ty Jerome",
+   "slug": "ty-jerome-1629660",
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
    "length": 25,
-   "last_date": "2026-11-09",
-   "started": "2026-05-12",
-   "team": "San Antonio"
+   "last_date": "2026-11-11",
+   "started": "2026-01-31",
+   "team": "Memphis"
   },
   {
    "personId": 1627759,
@@ -651,18 +663,6 @@
    "team": "New York"
   },
   {
-   "personId": 1629660,
-   "player": "Ty Jerome",
-   "slug": "ty-jerome-1629660",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "combined",
-   "length": 24,
-   "last_date": "2026-11-09",
-   "started": "2026-01-31",
-   "team": "Memphis"
-  },
-  {
    "personId": 1630595,
    "player": "Cade Cunningham",
    "slug": "cade-cunningham-1630595",
@@ -675,40 +675,28 @@
    "team": "Detroit"
   },
   {
-   "personId": 201939,
-   "player": "Stephen Curry",
-   "slug": "stephen-curry-201939",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "regular",
-   "length": 21,
-   "last_date": "2026-11-09",
-   "started": "2026-01-15",
-   "team": "Golden State"
-  },
-  {
    "personId": 203999,
    "player": "Nikola Jokic",
    "slug": "nikola-jokic-203999",
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
-   "length": 21,
-   "last_date": "2026-11-09",
+   "length": 22,
+   "last_date": "2026-11-11",
    "started": "2026-03-18",
    "team": "Denver"
   },
   {
-   "personId": 201939,
-   "player": "Stephen Curry",
-   "slug": "stephen-curry-201939",
+   "personId": 1630532,
+   "player": "Franz Wagner",
+   "slug": "franz-wagner-1630532",
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
    "length": 21,
-   "last_date": "2026-11-09",
-   "started": "2026-01-15",
-   "team": "Golden State"
+   "last_date": "2026-11-11",
+   "started": "2026-04-01",
+   "team": "Orlando"
   },
   {
    "personId": 1630595,
@@ -723,16 +711,28 @@
    "team": "Detroit"
   },
   {
-   "personId": 1630532,
-   "player": "Franz Wagner",
-   "slug": "franz-wagner-1630532",
+   "personId": 1642844,
+   "player": "Dylan Harper",
+   "slug": "dylan-harper-1642844",
    "type": "pts10",
    "label": "10+ points",
    "scope": "combined",
-   "length": 20,
-   "last_date": "2026-11-10",
-   "started": "2026-04-01",
-   "team": "Orlando"
+   "length": 19,
+   "last_date": "2026-11-11",
+   "started": "2026-05-28",
+   "team": "San Antonio"
+  },
+  {
+   "personId": 203944,
+   "player": "Julius Randle",
+   "slug": "julius-randle-203944",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "regular",
+   "length": 18,
+   "last_date": "2026-11-11",
+   "started": "2026-03-25",
+   "team": "Brooklyn"
   },
   {
    "personId": 1630183,
@@ -747,28 +747,28 @@
    "team": "Minnesota"
   },
   {
-   "personId": 1642844,
-   "player": "Dylan Harper",
-   "slug": "dylan-harper-1642844",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "combined",
-   "length": 18,
-   "last_date": "2026-11-09",
-   "started": "2026-05-28",
-   "team": "San Antonio"
-  },
-  {
-   "personId": 203944,
-   "player": "Julius Randle",
-   "slug": "julius-randle-203944",
+   "personId": 1628378,
+   "player": "Donovan Mitchell",
+   "slug": "donovan-mitchell-1628378",
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
    "length": 17,
-   "last_date": "2026-11-08",
-   "started": "2026-03-25",
-   "team": "Brooklyn"
+   "last_date": "2026-11-11",
+   "started": "2026-03-30",
+   "team": "Cleveland"
+  },
+  {
+   "personId": 1630532,
+   "player": "Franz Wagner",
+   "slug": "franz-wagner-1630532",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "regular",
+   "length": 17,
+   "last_date": "2026-11-11",
+   "started": "2026-04-01",
+   "team": "Orlando"
   },
   {
    "personId": 1629628,
@@ -783,6 +783,18 @@
    "team": "Toronto"
   },
   {
+   "personId": 1630578,
+   "player": "Alperen Sengun",
+   "slug": "alperen-sengun-1630578",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "combined",
+   "length": 17,
+   "last_date": "2026-11-11",
+   "started": "2026-04-10",
+   "team": "Houston"
+  },
+  {
    "personId": 1631094,
    "player": "Paolo Banchero",
    "slug": "paolo-banchero-1631094",
@@ -792,30 +804,6 @@
    "length": 17,
    "last_date": "2026-10-23",
    "started": "2026-03-31",
-   "team": "Orlando"
-  },
-  {
-   "personId": 1628378,
-   "player": "Donovan Mitchell",
-   "slug": "donovan-mitchell-1628378",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "regular",
-   "length": 16,
-   "last_date": "2026-11-09",
-   "started": "2026-03-30",
-   "team": "Cleveland"
-  },
-  {
-   "personId": 1630532,
-   "player": "Franz Wagner",
-   "slug": "franz-wagner-1630532",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "regular",
-   "length": 16,
-   "last_date": "2026-11-10",
-   "started": "2026-04-01",
    "team": "Orlando"
   },
   {
@@ -831,16 +819,28 @@
    "team": "Atlanta"
   },
   {
-   "personId": 1630578,
-   "player": "Alperen Sengun",
-   "slug": "alperen-sengun-1630578",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "combined",
-   "length": 16,
-   "last_date": "2026-11-09",
-   "started": "2026-04-10",
-   "team": "Houston"
+   "personId": 1626157,
+   "player": "Karl-Anthony Towns",
+   "slug": "karl-anthony-towns-1626157",
+   "type": "reb10",
+   "label": "10+ rebounds",
+   "scope": "regular",
+   "length": 15,
+   "last_date": "2026-11-11",
+   "started": "2026-04-01",
+   "team": "New York"
+  },
+  {
+   "personId": 1626157,
+   "player": "Karl-Anthony Towns",
+   "slug": "karl-anthony-towns-1626157",
+   "type": "dd",
+   "label": "Double-double",
+   "scope": "regular",
+   "length": 15,
+   "last_date": "2026-11-11",
+   "started": "2026-04-01",
+   "team": "New York"
   },
   {
    "personId": 1631094,
@@ -855,28 +855,28 @@
    "team": "Orlando"
   },
   {
-   "personId": 1626157,
-   "player": "Karl-Anthony Towns",
-   "slug": "karl-anthony-towns-1626157",
-   "type": "reb10",
-   "label": "10+ rebounds",
-   "scope": "regular",
-   "length": 14,
-   "last_date": "2026-11-10",
-   "started": "2026-04-01",
-   "team": "New York"
+   "personId": 1630559,
+   "player": "Austin Reaves",
+   "slug": "austin-reaves-1630559",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "combined",
+   "length": 15,
+   "last_date": "2026-11-11",
+   "started": "2026-05-07",
+   "team": "LA Lakers"
   },
   {
-   "personId": 1626157,
-   "player": "Karl-Anthony Towns",
-   "slug": "karl-anthony-towns-1626157",
-   "type": "dd",
-   "label": "Double-double",
+   "personId": 1629008,
+   "player": "Michael Porter Jr.",
+   "slug": "michael-porter-jr-1629008",
+   "type": "pts10",
+   "label": "10+ points",
    "scope": "regular",
    "length": 14,
-   "last_date": "2026-11-10",
-   "started": "2026-04-01",
-   "team": "New York"
+   "last_date": "2026-11-11",
+   "started": "2026-03-05",
+   "team": "Brooklyn"
   },
   {
    "personId": 1641705,
@@ -891,26 +891,14 @@
    "team": "San Antonio"
   },
   {
-   "personId": 1630559,
-   "player": "Austin Reaves",
-   "slug": "austin-reaves-1630559",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "combined",
-   "length": 14,
-   "last_date": "2026-11-08",
-   "started": "2026-05-07",
-   "team": "LA Lakers"
-  },
-  {
    "personId": 1629008,
    "player": "Michael Porter Jr.",
    "slug": "michael-porter-jr-1629008",
    "type": "pts10",
    "label": "10+ points",
-   "scope": "regular",
-   "length": 13,
-   "last_date": "2026-11-08",
+   "scope": "combined",
+   "length": 14,
+   "last_date": "2026-11-11",
    "started": "2026-03-05",
    "team": "Brooklyn"
   },
@@ -925,6 +913,18 @@
    "last_date": "2026-11-10",
    "started": "2026-04-09",
    "team": "Miami"
+  },
+  {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "regular",
+   "length": 13,
+   "last_date": "2026-11-11",
+   "started": "2026-03-31",
+   "team": "LA Lakers"
   },
   {
    "personId": 1630578,
@@ -939,18 +939,6 @@
    "team": "Houston"
   },
   {
-   "personId": 1629008,
-   "player": "Michael Porter Jr.",
-   "slug": "michael-porter-jr-1629008",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "combined",
-   "length": 13,
-   "last_date": "2026-11-08",
-   "started": "2026-03-05",
-   "team": "Brooklyn"
-  },
-  {
    "personId": 1630558,
    "player": "Davion Mitchell",
    "slug": "davion-mitchell-1630558",
@@ -961,6 +949,42 @@
    "last_date": "2026-11-10",
    "started": "2026-04-09",
    "team": "Miami"
+  },
+  {
+   "personId": 1626157,
+   "player": "Karl-Anthony Towns",
+   "slug": "karl-anthony-towns-1626157",
+   "type": "reb10",
+   "label": "10+ rebounds",
+   "scope": "combined",
+   "length": 13,
+   "last_date": "2026-11-11",
+   "started": "2026-06-10",
+   "team": "New York"
+  },
+  {
+   "personId": 203999,
+   "player": "Nikola Jokic",
+   "slug": "nikola-jokic-203999",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "combined",
+   "length": 13,
+   "last_date": "2026-11-11",
+   "started": "2026-04-25",
+   "team": "Denver"
+  },
+  {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "combined",
+   "length": 13,
+   "last_date": "2026-11-11",
+   "started": "2026-03-31",
+   "team": "LA Lakers"
   },
   {
    "personId": 1629630,
@@ -975,16 +999,16 @@
    "team": "Portland"
   },
   {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
-   "type": "ast5",
-   "label": "5+ assists",
+   "personId": 1642844,
+   "player": "Dylan Harper",
+   "slug": "dylan-harper-1642844",
+   "type": "pts10",
+   "label": "10+ points",
    "scope": "regular",
    "length": 12,
-   "last_date": "2026-11-09",
-   "started": "2026-03-31",
-   "team": "LA Lakers"
+   "last_date": "2026-11-11",
+   "started": "2026-10-20",
+   "team": "San Antonio"
   },
   {
    "personId": 1629060,
@@ -1059,42 +1083,6 @@
    "team": "Portland"
   },
   {
-   "personId": 1626157,
-   "player": "Karl-Anthony Towns",
-   "slug": "karl-anthony-towns-1626157",
-   "type": "reb10",
-   "label": "10+ rebounds",
-   "scope": "combined",
-   "length": 12,
-   "last_date": "2026-11-10",
-   "started": "2026-06-10",
-   "team": "New York"
-  },
-  {
-   "personId": 203999,
-   "player": "Nikola Jokic",
-   "slug": "nikola-jokic-203999",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "combined",
-   "length": 12,
-   "last_date": "2026-11-09",
-   "started": "2026-04-25",
-   "team": "Denver"
-  },
-  {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "combined",
-   "length": 12,
-   "last_date": "2026-11-09",
-   "started": "2026-03-31",
-   "team": "LA Lakers"
-  },
-  {
    "personId": 203897,
    "player": "Zach LaVine",
    "slug": "zach-lavine-203897",
@@ -1107,16 +1095,28 @@
    "team": "Sacramento"
   },
   {
-   "personId": 1642844,
-   "player": "Dylan Harper",
-   "slug": "dylan-harper-1642844",
+   "personId": 1629639,
+   "player": "Tyler Herro",
+   "slug": "tyler-herro-1629639",
    "type": "pts10",
    "label": "10+ points",
    "scope": "regular",
    "length": 11,
-   "last_date": "2026-11-09",
-   "started": "2026-10-20",
-   "team": "San Antonio"
+   "last_date": "2026-11-11",
+   "started": "2026-10-21",
+   "team": "Milwaukee"
+  },
+  {
+   "personId": 1630578,
+   "player": "Alperen Sengun",
+   "slug": "alperen-sengun-1630578",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "regular",
+   "length": 11,
+   "last_date": "2026-11-11",
+   "started": "2026-04-10",
+   "team": "Houston"
   },
   {
    "personId": 1643411,
@@ -1129,6 +1129,30 @@
    "last_date": "2026-11-10",
    "started": "2026-10-21",
    "team": "Sacramento"
+  },
+  {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "pts20",
+   "label": "20+ points",
+   "scope": "regular",
+   "length": 11,
+   "last_date": "2026-11-11",
+   "started": "2026-10-21",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 1630578,
+   "player": "Alperen Sengun",
+   "slug": "alperen-sengun-1630578",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "regular",
+   "length": 11,
+   "last_date": "2026-11-11",
+   "started": "2026-04-10",
+   "team": "Houston"
   },
   {
    "personId": 203999,
@@ -1155,6 +1179,42 @@
    "team": "Sacramento"
   },
   {
+   "personId": 203944,
+   "player": "Julius Randle",
+   "slug": "julius-randle-203944",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "combined",
+   "length": 11,
+   "last_date": "2026-11-11",
+   "started": "2026-10-21",
+   "team": "Brooklyn"
+  },
+  {
+   "personId": 1626157,
+   "player": "Karl-Anthony Towns",
+   "slug": "karl-anthony-towns-1626157",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "combined",
+   "length": 11,
+   "last_date": "2026-11-11",
+   "started": "2026-10-20",
+   "team": "New York"
+  },
+  {
+   "personId": 1629639,
+   "player": "Tyler Herro",
+   "slug": "tyler-herro-1629639",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "combined",
+   "length": 11,
+   "last_date": "2026-11-11",
+   "started": "2026-10-21",
+   "team": "Milwaukee"
+  },
+  {
    "personId": 1643411,
    "player": "Darius Acuff Jr.",
    "slug": "darius-acuff-jr-1643411",
@@ -1167,6 +1227,30 @@
    "team": "Sacramento"
   },
   {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "pts20",
+   "label": "20+ points",
+   "scope": "combined",
+   "length": 11,
+   "last_date": "2026-11-11",
+   "started": "2026-10-21",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 1626157,
+   "player": "Karl-Anthony Towns",
+   "slug": "karl-anthony-towns-1626157",
+   "type": "dd",
+   "label": "Double-double",
+   "scope": "combined",
+   "length": 11,
+   "last_date": "2026-11-11",
+   "started": "2026-10-20",
+   "team": "New York"
+  },
+  {
    "personId": 1629130,
    "player": "Duncan Robinson",
    "slug": "duncan-robinson-1629130",
@@ -1177,30 +1261,6 @@
    "last_date": "2026-11-09",
    "started": "2026-10-20",
    "team": "Detroit"
-  },
-  {
-   "personId": 1629639,
-   "player": "Tyler Herro",
-   "slug": "tyler-herro-1629639",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "regular",
-   "length": 10,
-   "last_date": "2026-11-08",
-   "started": "2026-10-21",
-   "team": "Milwaukee"
-  },
-  {
-   "personId": 1630578,
-   "player": "Alperen Sengun",
-   "slug": "alperen-sengun-1630578",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "regular",
-   "length": 10,
-   "last_date": "2026-11-09",
-   "started": "2026-04-10",
-   "team": "Houston"
   },
   {
    "personId": 1630595,
@@ -1227,28 +1287,64 @@
    "team": "Orlando"
   },
   {
-   "personId": 201939,
-   "player": "Stephen Curry",
-   "slug": "stephen-curry-201939",
-   "type": "pts20",
-   "label": "20+ points",
+   "personId": 1631095,
+   "player": "Jabari Smith Jr.",
+   "slug": "jabari-smith-jr-1631095",
+   "type": "pts10",
+   "label": "10+ points",
    "scope": "regular",
    "length": 10,
-   "last_date": "2026-11-09",
-   "started": "2026-04-12",
-   "team": "Golden State"
+   "last_date": "2026-11-11",
+   "started": "2026-10-24",
+   "team": "Houston"
   },
   {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
+   "personId": 1631117,
+   "player": "Walker Kessler",
+   "slug": "walker-kessler-1631117",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "regular",
+   "length": 10,
+   "last_date": "2026-11-11",
+   "started": "2026-10-27",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 1642847,
+   "player": "Jeremiah Fears",
+   "slug": "jeremiah-fears-1642847",
+   "type": "pts10",
+   "label": "10+ points",
+   "scope": "regular",
+   "length": 10,
+   "last_date": "2026-11-11",
+   "started": "2026-10-24",
+   "team": "New Orleans"
+  },
+  {
+   "personId": 1628983,
+   "player": "Shai Gilgeous-Alexander",
+   "slug": "shai-gilgeous-alexander-1628983",
    "type": "pts20",
    "label": "20+ points",
    "scope": "regular",
    "length": 10,
-   "last_date": "2026-11-09",
-   "started": "2026-10-21",
-   "team": "LA Lakers"
+   "last_date": "2026-11-11",
+   "started": "2026-10-25",
+   "team": "Oklahoma City"
+  },
+  {
+   "personId": 203999,
+   "player": "Nikola Jokic",
+   "slug": "nikola-jokic-203999",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "regular",
+   "length": 10,
+   "last_date": "2026-11-11",
+   "started": "2026-10-22",
+   "team": "Denver"
   },
   {
    "personId": 1630169,
@@ -1263,30 +1359,6 @@
    "team": "Indiana"
   },
   {
-   "personId": 1630532,
-   "player": "Franz Wagner",
-   "slug": "franz-wagner-1630532",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "regular",
-   "length": 10,
-   "last_date": "2026-11-10",
-   "started": "2026-10-21",
-   "team": "Orlando"
-  },
-  {
-   "personId": 1630578,
-   "player": "Alperen Sengun",
-   "slug": "alperen-sengun-1630578",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "regular",
-   "length": 10,
-   "last_date": "2026-11-09",
-   "started": "2026-04-10",
-   "team": "Houston"
-  },
-  {
    "personId": 1630217,
    "player": "Desmond Bane",
    "slug": "desmond-bane-1630217",
@@ -1297,42 +1369,6 @@
    "last_date": "2026-05-03",
    "started": "2025-04-22",
    "team": "Orlando"
-  },
-  {
-   "personId": 203944,
-   "player": "Julius Randle",
-   "slug": "julius-randle-203944",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "combined",
-   "length": 10,
-   "last_date": "2026-11-08",
-   "started": "2026-10-21",
-   "team": "Brooklyn"
-  },
-  {
-   "personId": 1626157,
-   "player": "Karl-Anthony Towns",
-   "slug": "karl-anthony-towns-1626157",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "combined",
-   "length": 10,
-   "last_date": "2026-11-10",
-   "started": "2026-10-20",
-   "team": "New York"
-  },
-  {
-   "personId": 1629639,
-   "player": "Tyler Herro",
-   "slug": "tyler-herro-1629639",
-   "type": "pts10",
-   "label": "10+ points",
-   "scope": "combined",
-   "length": 10,
-   "last_date": "2026-11-08",
-   "started": "2026-10-21",
-   "team": "Milwaukee"
   },
   {
    "personId": 1630162,
@@ -1347,112 +1383,40 @@
    "team": "Minnesota"
   },
   {
-   "personId": 201939,
-   "player": "Stephen Curry",
-   "slug": "stephen-curry-201939",
-   "type": "pts20",
-   "label": "20+ points",
+   "personId": 1631095,
+   "player": "Jabari Smith Jr.",
+   "slug": "jabari-smith-jr-1631095",
+   "type": "pts10",
+   "label": "10+ points",
    "scope": "combined",
    "length": 10,
-   "last_date": "2026-11-09",
-   "started": "2026-04-12",
-   "team": "Golden State"
+   "last_date": "2026-11-11",
+   "started": "2026-10-24",
+   "team": "Houston"
   },
   {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
-   "type": "pts20",
-   "label": "20+ points",
+   "personId": 1631117,
+   "player": "Walker Kessler",
+   "slug": "walker-kessler-1631117",
+   "type": "pts10",
+   "label": "10+ points",
    "scope": "combined",
    "length": 10,
-   "last_date": "2026-11-09",
-   "started": "2026-10-21",
+   "last_date": "2026-11-11",
+   "started": "2026-10-27",
    "team": "LA Lakers"
   },
   {
-   "personId": 1630532,
-   "player": "Franz Wagner",
-   "slug": "franz-wagner-1630532",
-   "type": "ast5",
-   "label": "5+ assists",
+   "personId": 1642847,
+   "player": "Jeremiah Fears",
+   "slug": "jeremiah-fears-1642847",
+   "type": "pts10",
+   "label": "10+ points",
    "scope": "combined",
    "length": 10,
-   "last_date": "2026-11-10",
-   "started": "2026-10-21",
-   "team": "Orlando"
-  },
-  {
-   "personId": 1626157,
-   "player": "Karl-Anthony Towns",
-   "slug": "karl-anthony-towns-1626157",
-   "type": "dd",
-   "label": "Double-double",
-   "scope": "combined",
-   "length": 10,
-   "last_date": "2026-11-10",
-   "started": "2026-10-20",
-   "team": "New York"
-  },
-  {
-   "personId": 1628983,
-   "player": "Shai Gilgeous-Alexander",
-   "slug": "shai-gilgeous-alexander-1628983",
-   "type": "pts20",
-   "label": "20+ points",
-   "scope": "regular",
-   "length": 9,
-   "last_date": "2026-11-10",
-   "started": "2026-10-25",
-   "team": "Oklahoma City"
-  },
-  {
-   "personId": 203999,
-   "player": "Nikola Jokic",
-   "slug": "nikola-jokic-203999",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "regular",
-   "length": 9,
-   "last_date": "2026-11-09",
-   "started": "2026-10-22",
-   "team": "Denver"
-  },
-  {
-   "personId": 1629636,
-   "player": "Darius Garland",
-   "slug": "darius-garland-1629636",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "regular",
-   "length": 9,
-   "last_date": "2026-11-10",
-   "started": "2026-10-23",
-   "team": "LA Clippers"
-  },
-  {
-   "personId": 1642843,
-   "player": "Cooper Flagg",
-   "slug": "cooper-flagg-1642843",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "regular",
-   "length": 9,
-   "last_date": "2026-11-09",
-   "started": "2026-10-23",
-   "team": "Dallas"
-  },
-  {
-   "personId": 1643411,
-   "player": "Darius Acuff Jr.",
-   "slug": "darius-acuff-jr-1643411",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "regular",
-   "length": 9,
-   "last_date": "2026-11-10",
-   "started": "2026-10-25",
-   "team": "Sacramento"
+   "last_date": "2026-11-11",
+   "started": "2026-10-24",
+   "team": "New Orleans"
   },
   {
    "personId": 1628983,
@@ -1461,22 +1425,10 @@
    "type": "pts20",
    "label": "20+ points",
    "scope": "combined",
-   "length": 9,
-   "last_date": "2026-11-10",
+   "length": 10,
+   "last_date": "2026-11-11",
    "started": "2026-10-25",
    "team": "Oklahoma City"
-  },
-  {
-   "personId": 1629636,
-   "player": "Darius Garland",
-   "slug": "darius-garland-1629636",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "combined",
-   "length": 9,
-   "last_date": "2026-11-10",
-   "started": "2026-10-23",
-   "team": "LA Clippers"
   },
   {
    "personId": 1630578,
@@ -1485,10 +1437,106 @@
    "type": "ast5",
    "label": "5+ assists",
    "scope": "combined",
-   "length": 9,
-   "last_date": "2026-11-09",
+   "length": 10,
+   "last_date": "2026-11-11",
    "started": "2026-10-21",
    "team": "Houston"
+  },
+  {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "pts30",
+   "label": "30+ points",
+   "scope": "regular",
+   "length": 9,
+   "last_date": "2026-11-11",
+   "started": "2026-10-25",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 1629636,
+   "player": "Darius Garland",
+   "slug": "darius-garland-1629636",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "regular",
+   "length": 9,
+   "last_date": "2026-11-10",
+   "started": "2026-10-23",
+   "team": "LA Clippers"
+  },
+  {
+   "personId": 1642843,
+   "player": "Cooper Flagg",
+   "slug": "cooper-flagg-1642843",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "regular",
+   "length": 9,
+   "last_date": "2026-11-09",
+   "started": "2026-10-23",
+   "team": "Dallas"
+  },
+  {
+   "personId": 1643411,
+   "player": "Darius Acuff Jr.",
+   "slug": "darius-acuff-jr-1643411",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "regular",
+   "length": 9,
+   "last_date": "2026-11-10",
+   "started": "2026-10-25",
+   "team": "Sacramento"
+  },
+  {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "tpm3",
+   "label": "3+ threes",
+   "scope": "regular",
+   "length": 9,
+   "last_date": "2026-11-11",
+   "started": "2026-10-25",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "p30r5a5",
+   "label": "30+ pts, 5+ reb, 5+ ast",
+   "scope": "regular",
+   "length": 9,
+   "last_date": "2026-11-11",
+   "started": "2026-10-25",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "pts30",
+   "label": "30+ points",
+   "scope": "combined",
+   "length": 9,
+   "last_date": "2026-11-11",
+   "started": "2026-10-25",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 1629636,
+   "player": "Darius Garland",
+   "slug": "darius-garland-1629636",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "combined",
+   "length": 9,
+   "last_date": "2026-11-10",
+   "started": "2026-10-23",
+   "team": "LA Clippers"
   },
   {
    "personId": 1642843,
@@ -1513,6 +1561,30 @@
    "last_date": "2026-11-10",
    "started": "2026-10-25",
    "team": "Sacramento"
+  },
+  {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "tpm3",
+   "label": "3+ threes",
+   "scope": "combined",
+   "length": 9,
+   "last_date": "2026-11-11",
+   "started": "2026-10-25",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 1629029,
+   "player": "Luka Doncic",
+   "slug": "luka-doncic-1629029",
+   "type": "p30r5a5",
+   "label": "30+ pts, 5+ reb, 5+ ast",
+   "scope": "combined",
+   "length": 9,
+   "last_date": "2026-11-11",
+   "started": "2026-10-25",
+   "team": "LA Lakers"
   },
   {
    "personId": 203507,
@@ -1525,18 +1597,6 @@
    "last_date": "2026-11-10",
    "started": "2026-10-26",
    "team": "Miami"
-  },
-  {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
-   "type": "pts30",
-   "label": "30+ points",
-   "scope": "regular",
-   "length": 8,
-   "last_date": "2026-11-09",
-   "started": "2026-10-25",
-   "team": "LA Lakers"
   },
   {
    "personId": 203507,
@@ -1551,28 +1611,16 @@
    "team": "Miami"
   },
   {
-   "personId": 201939,
-   "player": "Stephen Curry",
-   "slug": "stephen-curry-201939",
-   "type": "tpm3",
-   "label": "3+ threes",
+   "personId": 1642347,
+   "player": "Jamal Shead",
+   "slug": "jamal-shead-1642347",
+   "type": "ast5",
+   "label": "5+ assists",
    "scope": "regular",
    "length": 8,
-   "last_date": "2026-11-09",
-   "started": "2026-10-23",
-   "team": "Golden State"
-  },
-  {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
-   "type": "tpm3",
-   "label": "3+ threes",
-   "scope": "regular",
-   "length": 8,
-   "last_date": "2026-11-09",
-   "started": "2026-10-25",
-   "team": "LA Lakers"
+   "last_date": "2026-11-11",
+   "started": "2026-10-28",
+   "team": "Toronto"
   },
   {
    "personId": 203507,
@@ -1597,18 +1645,6 @@
    "last_date": "2026-11-10",
    "started": "2026-10-26",
    "team": "Miami"
-  },
-  {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
-   "type": "p30r5a5",
-   "label": "30+ pts, 5+ reb, 5+ ast",
-   "scope": "regular",
-   "length": 8,
-   "last_date": "2026-11-09",
-   "started": "2026-10-25",
-   "team": "LA Lakers"
   },
   {
    "personId": 1630595,
@@ -1635,18 +1671,6 @@
    "team": "Miami"
   },
   {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
-   "type": "pts30",
-   "label": "30+ points",
-   "scope": "combined",
-   "length": 8,
-   "last_date": "2026-11-09",
-   "started": "2026-10-25",
-   "team": "LA Lakers"
-  },
-  {
    "personId": 203507,
    "player": "Giannis Antetokounmpo",
    "slug": "giannis-antetokounmpo-203507",
@@ -1659,28 +1683,16 @@
    "team": "Miami"
   },
   {
-   "personId": 201939,
-   "player": "Stephen Curry",
-   "slug": "stephen-curry-201939",
-   "type": "tpm3",
-   "label": "3+ threes",
+   "personId": 1642347,
+   "player": "Jamal Shead",
+   "slug": "jamal-shead-1642347",
+   "type": "ast5",
+   "label": "5+ assists",
    "scope": "combined",
    "length": 8,
-   "last_date": "2026-11-09",
-   "started": "2026-10-23",
-   "team": "Golden State"
-  },
-  {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
-   "type": "tpm3",
-   "label": "3+ threes",
-   "scope": "combined",
-   "length": 8,
-   "last_date": "2026-11-09",
-   "started": "2026-10-25",
-   "team": "LA Lakers"
+   "last_date": "2026-11-11",
+   "started": "2026-10-28",
+   "team": "Toronto"
   },
   {
    "personId": 203507,
@@ -1707,18 +1719,6 @@
    "team": "Miami"
   },
   {
-   "personId": 1629029,
-   "player": "Luka Doncic",
-   "slug": "luka-doncic-1629029",
-   "type": "p30r5a5",
-   "label": "30+ pts, 5+ reb, 5+ ast",
-   "scope": "combined",
-   "length": 8,
-   "last_date": "2026-11-09",
-   "started": "2026-10-25",
-   "team": "LA Lakers"
-  },
-  {
    "personId": 1643411,
    "player": "Darius Acuff Jr.",
    "slug": "darius-acuff-jr-1643411",
@@ -1741,18 +1741,6 @@
    "last_date": "2026-11-10",
    "started": "2026-10-28",
    "team": "Miami"
-  },
-  {
-   "personId": 1642347,
-   "player": "Jamal Shead",
-   "slug": "jamal-shead-1642347",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "regular",
-   "length": 7,
-   "last_date": "2026-11-09",
-   "started": "2026-10-28",
-   "team": "Toronto"
   },
   {
    "personId": 1630567,
@@ -1815,18 +1803,6 @@
    "team": "Miami"
   },
   {
-   "personId": 1642347,
-   "player": "Jamal Shead",
-   "slug": "jamal-shead-1642347",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "combined",
-   "length": 7,
-   "last_date": "2026-11-09",
-   "started": "2026-10-28",
-   "team": "Toronto"
-  },
-  {
    "personId": 1630567,
    "player": "Scottie Barnes",
    "slug": "scottie-barnes-1630567",
@@ -1837,6 +1813,42 @@
    "last_date": "2026-11-04",
    "started": "2026-10-23",
    "team": "Toronto"
+  },
+  {
+   "personId": 1630581,
+   "player": "Josh Giddey",
+   "slug": "josh-giddey-1630581",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "regular",
+   "length": 6,
+   "last_date": "2026-11-11",
+   "started": "2026-10-28",
+   "team": "Chicago"
+  },
+  {
+   "personId": 1629008,
+   "player": "Michael Porter Jr.",
+   "slug": "michael-porter-jr-1629008",
+   "type": "tpm3",
+   "label": "3+ threes",
+   "scope": "regular",
+   "length": 6,
+   "last_date": "2026-11-11",
+   "started": "2026-11-01",
+   "team": "Brooklyn"
+  },
+  {
+   "personId": 1630217,
+   "player": "Desmond Bane",
+   "slug": "desmond-bane-1630217",
+   "type": "tpm3",
+   "label": "3+ threes",
+   "scope": "regular",
+   "length": 6,
+   "last_date": "2026-11-11",
+   "started": "2026-10-30",
+   "team": "Orlando"
   },
   {
    "personId": 203999,
@@ -1851,6 +1863,54 @@
    "team": "Denver"
   },
   {
+   "personId": 1630581,
+   "player": "Josh Giddey",
+   "slug": "josh-giddey-1630581",
+   "type": "ast5",
+   "label": "5+ assists",
+   "scope": "combined",
+   "length": 6,
+   "last_date": "2026-11-11",
+   "started": "2026-10-28",
+   "team": "Chicago"
+  },
+  {
+   "personId": 1629008,
+   "player": "Michael Porter Jr.",
+   "slug": "michael-porter-jr-1629008",
+   "type": "tpm3",
+   "label": "3+ threes",
+   "scope": "combined",
+   "length": 6,
+   "last_date": "2026-11-11",
+   "started": "2026-11-01",
+   "team": "Brooklyn"
+  },
+  {
+   "personId": 1630217,
+   "player": "Desmond Bane",
+   "slug": "desmond-bane-1630217",
+   "type": "tpm3",
+   "label": "3+ threes",
+   "scope": "combined",
+   "length": 6,
+   "last_date": "2026-11-11",
+   "started": "2026-10-30",
+   "team": "Orlando"
+  },
+  {
+   "personId": 203076,
+   "player": "Anthony Davis",
+   "slug": "anthony-davis-203076",
+   "type": "pts20",
+   "label": "20+ points",
+   "scope": "regular",
+   "length": 5,
+   "last_date": "2026-11-11",
+   "started": "2026-10-30",
+   "team": "Washington"
+  },
+  {
    "personId": 1629638,
    "player": "Nickeil Alexander-Walker",
    "slug": "nickeil-alexander-walker-1629638",
@@ -1861,6 +1921,30 @@
    "last_date": "2026-11-09",
    "started": "2026-11-02",
    "team": "Atlanta"
+  },
+  {
+   "personId": 1629660,
+   "player": "Ty Jerome",
+   "slug": "ty-jerome-1629660",
+   "type": "pts20",
+   "label": "20+ points",
+   "scope": "regular",
+   "length": 5,
+   "last_date": "2026-11-11",
+   "started": "2026-11-02",
+   "team": "Memphis"
+  },
+  {
+   "personId": 1641705,
+   "player": "Victor Wembanyama",
+   "slug": "victor-wembanyama-1641705",
+   "type": "pts20",
+   "label": "20+ points",
+   "scope": "regular",
+   "length": 5,
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "San Antonio"
   },
   {
    "personId": 203497,
@@ -1875,18 +1959,6 @@
    "team": "Minnesota"
   },
   {
-   "personId": 1630581,
-   "player": "Josh Giddey",
-   "slug": "josh-giddey-1630581",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "regular",
-   "length": 5,
-   "last_date": "2026-11-08",
-   "started": "2026-10-28",
-   "team": "Chicago"
-  },
-  {
    "personId": 1631094,
    "player": "Paolo Banchero",
    "slug": "paolo-banchero-1631094",
@@ -1899,28 +1971,16 @@
    "team": "Orlando"
   },
   {
-   "personId": 1629008,
-   "player": "Michael Porter Jr.",
-   "slug": "michael-porter-jr-1629008",
-   "type": "tpm3",
-   "label": "3+ threes",
+   "personId": 1629680,
+   "player": "Matisse Thybulle",
+   "slug": "matisse-thybulle-1629680",
+   "type": "stl2",
+   "label": "2+ steals",
    "scope": "regular",
    "length": 5,
-   "last_date": "2026-11-08",
-   "started": "2026-11-01",
-   "team": "Brooklyn"
-  },
-  {
-   "personId": 1630217,
-   "player": "Desmond Bane",
-   "slug": "desmond-bane-1630217",
-   "type": "tpm3",
-   "label": "3+ threes",
-   "scope": "regular",
-   "length": 5,
-   "last_date": "2026-11-10",
-   "started": "2026-10-30",
-   "team": "Orlando"
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "LA Lakers"
   },
   {
    "personId": 1628378,
@@ -1995,6 +2055,18 @@
    "team": "Orlando"
   },
   {
+   "personId": 203076,
+   "player": "Anthony Davis",
+   "slug": "anthony-davis-203076",
+   "type": "pts20",
+   "label": "20+ points",
+   "scope": "combined",
+   "length": 5,
+   "last_date": "2026-11-11",
+   "started": "2026-10-30",
+   "team": "Washington"
+  },
+  {
    "personId": 1629638,
    "player": "Nickeil Alexander-Walker",
    "slug": "nickeil-alexander-walker-1629638",
@@ -2005,6 +2077,30 @@
    "last_date": "2026-11-09",
    "started": "2026-11-02",
    "team": "Atlanta"
+  },
+  {
+   "personId": 1629660,
+   "player": "Ty Jerome",
+   "slug": "ty-jerome-1629660",
+   "type": "pts20",
+   "label": "20+ points",
+   "scope": "combined",
+   "length": 5,
+   "last_date": "2026-11-11",
+   "started": "2026-11-02",
+   "team": "Memphis"
+  },
+  {
+   "personId": 1641705,
+   "player": "Victor Wembanyama",
+   "slug": "victor-wembanyama-1641705",
+   "type": "pts20",
+   "label": "20+ points",
+   "scope": "combined",
+   "length": 5,
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "San Antonio"
   },
   {
    "personId": 203497,
@@ -2019,18 +2115,6 @@
    "team": "Minnesota"
   },
   {
-   "personId": 1630581,
-   "player": "Josh Giddey",
-   "slug": "josh-giddey-1630581",
-   "type": "ast5",
-   "label": "5+ assists",
-   "scope": "combined",
-   "length": 5,
-   "last_date": "2026-11-08",
-   "started": "2026-10-28",
-   "team": "Chicago"
-  },
-  {
    "personId": 1631094,
    "player": "Paolo Banchero",
    "slug": "paolo-banchero-1631094",
@@ -2043,28 +2127,64 @@
    "team": "Orlando"
   },
   {
-   "personId": 1629008,
-   "player": "Michael Porter Jr.",
-   "slug": "michael-porter-jr-1629008",
-   "type": "tpm3",
-   "label": "3+ threes",
+   "personId": 1629680,
+   "player": "Matisse Thybulle",
+   "slug": "matisse-thybulle-1629680",
+   "type": "stl2",
+   "label": "2+ steals",
    "scope": "combined",
    "length": 5,
-   "last_date": "2026-11-08",
-   "started": "2026-11-01",
-   "team": "Brooklyn"
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "LA Lakers"
   },
   {
-   "personId": 1630217,
-   "player": "Desmond Bane",
-   "slug": "desmond-bane-1630217",
-   "type": "tpm3",
-   "label": "3+ threes",
-   "scope": "combined",
-   "length": 5,
-   "last_date": "2026-11-10",
-   "started": "2026-10-30",
-   "team": "Orlando"
+   "personId": 203999,
+   "player": "Nikola Jokic",
+   "slug": "nikola-jokic-203999",
+   "type": "reb10",
+   "label": "10+ rebounds",
+   "scope": "regular",
+   "length": 4,
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "Denver"
+  },
+  {
+   "personId": 1631117,
+   "player": "Walker Kessler",
+   "slug": "walker-kessler-1631117",
+   "type": "reb10",
+   "label": "10+ rebounds",
+   "scope": "regular",
+   "length": 4,
+   "last_date": "2026-11-11",
+   "started": "2026-11-06",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 203999,
+   "player": "Nikola Jokic",
+   "slug": "nikola-jokic-203999",
+   "type": "dd",
+   "label": "Double-double",
+   "scope": "regular",
+   "length": 4,
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "Denver"
+  },
+  {
+   "personId": 1631117,
+   "player": "Walker Kessler",
+   "slug": "walker-kessler-1631117",
+   "type": "dd",
+   "label": "Double-double",
+   "scope": "regular",
+   "length": 4,
+   "last_date": "2026-11-11",
+   "started": "2026-11-06",
+   "team": "LA Lakers"
   },
   {
    "personId": 1642843,
@@ -2079,6 +2199,54 @@
    "team": "Dallas"
   },
   {
+   "personId": 203999,
+   "player": "Nikola Jokic",
+   "slug": "nikola-jokic-203999",
+   "type": "reb10",
+   "label": "10+ rebounds",
+   "scope": "combined",
+   "length": 4,
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "Denver"
+  },
+  {
+   "personId": 1631117,
+   "player": "Walker Kessler",
+   "slug": "walker-kessler-1631117",
+   "type": "reb10",
+   "label": "10+ rebounds",
+   "scope": "combined",
+   "length": 4,
+   "last_date": "2026-11-11",
+   "started": "2026-11-06",
+   "team": "LA Lakers"
+  },
+  {
+   "personId": 203999,
+   "player": "Nikola Jokic",
+   "slug": "nikola-jokic-203999",
+   "type": "dd",
+   "label": "Double-double",
+   "scope": "combined",
+   "length": 4,
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "Denver"
+  },
+  {
+   "personId": 1631117,
+   "player": "Walker Kessler",
+   "slug": "walker-kessler-1631117",
+   "type": "dd",
+   "label": "Double-double",
+   "scope": "combined",
+   "length": 4,
+   "last_date": "2026-11-11",
+   "started": "2026-11-06",
+   "team": "LA Lakers"
+  },
+  {
    "personId": 1642843,
    "player": "Cooper Flagg",
    "slug": "cooper-flagg-1642843",
@@ -2091,64 +2259,64 @@
    "team": "Dallas"
   },
   {
-   "personId": 203999,
-   "player": "Nikola Jokic",
-   "slug": "nikola-jokic-203999",
-   "type": "reb10",
-   "label": "10+ rebounds",
+   "personId": 1630532,
+   "player": "Franz Wagner",
+   "slug": "franz-wagner-1630532",
+   "type": "pts30",
+   "label": "30+ points",
    "scope": "regular",
    "length": 3,
-   "last_date": "2026-11-09",
-   "started": "2026-11-04",
-   "team": "Denver"
-  },
-  {
-   "personId": 1628976,
-   "player": "Wendell Carter Jr.",
-   "slug": "wendell-carter-jr-1628976",
-   "type": "reb10",
-   "label": "10+ rebounds",
-   "scope": "regular",
-   "length": 3,
-   "last_date": "2026-11-10",
-   "started": "2026-11-05",
+   "last_date": "2026-11-11",
+   "started": "2026-11-07",
    "team": "Orlando"
   },
   {
-   "personId": 1631117,
-   "player": "Walker Kessler",
-   "slug": "walker-kessler-1631117",
+   "personId": 203076,
+   "player": "Anthony Davis",
+   "slug": "anthony-davis-203076",
    "type": "reb10",
    "label": "10+ rebounds",
    "scope": "regular",
    "length": 3,
-   "last_date": "2026-11-09",
-   "started": "2026-11-06",
-   "team": "LA Lakers"
-  },
-  {
-   "personId": 203999,
-   "player": "Nikola Jokic",
-   "slug": "nikola-jokic-203999",
-   "type": "dd",
-   "label": "Double-double",
-   "scope": "regular",
-   "length": 3,
-   "last_date": "2026-11-09",
+   "last_date": "2026-11-11",
    "started": "2026-11-04",
-   "team": "Denver"
+   "team": "Washington"
   },
   {
-   "personId": 1631117,
-   "player": "Walker Kessler",
-   "slug": "walker-kessler-1631117",
+   "personId": 203076,
+   "player": "Anthony Davis",
+   "slug": "anthony-davis-203076",
    "type": "dd",
    "label": "Double-double",
    "scope": "regular",
    "length": 3,
-   "last_date": "2026-11-09",
-   "started": "2026-11-06",
-   "team": "LA Lakers"
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "Washington"
+  },
+  {
+   "personId": 203076,
+   "player": "Anthony Davis",
+   "slug": "anthony-davis-203076",
+   "type": "p20r10",
+   "label": "20+ pts & 10+ reb",
+   "scope": "regular",
+   "length": 3,
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "Washington"
+  },
+  {
+   "personId": 1626157,
+   "player": "Karl-Anthony Towns",
+   "slug": "karl-anthony-towns-1626157",
+   "type": "p20r10",
+   "label": "20+ pts & 10+ reb",
+   "scope": "regular",
+   "length": 3,
+   "last_date": "2026-11-11",
+   "started": "2026-11-07",
+   "team": "New York"
   },
   {
    "personId": 1628973,
@@ -2187,64 +2355,64 @@
    "team": "Boston"
   },
   {
-   "personId": 203999,
-   "player": "Nikola Jokic",
-   "slug": "nikola-jokic-203999",
-   "type": "reb10",
-   "label": "10+ rebounds",
+   "personId": 1630532,
+   "player": "Franz Wagner",
+   "slug": "franz-wagner-1630532",
+   "type": "pts30",
+   "label": "30+ points",
    "scope": "combined",
    "length": 3,
-   "last_date": "2026-11-09",
-   "started": "2026-11-04",
-   "team": "Denver"
-  },
-  {
-   "personId": 1628976,
-   "player": "Wendell Carter Jr.",
-   "slug": "wendell-carter-jr-1628976",
-   "type": "reb10",
-   "label": "10+ rebounds",
-   "scope": "combined",
-   "length": 3,
-   "last_date": "2026-11-10",
-   "started": "2026-11-05",
+   "last_date": "2026-11-11",
+   "started": "2026-11-07",
    "team": "Orlando"
   },
   {
-   "personId": 1631117,
-   "player": "Walker Kessler",
-   "slug": "walker-kessler-1631117",
+   "personId": 203076,
+   "player": "Anthony Davis",
+   "slug": "anthony-davis-203076",
    "type": "reb10",
    "label": "10+ rebounds",
    "scope": "combined",
    "length": 3,
-   "last_date": "2026-11-09",
-   "started": "2026-11-06",
-   "team": "LA Lakers"
-  },
-  {
-   "personId": 203999,
-   "player": "Nikola Jokic",
-   "slug": "nikola-jokic-203999",
-   "type": "dd",
-   "label": "Double-double",
-   "scope": "combined",
-   "length": 3,
-   "last_date": "2026-11-09",
+   "last_date": "2026-11-11",
    "started": "2026-11-04",
-   "team": "Denver"
+   "team": "Washington"
   },
   {
-   "personId": 1631117,
-   "player": "Walker Kessler",
-   "slug": "walker-kessler-1631117",
+   "personId": 203076,
+   "player": "Anthony Davis",
+   "slug": "anthony-davis-203076",
    "type": "dd",
    "label": "Double-double",
    "scope": "combined",
    "length": 3,
-   "last_date": "2026-11-09",
-   "started": "2026-11-06",
-   "team": "LA Lakers"
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "Washington"
+  },
+  {
+   "personId": 203076,
+   "player": "Anthony Davis",
+   "slug": "anthony-davis-203076",
+   "type": "p20r10",
+   "label": "20+ pts & 10+ reb",
+   "scope": "combined",
+   "length": 3,
+   "last_date": "2026-11-11",
+   "started": "2026-11-04",
+   "team": "Washington"
+  },
+  {
+   "personId": 1626157,
+   "player": "Karl-Anthony Towns",
+   "slug": "karl-anthony-towns-1626157",
+   "type": "p20r10",
+   "label": "20+ pts & 10+ reb",
+   "scope": "combined",
+   "length": 3,
+   "last_date": "2026-11-11",
+   "started": "2026-11-07",
+   "team": "New York"
   }
  ]
 }
