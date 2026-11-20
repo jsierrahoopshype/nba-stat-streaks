@@ -554,8 +554,7 @@ def build_feats_html(feats):
     chips = "".join(f'<button class="chip" data-feat="{f["id"]}">{esc(f["label"])}</button>' for f in feats)
     body = (
         f'<div class="wrap">\n'
-        f'<header><span class="brand">HoopsMatic · NBA Statistical Streaks</span>'
-        f'<h1>Rarest <span class="accent">Feats</span></h1>'
+        f'<header><h1>Rarest <span class="accent">Feats</span></h1>'
         f'<p class="subtitle">Single-game feats ranked by career count — regular-season totals, 1946–present.</p></header>\n'
         f'{search_box()}\n'
         f'<div class="fams"><div class="fam"><span class="flabel">Feat</span>{chips}</div></div>\n'
