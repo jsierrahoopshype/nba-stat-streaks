@@ -7,7 +7,7 @@ Runs inside nightly_build.py after the site pages are written (same data, same r
                                                    + this season's cdn.nba.com box lines)
   writes  on-a-run.html                            the page (one URL, filters are in-page)
           data/on-a-run.json                       the same cards as public JSON (README)
-          data/player-meta-cache.json              position + headshot-exists per player
+          data/player-meta-cache.json              position + headshot file per player
           players/<slug>.html                      adds the "Against a number" block to the
                                                    pages of players who played this season
                                                    or last season (other pages untouched)
@@ -19,13 +19,16 @@ Qualifying rule (per stat, ladder below, HIGHEST number that passes):
     baseline: earlier games this season (before the last 10) if there are 10+, else
     last season's games; baseline games count only with 15+ minutes too (like for like),
     and the baseline needs 10+ games or the stat is skipped,
-  * the number is at or above his season average for that stat (no trivial runs: a
-    25-ppg scorer clearing 10 or 20 can never show up).
+  * the number is at or above his average for that stat in the same baseline games, i.e.
+    before this 10-game stretch (no trivial runs: a 25-ppg scorer clearing 10 or 20 can
+    never show up).
 Ranked by the gap (L10 rate minus baseline rate), then the current straight streak.
 
-Metadata (positions, headshot existence) comes from NBA.com / cdn.nba.com only, for the
-players on the cards, cached in data/player-meta-cache.json; a failed fetch keeps the
-cached value (or shows no position) and never fails the build.
+Metadata, for the players on the cards, cached in data/player-meta-cache.json: positions
+from NBA.com rosters, and whether the HoopsMatic headshot set (nba-headshots face-fill, as
+served on hoopsmatic.com/img/, the one every HoopsMatic section uses) has a file for him.
+Checked at build time only: visitors' browsers load just that hoopsmatic.com file, and no
+image at all when there is none. A failed fetch never fails the build.
 
   python build_on_a_run.py                # normal (nightly_build runs this)
   python build_on_a_run.py --no-network   # use the cache only, fetch nothing
@@ -35,9 +38,9 @@ import re
 import sys
 import json
 import time
-import hashlib
 import argparse
 import datetime
+import urllib.error
 import urllib.request
 from html import escape as _esc
 
@@ -80,7 +83,8 @@ LADDER = {
 WINDOW, NEED_HITS, MIN_GAP, MIN_MINUTES, MIN_BASE_GAMES, MAX_CARDS = 10, 8, 0.30, 15, 10, 40
 CHART_GAMES = 20
 
-HEADSHOT = "https://cdn.nba.com/headshots/nba/latest/260x190/{pid}.png"
+# HoopsMatic headshots (nba-headshots repo, served on hoopsmatic.com): face-fill/<id>-<name slug>.webp
+HEADSHOT = "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/{stem}.webp"
 NBA_PLAYER = "https://www.nba.com/player/{pid}"
 UA = {"User-Agent": "Mozilla/5.0 (compatible; hoopsmatic-streaks/1.0)"}
 POS_SHORT = {"Guard": "G", "Forward": "F", "Center": "C", "Guard-Forward": "G-F",
@@ -210,10 +214,11 @@ def find_cards(df, cur):
             svals = [float(v) for v in season_g[col]]
             avg = sum(svals) / len(svals)
             bvals = [float(v) for v in base[col]]
+            pre_avg = sum(bvals) / len(bvals)                # his normal: the baseline games
             pick = None
             for n in sorted(LADDER[key], reverse=True):      # highest number first
-                if n < avg:
-                    break                                    # below his season average: trivial
+                if n < pre_avg:
+                    break                                    # below his pre-stretch average: trivial
                 hits = sum(1 for v in vals10 if v >= n)
                 if hits < NEED_HITS:
                     continue
@@ -228,14 +233,14 @@ def find_cards(df, cur):
                 "pid": int(pid), "g": season_g, "last": last, "base": base, "base_src": base_src,
                 "stat": key, "n": n, "hits10": hits, "base_rate": br, "gap": hits / WINDOW - br,
                 "streak": trailing_streak(svals, n), "season_long": longest_streak(svals, n),
-                "avg": avg, "svals": svals, "vals10": vals10, "bvals": bvals,
+                "avg": avg, "pre_avg": pre_avg, "svals": svals, "vals10": vals10, "bvals": bvals,
             })
     cards.sort(key=lambda c: (-round(c["gap"], 6), -c["streak"], -c["hits10"], c["pid"], c["stat"]))
     return cards
 
 
 # --------------------------------------------------------------------------- #
-# Player metadata (NBA.com position, cdn.nba.com headshot) — cached, fail-soft
+# Player metadata (NBA.com position, HoopsMatic headshot file) — cached, fail-soft
 # --------------------------------------------------------------------------- #
 def _get(url, timeout=20):
     req = urllib.request.Request(url, headers=UA)
@@ -243,15 +248,24 @@ def _get(url, timeout=20):
         return r.read()
 
 
-def refresh_meta(pids, cache, today, network=True):
-    """Fill cache[pid] = {"pos": "G-F"|"", "headshot": True|False|None, "checked": date}."""
+def headshot_stems(pid, name):
+    """Candidate file stems: <id>-<name slug> (apostrophes dropped, as the set names them),
+    then the same with apostrophes as hyphens."""
+    out = []
+    for nm in (str(name).replace("'", ""), str(name).replace("'", " ")):
+        stem = f"{pid}-" + BS.slugify(nm, pid)[: -len(f"-{pid}")]
+        if stem not in out:
+            out.append(stem)
+    return out
+
+
+def refresh_meta(pids, cache, today, names=None, network=True):
+    """Fill cache[pid] = {"pos": "G-F"|"", "hs": "<file stem>"|"" (none), "hs_checked": date}."""
+    for ent in cache.values():                      # drop the old cdn.nba.com keys
+        ent.pop("headshot", None)
+        ent.pop("checked", None)
     if not network:
         return cache
-    fallback = None
-    try:
-        fallback = hashlib.sha256(_get(HEADSHOT.format(pid=1))).hexdigest()   # the silhouette
-    except Exception as e:
-        print(f"  headshot fallback check failed ({type(e).__name__}); headshots left as they are")
     fetched = 0
     for pid in pids:
         k = str(pid)
@@ -274,12 +288,25 @@ def refresh_meta(pids, cache, today, network=True):
                 time.sleep(0.4)
             except Exception as e:
                 print(f"  position for {pid}: fetch failed ({type(e).__name__})")
-        if fallback and ent.get("headshot") is not True:
-            try:
-                ent["headshot"] = hashlib.sha256(_get(HEADSHOT.format(pid=pid))).hexdigest() != fallback
-                ent["checked"] = today.isoformat()
-            except Exception as e:
-                print(f"  headshot for {pid}: check failed ({type(e).__name__})")
+        # headshot: found once = kept; missing = re-checked (new files get added)
+        if not ent.get("hs") and names and pid in names:
+            found, failed = "", False
+            for stem in headshot_stems(pid, names[pid]):
+                try:
+                    req = urllib.request.Request(HEADSHOT.format(stem=stem), headers=UA, method="HEAD")
+                    with urllib.request.urlopen(req, timeout=20) as r:
+                        if r.status == 200 and "image" in (r.headers.get("Content-Type") or ""):
+                            found = stem
+                            break
+                except urllib.error.HTTPError as e:
+                    if e.code != 404:
+                        failed = True
+                except Exception:
+                    failed = True
+            if found or not failed:                 # a network failure leaves the cache as it was
+                if ent.get("hs") != found or "hs_checked" not in ent:
+                    ent["hs_checked"] = today.isoformat()
+                ent["hs"] = found
         cache[k] = {**cache.get(k, {}), **ent}
     print(f"  player metadata: {fetched} NBA.com page(s) fetched")
     return cache
@@ -431,11 +458,11 @@ def bars_html(c, uid):
 def card_html(i, c, name, slug, meta):
     pid = c["pid"]
     pos = meta.get("pos") or ""
-    hs = meta.get("headshot")
+    hs = meta.get("hs")
     img = ""
-    if hs is not False:   # True, or unknown (fetch failed): show it; JS drops it if it errors
+    if hs:   # a HoopsMatic headshot file exists; none (or not checked yet) = no image at all
         lazy = '' if i < 3 else ' loading="lazy"'
-        img = (f'<img class="hs" src="{HEADSHOT.format(pid=pid)}" width="78" height="57" alt=""{lazy} '
+        img = (f'<img class="hs" src="{HEADSHOT.format(stem=esc(hs))}" width="56" height="56" alt=""{lazy} '
                f'decoding="async">')
     name_html = (f'<a class="plink" href="players/{esc(slug)}.html">{esc(name)}</a>' if slug else esc(name))
     thref = team_href(c["team"])
@@ -488,7 +515,7 @@ padding:0 .8rem;cursor:pointer;border:1px solid var(--border);border-radius:8px;
 .ocard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.8rem .85rem .75rem;min-width:0;}
 .ocard[hidden]{display:none;}
 .ohd{display:flex;align-items:center;gap:.65rem;min-width:0;}
-.hs{width:78px;height:57px;object-fit:cover;object-position:top;background:#f0f0f2;border-radius:8px;flex:0 0 auto;}
+.hs{width:56px;height:56px;object-fit:cover;background:#f0f0f2;border-radius:50%;flex:0 0 auto;}
 .oid{min-width:0;}
 .onm{font-size:1.02rem;font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.25;overflow-wrap:anywhere;}
 .otm{margin:0;font-size:.8rem;color:var(--muted);display:flex;gap:.45rem;align-items:center;flex-wrap:wrap;}
@@ -613,7 +640,7 @@ def build_page(cards, names, slugs, metas, through):
         '<p class="or-how">How a run qualifies: 15+ minutes in each of his last 10 games (regular season '
         'and playoffs, this season), the number cleared in 8 or more of them, and a hit rate at least 30 points '
         'above his rate at that number in his earlier games this season (or last season when he has fewer '
-        'than 10 earlier games). The number is never below his season average. Ranked by how far the run '
+        'than 10 earlier games). The number is never below his average before this 10-game stretch (same baseline games). Ranked by how far the run '
         f'sits above his normal, then by the current streak. The same cards are published as '
         f'<a href="data/on-a-run.json">JSON</a>.</p>\n'
         '</div>\n'
@@ -633,7 +660,7 @@ def card_json(c, name, slug, meta):
         "player_url": f"{BS.SITE_URL}players/{slug}.html" if slug else None,
         "team": c["team"], "team_url": (BS.SITE_URL + team_href(c["team"], prefix="")) if team_href(c["team"]) else None,
         "position": meta.get("pos") or None,
-        "headshot": HEADSHOT.format(pid=c["pid"]) if meta.get("headshot") is not False else None,
+        "headshot": HEADSHOT.format(stem=meta["hs"]) if meta.get("hs") else None,
         "stat": c["stat"], "stat_label": pl, "number": c["n"], "label": f'{c["n"]}+ {pl}',
         "last10": games,
         "hit_rates": {k.lower(): v for k, v in c["rates"].items()},
@@ -643,6 +670,7 @@ def card_json(c, name, slug, meta):
         "gap_points": round(100 * c["gap"]),
         "streak": c["streak"],
         "season_average": round(c["avg"], 1),
+        "pre_stretch_average": round(c["pre_avg"], 1),   # baseline games: the guard
         "note": c["note"],
     }
 
@@ -791,7 +819,7 @@ def main():
             metas = json.load(f)
     except FileNotFoundError:
         metas = {}
-    metas = refresh_meta([c["pid"] for c in cards], metas, today, network=not a.no_network)
+    metas = refresh_meta([c["pid"] for c in cards], metas, today, names=names, network=not a.no_network)
     os.makedirs(os.path.dirname(META_CACHE), exist_ok=True)
     with open(META_CACHE, "w", encoding="utf-8", newline="\n") as f:
         json.dump(dict(sorted(metas.items(), key=lambda kv: int(kv[0]))), f, indent=0, sort_keys=True)
