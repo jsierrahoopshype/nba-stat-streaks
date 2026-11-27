@@ -69,13 +69,13 @@ jobs:
           git add -A -- active-state.json active-streaks.html lastgame.html index.html feats.html \
             droughts.html teams.html players teams streaks-data.js feats-data.js search-index.js \
             droughts-data.js droughts-leaderboard-data.js sitemap.xml sitemap-lastmod.json \
-            on-a-run/index.html data/on-a-run.json data/player-meta-cache.json
+            on-a-run.html data/on-a-run.json data/player-meta-cache.json
 
           staged="$(git diff --cached --name-only)"
           echo "Staged $(echo "$staged" | grep -c . || true) file(s)"
 
           # Hard guard: abort if anything outside the allowed set got staged.
-          if echo "$staged" | grep -v '^$' | grep -qvE '^(active-state\.json|active-streaks\.html|lastgame\.html|index\.html|feats\.html|droughts\.html|teams\.html|players/[^/]+\.html|teams/[^/]+\.html|streaks-data\.js|feats-data\.js|search-index\.js|droughts-data\.js|droughts-leaderboard-data\.js|sitemap\.xml|sitemap-lastmod\.json|on-a-run/index\.html|data/on-a-run\.json|data/player-meta-cache\.json)$'; then
+          if echo "$staged" | grep -v '^$' | grep -qvE '^(active-state\.json|active-streaks\.html|lastgame\.html|index\.html|feats\.html|droughts\.html|teams\.html|players/[^/]+\.html|teams/[^/]+\.html|streaks-data\.js|feats-data\.js|search-index\.js|droughts-data\.js|droughts-leaderboard-data\.js|sitemap\.xml|sitemap-lastmod\.json|on-a-run\.html|data/on-a-run\.json|data/player-meta-cache\.json)$'; then
             echo "::error::Out-of-scope file staged — refusing to commit."
             exit 1
           fi

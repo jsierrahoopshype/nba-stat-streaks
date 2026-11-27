@@ -5,7 +5,7 @@ Runs inside nightly_build.py after the site pages are written (same data, same r
 
   reads   NBA_STREAKS_DATA/PlayerStatistics.csv   (prepare_data.py output: Kaggle history
                                                    + this season's cdn.nba.com box lines)
-  writes  on-a-run/index.html                      the page (one URL, filters are in-page)
+  writes  on-a-run.html                            the page (one URL, filters are in-page)
           data/on-a-run.json                       the same cards as public JSON (README)
           data/player-meta-cache.json              position + headshot-exists per player
           players/<slug>.html                      adds the "Against a number" block to the
@@ -48,12 +48,13 @@ import build_site as BS
 from franchises import franchise_of, team_slug
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-OUT_DIR = os.path.join(BASE, "on-a-run")
-OUT_HTML = os.path.join(OUT_DIR, "index.html")
+OUT_HTML = os.path.join(BASE, "on-a-run.html")
 OUT_JSON = os.path.join(BASE, "data", "on-a-run.json")
 META_CACHE = os.path.join(BASE, "data", "player-meta-cache.json")
 PLAYERS_DIR = os.path.join(BASE, "players")
-PAGE_URL = BS.SITE_URL + "on-a-run/"
+# A file URL like active-streaks.html: the hoopsmatic.com worker serves *.html paths in
+# this section (folder URLs such as on-a-run/ return 404 there).
+PAGE_URL = BS.SITE_URL + "on-a-run.html"
 JSON_URL = BS.SITE_URL + "data/on-a-run.json"
 
 # Stat order is fixed everywhere: 3-pointers last.
@@ -146,7 +147,7 @@ def page_slugs():
 TEAM_PAGES = None
 
 
-def team_href(franchise, prefix="../"):
+def team_href(franchise, prefix=""):
     global TEAM_PAGES
     if TEAM_PAGES is None:
         TEAM_PAGES = set(os.listdir(os.path.join(BASE, "teams")))
@@ -436,7 +437,7 @@ def card_html(i, c, name, slug, meta):
         lazy = '' if i < 3 else ' loading="lazy"'
         img = (f'<img class="hs" src="{HEADSHOT.format(pid=pid)}" width="78" height="57" alt=""{lazy} '
                f'decoding="async">')
-    name_html = (f'<a class="plink" href="../players/{esc(slug)}.html">{esc(name)}</a>' if slug else esc(name))
+    name_html = (f'<a class="plink" href="players/{esc(slug)}.html">{esc(name)}</a>' if slug else esc(name))
     thref = team_href(c["team"])
     team_html = (f'<a class="tmname" href="{esc(thref)}">{esc(c["team"])}</a>' if thref else esc(c["team"]))
     pos_html = f'<span class="pos">{esc(pos)}</span>' if pos else ""
@@ -565,7 +566,7 @@ def build_page(cards, names, slugs, metas, through):
     title = "NBA players on a hot streak right now: points, rebounds, assists | HoopsMatic"
     desc = ("NBA players on a hot streak right now: who is clearing 20 points, 10 rebounds, 8 assists or "
             "3 made threes far more often than usual over his last 10 games. Updated every day.")
-    hd = BS.head(title, desc, prefix="../", path="on-a-run/")
+    hd = BS.head(title, desc, path="on-a-run.html")
     hd = hd.replace(f'<link rel="canonical" href="{PAGE_URL}">\n',
                     f'<link rel="canonical" href="{PAGE_URL}">\n'
                     f'<meta property="og:url" content="{PAGE_URL}">\n'
@@ -600,7 +601,7 @@ def build_page(cards, names, slugs, metas, through):
         grid = ""
     body = (
         '<div class="wrap">\n'
-        '<a class="backtop" href="../index.html">← All streak leaderboards</a>\n'
+        '<a class="backtop" href="index.html">← All streak leaderboards</a>\n'
         '<header class="or-hd"><h1>NBA players <span class="accent">on a run</span></h1>'
         f'<p class="or-upd">Updated {esc(fmt_full(through))} (games through that night)</p>'
         '<p class="subtitle">Players clearing a stat number in at least 8 of their last 10 games, '
@@ -614,10 +615,10 @@ def build_page(cards, names, slugs, metas, through):
         'above his rate at that number in his earlier games this season (or last season when he has fewer '
         'than 10 earlier games). The number is never below his season average. Ranked by how far the run '
         f'sits above his normal, then by the current streak. The same cards are published as '
-        f'<a href="../data/on-a-run.json">JSON</a>.</p>\n'
+        f'<a href="data/on-a-run.json">JSON</a>.</p>\n'
         '</div>\n'
     )
-    return hd + PAGE_CSS + BS.nav("onrun", prefix="../") + body + PAGE_JS + "</body></html>\n"
+    return hd + PAGE_CSS + BS.nav("onrun") + body + PAGE_JS + "</body></html>\n"
 
 
 def card_json(c, name, slug, meta):
@@ -798,7 +799,6 @@ def main():
 
     assign_notes(cards, names, metas)
 
-    os.makedirs(OUT_DIR, exist_ok=True)
     with open(OUT_HTML, "w", encoding="utf-8", newline="\n") as f:
         f.write(build_page(cards, names, slugs, metas, through))
     out = {
@@ -815,7 +815,7 @@ def main():
     with open(OUT_JSON, "w", encoding="utf-8", newline="\n") as f:
         json.dump(out, f, indent=1, ensure_ascii=False)
         f.write("\n")
-    print(f"  on-a-run: {len(cards)} cards -> on-a-run/index.html, data/on-a-run.json")
+    print(f"  on-a-run: {len(cards)} cards -> on-a-run.html, data/on-a-run.json")
 
     inject_charts(df, cur, slugs)
     return 0

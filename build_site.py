@@ -500,7 +500,7 @@ def build_index_html(meta):
         f'{search_box()}\n'
         # link to the daily On a run page (inline style: the shared CSS stays untouched so
         # no other page's content hash moves)
-        f'<p style="margin:.3rem 0 .2rem;"><a href="on-a-run/" style="display:inline-flex;align-items:center;'
+        f'<p style="margin:.3rem 0 .2rem;"><a href="on-a-run.html" style="display:inline-flex;align-items:center;'
         f'min-height:44px;font-weight:600;">Who is on a run right now: players clearing a number far more '
         f'often than usual →</a></p>\n'
         f'<div class="controls"><div class="tabs">{tabs}</div></div>\n'

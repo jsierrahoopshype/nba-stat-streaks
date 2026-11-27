@@ -6,7 +6,7 @@ This repo holds the code and data behind that page. GitHub Pages builds it, and 
 
 ## On a run (daily)
 
-Page: https://hoopsmatic.com/streaks-droughts/on-a-run/ shows players clearing a stat number far more often than usual right now. Rebuilt by the nightly job (`build_on_a_run.py`, step 6 of `nightly_build.py`) from the same data as the rest of the section: the committed Kaggle history plus this season's cdn.nba.com box lines.
+Page: https://hoopsmatic.com/streaks-droughts/on-a-run.html shows players clearing a stat number far more often than usual right now. Rebuilt by the nightly job (`build_on_a_run.py`, step 6 of `nightly_build.py`) from the same data as the rest of the section: the committed Kaggle history plus this season's cdn.nba.com box lines.
 
 **Rule.** Stats in this order: PTS, REB, AST, STL, BLK, 3PM. Ladder: PTS 10/15/20/25/30/35/40, REB 5/8/10/12/15, AST 5/8/10/12, STL 2/3, BLK 2/3/4, 3PM 2/3/4/5. A player qualifies for a stat at the highest ladder number where:
 
@@ -25,7 +25,7 @@ URL: https://hoopsmatic.com/streaks-droughts/data/on-a-run.json (same cards, sam
 {
   "updated": "2026-11-26",          // games through this date
   "season": "2026-27",
-  "page": "https://hoopsmatic.com/streaks-droughts/on-a-run/",
+  "page": "https://hoopsmatic.com/streaks-droughts/on-a-run.html",
   "count": 40,
   "rules": { "window": 10, "min_hits": 8, "min_gap_points": 30, "min_minutes": 15,
              "min_baseline_games": 10, "ladder": { "PTS": [10, 15, ...], ... },

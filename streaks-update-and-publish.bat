@@ -45,7 +45,7 @@ if errorlevel 1 (set "MSG=nightly_build.py failed. Nothing was committed or push
 rem ---- 5. Commit + push (build outputs only, never scripts or data CSVs) -----
 echo.
 echo [5/5] Publishing...
-git add -- active-state.json active-streaks.html lastgame.html index.html feats.html droughts.html teams.html players teams streaks-data.js feats-data.js search-index.js droughts-data.js droughts-leaderboard-data.js sitemap.xml sitemap-lastmod.json on-a-run/index.html data/on-a-run.json data/player-meta-cache.json
+git add -- active-state.json active-streaks.html lastgame.html index.html feats.html droughts.html teams.html players teams streaks-data.js feats-data.js search-index.js droughts-data.js droughts-leaderboard-data.js sitemap.xml sitemap-lastmod.json on-a-run.html data/on-a-run.json data/player-meta-cache.json
 if errorlevel 1 (set "MSG=git add failed. Nothing was committed or pushed." & goto fail)
 if exist "data\daily" git add -- data/daily
 

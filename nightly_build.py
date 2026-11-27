@@ -12,7 +12,7 @@ season are picked up the same way as old ones (no incremental state to drift):
   3. build_site.py         leaderboards, feats, droughts, player pages, data .js files
   4. build_teams.py --all  franchise pages + teams index
   5. active-streaks.html   every current active streak, by scope / family / threshold
-  6. build_on_a_run.py     on-a-run/ page + data/on-a-run.json + "against a number" chart
+  6. build_on_a_run.py     on-a-run.html page + data/on-a-run.json + "against a number" chart
                            on the pages of players who played this season or last season
   7. build_sitemap.py      sitemap.xml; only pages whose content changed get a new lastmod
 
