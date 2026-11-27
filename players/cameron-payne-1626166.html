@@ -132,6 +132,66 @@ table.board tbody td.col-streak{font-size:1.1rem;font-weight:700;color:var(--acc
 <a class="backtop" href="../index.html">← All streak leaderboards</a>
 <div class="psearch-wrap"><input class="psearch" type="search" placeholder="Search any player by name…" autocomplete="off" spellcheck="false"><div class="ac" role="listbox"></div></div>
 <header><h1>Cameron Payne <img class="flag-img flag-lg" src="https://flagcdn.com/h40/us.png" srcset="https://flagcdn.com/h40/us.png 2x" alt="United States" title="United States"></h1><p class="subtitle">Longest streak of 12 5+ assists in a row.</p><p class="teams-line"><span class="tl-label">Teams</span><a class="tmlink" href="../teams/phoenix-suns.html">Phoenix Suns</a><a class="tmlink" href="../teams/new-york-knicks.html">New York Knicks</a><a class="tmlink" href="../teams/oklahoma-city-thunder.html">Oklahoma City Thunder</a><a class="tmlink" href="../teams/chicago-bulls.html">Chicago Bulls</a><a class="tmlink" href="../teams/philadelphia-76ers.html">Philadelphia 76ers</a><a class="tmlink" href="../teams/milwaukee-bucks.html">Milwaukee Bucks</a><a class="tmlink" href="../teams/cleveland-cavaliers.html">Cleveland Cavaliers</a></p></header>
+<!--hm-anum--><style>
+.anum{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.85rem .9rem .8rem;margin:1rem 0 1.2rem;}
+.anum h2{margin:0 0 .5rem;}
+.anum-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin-bottom:.5rem;}
+.anum-b{min-height:44px;min-width:44px;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:0 .75rem;
+cursor:pointer;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);}
+.anum-b:hover{border-color:var(--accent);color:var(--accent);}
+.anum-b[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;}
+.anum-b:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.anum-step{display:inline-flex;align-items:center;gap:.35rem;}
+.anum-val{min-width:4.5rem;text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.95rem;}
+.anum-chart{position:relative;display:flex;align-items:flex-end;gap:2px;height:120px;border-bottom:1px solid var(--border);margin:.3rem 0 .2rem;}
+.anum-bar{flex:1 1 0;min-width:0;border-radius:2px 2px 0 0;}
+.anum-bar.hit{background:#16a34a;}.anum-bar.miss{background:#dc2626;}
+.anum-line{position:absolute;left:0;right:0;border-top:2px dashed var(--text);opacity:.55;pointer-events:none;}
+.anum-axis{display:flex;justify-content:space-between;font-size:.66rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.anum-rates{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.3rem;margin-top:.6rem;}
+.anum-rt{background:var(--bg);border-radius:8px;padding:.3rem .2rem;text-align:center;display:flex;flex-direction:column;}
+.anum-rl{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+.anum-rv{font-family:'JetBrains Mono',monospace;font-size:.92rem;font-weight:700;}
+.anum-rg{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--muted);}
+.anum-sum{font-size:.86rem;margin:.5rem 0 0;}
+.anum-note{font-size:.76rem;color:var(--muted);margin:.5rem 0 0;}
+</style><section class="anum" id="anum" aria-labelledby="anum-h"><h2 id="anum-h">Last 20 games against a number</h2><div class="anum-row" role="group" aria-label="Stat"><button type="button" class="anum-b" data-stat="PTS" aria-pressed="true">PTS</button><button type="button" class="anum-b" data-stat="REB" aria-pressed="false">REB</button><button type="button" class="anum-b" data-stat="AST" aria-pressed="false">AST</button><button type="button" class="anum-b" data-stat="STL" aria-pressed="false">STL</button><button type="button" class="anum-b" data-stat="BLK" aria-pressed="false">BLK</button><button type="button" class="anum-b" data-stat="3PM" aria-pressed="false">3PM</button></div><div class="anum-row anum-step" role="group" aria-label="Number"><button type="button" class="anum-b anum-minus" aria-label="Lower the number">−</button><output class="anum-val" aria-live="polite"></output><button type="button" class="anum-b anum-plus" aria-label="Raise the number">+</button></div><div class="anum-chart" aria-hidden="true"></div><div class="anum-axis"><span>Feb 22, 2026</span><span>Apr 4, 2026</span></div><p class="anum-sum"></p><div class="anum-rates"></div><p class="anum-note">Green = at or over the number, red = under. Regular season and playoffs. Season = this season's games.</p><script type="application/json" id="anum-data">{"ladder":{"PTS":[10,15,20,25,30,35,40],"REB":[5,8,10,12,15],"AST":[5,8,10,12],"STL":[2,3],"BLK":[2,3,4],"3PM":[2,3,4,5]},"pl":{"PTS":"points","REB":"rebounds","AST":"assists","STL":"steals","BLK":"blocks","3PM":"3-pointers"},"dates":["Feb 22, 2026","Feb 24, 2026","Feb 26, 2026","Mar 1, 2026","Mar 3, 2026","Mar 4, 2026","Mar 7, 2026","Mar 9, 2026","Mar 10, 2026","Mar 12, 2026","Mar 14, 2026","Mar 15, 2026","Mar 17, 2026","Mar 19, 2026","Mar 21, 2026","Mar 23, 2026","Mar 25, 2026","Mar 28, 2026","Apr 1, 2026","Apr 4, 2026"],"last":{"PTS":[3,2,6,0,10,0,6,12,32,15,6,11,5,3,16,10,15,0,4,2],"REB":[2,0,3,0,2,1,1,6,3,1,3,2,2,3,3,2,4,0,3,3],"AST":[3,0,1,1,2,1,6,4,10,2,1,1,2,0,7,6,3,0,1,1],"STL":[2,1,1,0,2,0,2,0,3,0,2,1,3,2,0,2,0,0,0,0],"BLK":[0,0,0,0,0,0,1,0,2,0,1,0,0,1,1,0,0,0,1,0],"3PM":[1,0,2,0,2,0,0,2,8,2,2,1,1,0,3,2,5,0,0,0]},"season":{"PTS":[],"REB":[],"AST":[],"STL":[],"BLK":[],"3PM":[]}}</script></section><script>
+(function(){
+  var root=document.getElementById('anum');if(!root)return;
+  var D=JSON.parse(document.getElementById('anum-data').textContent);
+  var ORDER=['PTS','REB','AST','STL','BLK','3PM'],LAD=D.ladder,PL=D.pl;
+  var stat='PTS',n=0;
+  function el(t,c,txt){var e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e;}
+  function def(k){var s=D.season[k],v=s.length?s:D.last[k];if(!v.length)return LAD[k][0];
+    var a=0;v.forEach(function(x){a+=x;});a/=v.length;var best=LAD[k][0];
+    LAD[k].forEach(function(x){if(Math.abs(x-a)<Math.abs(best-a))best=x;});return best;}
+  var chart=root.querySelector('.anum-chart'),val=root.querySelector('.anum-val'),rates=root.querySelector('.anum-rates');
+  var sumEl=root.querySelector('.anum-sum');
+  function rate(v){var h=0;v.forEach(function(x){if(x>=n)h++;});return [h,v.length];}
+  function draw(){
+    val.textContent=n+'+ '+PL[stat];
+    var v=D.last[stat],top=Math.max(Math.max.apply(null,v.concat([0])),n*1.6,n+2);
+    chart.replaceChildren();
+    var ln=el('span','anum-line');ln.style.bottom=(100*n/top)+'%';chart.appendChild(ln);
+    v.forEach(function(x,i){var b=el('span','anum-bar '+(x>=n?'hit':'miss'));
+      b.style.height=Math.max(5,100*x/top)+'%';b.title=D.dates[i]+': '+x+' '+PL[stat];chart.appendChild(b);});
+    rates.replaceChildren();
+    var s=D.season[stat],all=D.last[stat];
+    [['L5',all.slice(-5)],['L10',all.slice(-10)],['L15',all.slice(-15)],['Season',s]].forEach(function(p){
+      var r=rate(p[1]),d=el('div','anum-rt');d.appendChild(el('span','anum-rl',p[0]));
+      d.appendChild(el('span','anum-rv',r[1]?Math.round(100*r[0]/r[1])+'%':'—'));
+      d.appendChild(el('span','anum-rg',r[0]+'/'+r[1]));rates.appendChild(d);});
+    var h=rate(all);sumEl.textContent='Cleared '+n+' '+PL[stat]+' in '+h[0]+' of his last '+h[1]+' games.';
+  }
+  root.querySelectorAll('.anum-b[data-stat]').forEach(function(b){b.addEventListener('click',function(){
+    stat=b.dataset.stat;n=def(stat);
+    root.querySelectorAll('.anum-b[data-stat]').forEach(function(o){o.setAttribute('aria-pressed',o===b?'true':'false');});
+    draw();});});
+  root.querySelector('.anum-minus').addEventListener('click',function(){if(n>1){n--;draw();}});
+  root.querySelector('.anum-plus').addEventListener('click',function(){n++;draw();});
+  n=def(stat);draw();
+})();
+</script><!--/hm-anum-->
 <div class="seg" id="player-seg"><button class="tab active" data-view="streaks">Streaks</button><button class="tab" data-view="droughts">Droughts</button></div>
 <div id="view-streaks"><h2>Regular Season</h2>
 <h3 class="famh">Scoring</h3>
