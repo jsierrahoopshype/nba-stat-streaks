@@ -2,7 +2,7 @@
  "updated": "2026-11-25",
  "season": "2026-27",
  "page": "https://hoopsmatic.com/streaks-droughts/on-a-run.html",
- "count": 6,
+ "count": 19,
  "rules": {
   "window": 10,
   "min_hits": 8,
@@ -65,7 +65,7 @@
    "team": "Brooklyn Nets",
    "team_url": "https://hoopsmatic.com/streaks-droughts/teams/brooklyn-nets.html",
    "position": "C",
-   "headshot": "https://cdn.nba.com/headshots/nba/latest/260x190/1630549.png",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1630549-dayron-sharpe.webp",
    "stat": "AST",
    "stat_label": "assists",
    "number": 5,
@@ -183,7 +183,776 @@
    "gap_points": 67,
    "streak": 2,
    "season_average": 4.1,
+   "pre_stretch_average": 2.6,
    "note": "Sharpe has reached 5 assists in 8 of his last 10 games. Last season, that happened in 13% of his games."
+  },
+  {
+   "player_id": 1630558,
+   "name": "Davion Mitchell",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/davion-mitchell-1630558.html",
+   "team": "Miami Heat",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/miami-heat.html",
+   "position": "G",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1630558-davion-mitchell.webp",
+   "stat": "PTS",
+   "stat_label": "points",
+   "number": 15,
+   "label": "15+ points",
+   "last10": [
+    {
+     "date": "2026-11-04",
+     "game_id": "22600186",
+     "opponent": "LA Clippers",
+     "value": 11,
+     "minutes": 43,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-05",
+     "game_id": "22600188",
+     "opponent": "Golden State Warriors",
+     "value": 22,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-08",
+     "game_id": "22600202",
+     "opponent": "Sacramento Kings",
+     "value": 17,
+     "minutes": 40,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-10",
+     "game_id": "22600214",
+     "opponent": "Utah Jazz",
+     "value": 19,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600036",
+     "opponent": "Cleveland Cavaliers",
+     "value": 22,
+     "minutes": 38,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-14",
+     "game_id": "22600233",
+     "opponent": "Detroit Pistons",
+     "value": 15,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600249",
+     "opponent": "Houston Rockets",
+     "value": 16,
+     "minutes": 33,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-18",
+     "game_id": "22600260",
+     "opponent": "Milwaukee Bucks",
+     "value": 24,
+     "minutes": 35,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-22",
+     "game_id": "22600281",
+     "opponent": "Oklahoma City Thunder",
+     "value": 14,
+     "minutes": 33,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-25",
+     "game_id": "22600055",
+     "opponent": "Philadelphia 76ers",
+     "value": 20,
+     "minutes": 40,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 4,
+     "games": 5,
+     "pct": 80
+    },
+    "l10": {
+     "hits": 8,
+     "games": 10,
+     "pct": 80
+    },
+    "l15": {
+     "hits": 12,
+     "games": 15,
+     "pct": 80
+    },
+    "season": {
+     "hits": 13,
+     "games": 17,
+     "pct": 76
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 70,
+    "hits": 9,
+    "pct": 13
+   },
+   "gap_points": 67,
+   "streak": 1,
+   "season_average": 17.2,
+   "pre_stretch_average": 9.3,
+   "note": "8 of the last 10 at 15 or more points, up from a 13% clip last season."
+  },
+  {
+   "player_id": 1630532,
+   "name": "Franz Wagner",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/franz-wagner-1630532.html",
+   "team": "Orlando Magic",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/orlando-magic.html",
+   "position": "F",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1630532-franz-wagner.webp",
+   "stat": "AST",
+   "stat_label": "assists",
+   "number": 5,
+   "label": "5+ assists",
+   "last10": [
+    {
+     "date": "2026-11-05",
+     "game_id": "22600187",
+     "opponent": "Phoenix Suns",
+     "value": 15,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-07",
+     "game_id": "22600193",
+     "opponent": "Golden State Warriors",
+     "value": 11,
+     "minutes": 39,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-10",
+     "game_id": "22600215",
+     "opponent": "Sacramento Kings",
+     "value": 7,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-11",
+     "game_id": "22600224",
+     "opponent": "Utah Jazz",
+     "value": 1,
+     "minutes": 39,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600035",
+     "opponent": "Milwaukee Bucks",
+     "value": 12,
+     "minutes": 36,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600245",
+     "opponent": "Boston Celtics",
+     "value": 9,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-18",
+     "game_id": "22600261",
+     "opponent": "Philadelphia 76ers",
+     "value": 11,
+     "minutes": 35,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-20",
+     "game_id": "22600044",
+     "opponent": "Brooklyn Nets",
+     "value": 7,
+     "minutes": 36,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-22",
+     "game_id": "22600282",
+     "opponent": "Washington Wizards",
+     "value": 6,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-24",
+     "game_id": "22600052",
+     "opponent": "Detroit Pistons",
+     "value": 6,
+     "minutes": 37,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 5,
+     "games": 5,
+     "pct": 100
+    },
+    "l10": {
+     "hits": 9,
+     "games": 10,
+     "pct": 90
+    },
+    "l15": {
+     "hits": 14,
+     "games": 15,
+     "pct": 93
+    },
+    "season": {
+     "hits": 16,
+     "games": 17,
+     "pct": 94
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 37,
+    "hits": 10,
+    "pct": 27
+   },
+   "gap_points": 63,
+   "streak": 6,
+   "season_average": 8.1,
+   "pre_stretch_average": 3.4,
+   "note": "Before this stretch he got to 5 assists in 27% of games last season. Now it is 9 out of 10."
+  },
+  {
+   "player_id": 1630217,
+   "name": "Desmond Bane",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/desmond-bane-1630217.html",
+   "team": "Orlando Magic",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/orlando-magic.html",
+   "position": "G",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1630217-desmond-bane.webp",
+   "stat": "3PM",
+   "stat_label": "3-pointers",
+   "number": 3,
+   "label": "3+ 3-pointers",
+   "last10": [
+    {
+     "date": "2026-11-02",
+     "game_id": "22600162",
+     "opponent": "Washington Wizards",
+     "value": 4,
+     "minutes": 36,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-05",
+     "game_id": "22600187",
+     "opponent": "Phoenix Suns",
+     "value": 3,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-10",
+     "game_id": "22600215",
+     "opponent": "Sacramento Kings",
+     "value": 4,
+     "minutes": 35,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-11",
+     "game_id": "22600224",
+     "opponent": "Utah Jazz",
+     "value": 7,
+     "minutes": 34,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600035",
+     "opponent": "Milwaukee Bucks",
+     "value": 6,
+     "minutes": 34,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600245",
+     "opponent": "Boston Celtics",
+     "value": 3,
+     "minutes": 39,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-18",
+     "game_id": "22600261",
+     "opponent": "Philadelphia 76ers",
+     "value": 5,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-20",
+     "game_id": "22600044",
+     "opponent": "Brooklyn Nets",
+     "value": 7,
+     "minutes": 30,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-22",
+     "game_id": "22600282",
+     "opponent": "Washington Wizards",
+     "value": 3,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-24",
+     "game_id": "22600052",
+     "opponent": "Detroit Pistons",
+     "value": 4,
+     "minutes": 33,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 5,
+     "games": 5,
+     "pct": 100
+    },
+    "l10": {
+     "hits": 10,
+     "games": 10,
+     "pct": 100
+    },
+    "l15": {
+     "hits": 13,
+     "games": 15,
+     "pct": 87
+    },
+    "season": {
+     "hits": 14,
+     "games": 16,
+     "pct": 88
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 89,
+    "hits": 33,
+    "pct": 37
+   },
+   "gap_points": 63,
+   "streak": 12,
+   "season_average": 4.2,
+   "pre_stretch_average": 2.2,
+   "note": "He is averaging 4.6 3-pointers across the last 10, compared with 2.2 last season."
+  },
+  {
+   "player_id": 1641710,
+   "name": "Anthony Black",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/anthony-black-1641710.html",
+   "team": "Orlando Magic",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/orlando-magic.html",
+   "position": "G",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1641710-anthony-black.webp",
+   "stat": "AST",
+   "stat_label": "assists",
+   "number": 5,
+   "label": "5+ assists",
+   "last10": [
+    {
+     "date": "2026-11-05",
+     "game_id": "22600187",
+     "opponent": "Phoenix Suns",
+     "value": 6,
+     "minutes": 30,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-07",
+     "game_id": "22600193",
+     "opponent": "Golden State Warriors",
+     "value": 6,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-10",
+     "game_id": "22600215",
+     "opponent": "Sacramento Kings",
+     "value": 5,
+     "minutes": 33,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-11",
+     "game_id": "22600224",
+     "opponent": "Utah Jazz",
+     "value": 8,
+     "minutes": 38,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600035",
+     "opponent": "Milwaukee Bucks",
+     "value": 5,
+     "minutes": 36,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600245",
+     "opponent": "Boston Celtics",
+     "value": 7,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-18",
+     "game_id": "22600261",
+     "opponent": "Philadelphia 76ers",
+     "value": 6,
+     "minutes": 36,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-20",
+     "game_id": "22600044",
+     "opponent": "Brooklyn Nets",
+     "value": 6,
+     "minutes": 36,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-22",
+     "game_id": "22600282",
+     "opponent": "Washington Wizards",
+     "value": 2,
+     "minutes": 34,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-24",
+     "game_id": "22600052",
+     "opponent": "Detroit Pistons",
+     "value": 2,
+     "minutes": 27,
+     "cleared": false
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 3,
+     "games": 5,
+     "pct": 60
+    },
+    "l10": {
+     "hits": 8,
+     "games": 10,
+     "pct": 80
+    },
+    "l15": {
+     "hits": 10,
+     "games": 14,
+     "pct": 71
+    },
+    "season": {
+     "hits": 10,
+     "games": 14,
+     "pct": 71
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 70,
+    "hits": 20,
+    "pct": 29
+   },
+   "gap_points": 51,
+   "streak": 0,
+   "season_average": 5.1,
+   "pre_stretch_average": 3.5,
+   "note": "The high point so far: 8 assists against the Jazz on Nov 11."
+  },
+  {
+   "player_id": 1642847,
+   "name": "Jeremiah Fears",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/jeremiah-fears-1642847.html",
+   "team": "New Orleans Pelicans",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/new-orleans-pelicans.html",
+   "position": "G",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1642847-jeremiah-fears.webp",
+   "stat": "AST",
+   "stat_label": "assists",
+   "number": 5,
+   "label": "5+ assists",
+   "last10": [
+    {
+     "date": "2026-11-08",
+     "game_id": "22600201",
+     "opponent": "LA Clippers",
+     "value": 5,
+     "minutes": 29,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-09",
+     "game_id": "22600210",
+     "opponent": "Golden State Warriors",
+     "value": 8,
+     "minutes": 28,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-11",
+     "game_id": "22600223",
+     "opponent": "Brooklyn Nets",
+     "value": 5,
+     "minutes": 27,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600038",
+     "opponent": "Memphis Grizzlies",
+     "value": 7,
+     "minutes": 33,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-14",
+     "game_id": "22600231",
+     "opponent": "Denver Nuggets",
+     "value": 7,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600251",
+     "opponent": "Golden State Warriors",
+     "value": 10,
+     "minutes": 29,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-18",
+     "game_id": "22600264",
+     "opponent": "Detroit Pistons",
+     "value": 4,
+     "minutes": 30,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-20",
+     "game_id": "22600048",
+     "opponent": "Oklahoma City Thunder",
+     "value": 5,
+     "minutes": 38,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-21",
+     "game_id": "22600278",
+     "opponent": "San Antonio Spurs",
+     "value": 4,
+     "minutes": 34,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-23",
+     "game_id": "22600293",
+     "opponent": "Phoenix Suns",
+     "value": 11,
+     "minutes": 39,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 3,
+     "games": 5,
+     "pct": 60
+    },
+    "l10": {
+     "hits": 8,
+     "games": 10,
+     "pct": 80
+    },
+    "l15": {
+     "hits": 12,
+     "games": 15,
+     "pct": 80
+    },
+    "season": {
+     "hits": 12,
+     "games": 19,
+     "pct": 63
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 79,
+    "hits": 23,
+    "pct": 29
+   },
+   "gap_points": 51,
+   "streak": 1,
+   "season_average": 5.6,
+   "pre_stretch_average": 3.5,
+   "note": "That is a jump of 51 points in hit rate at 5+ assists compared with last season."
+  },
+  {
+   "player_id": 1641783,
+   "name": "Tristan da Silva",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/tristan-da-silva-1641783.html",
+   "team": "Orlando Magic",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/orlando-magic.html",
+   "position": "F",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1641783-tristan-da-silva.webp",
+   "stat": "3PM",
+   "stat_label": "3-pointers",
+   "number": 2,
+   "label": "2+ 3-pointers",
+   "last10": [
+    {
+     "date": "2026-11-01",
+     "game_id": "22600154",
+     "opponent": "Boston Celtics",
+     "value": 5,
+     "minutes": 35,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-02",
+     "game_id": "22600162",
+     "opponent": "Washington Wizards",
+     "value": 2,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-05",
+     "game_id": "22600187",
+     "opponent": "Phoenix Suns",
+     "value": 4,
+     "minutes": 30,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-07",
+     "game_id": "22600193",
+     "opponent": "Golden State Warriors",
+     "value": 5,
+     "minutes": 38,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600035",
+     "opponent": "Milwaukee Bucks",
+     "value": 2,
+     "minutes": 31,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600245",
+     "opponent": "Boston Celtics",
+     "value": 3,
+     "minutes": 31,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-18",
+     "game_id": "22600261",
+     "opponent": "Philadelphia 76ers",
+     "value": 2,
+     "minutes": 27,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-20",
+     "game_id": "22600044",
+     "opponent": "Brooklyn Nets",
+     "value": 2,
+     "minutes": 23,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-22",
+     "game_id": "22600282",
+     "opponent": "Washington Wizards",
+     "value": 4,
+     "minutes": 27,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-24",
+     "game_id": "22600052",
+     "opponent": "Detroit Pistons",
+     "value": 4,
+     "minutes": 33,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 5,
+     "games": 5,
+     "pct": 100
+    },
+    "l10": {
+     "hits": 10,
+     "games": 10,
+     "pct": 100
+    },
+    "l15": {
+     "hits": 14,
+     "games": 15,
+     "pct": 93
+    },
+    "season": {
+     "hits": 14,
+     "games": 15,
+     "pct": 93
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 76,
+    "hits": 38,
+    "pct": 50
+   },
+   "gap_points": 50,
+   "streak": 13,
+   "season_average": 3.3,
+   "pre_stretch_average": 1.6,
+   "note": "All five of his most recent games got there, and 10 of the last 10 did."
   },
   {
    "player_id": 1630700,
@@ -192,7 +961,7 @@
    "team": "Atlanta Hawks",
    "team_url": "https://hoopsmatic.com/streaks-droughts/teams/atlanta-hawks.html",
    "position": "G",
-   "headshot": "https://cdn.nba.com/headshots/nba/latest/260x190/1630700.png",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1630700-dyson-daniels.webp",
    "stat": "REB",
    "stat_label": "rebounds",
    "number": 8,
@@ -310,7 +1079,520 @@
    "gap_points": 49,
    "streak": 5,
    "season_average": 8.0,
-   "note": "9 of the last 10 at 8 or more rebounds, up from a 41% clip last season."
+   "pre_stretch_average": 6.9,
+   "note": "Since Nov 2 he has 9 games with 8 or more rebounds in 10 tries."
+  },
+  {
+   "player_id": 203507,
+   "name": "Giannis Antetokounmpo",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/giannis-antetokounmpo-203507.html",
+   "team": "Miami Heat",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/miami-heat.html",
+   "position": "F",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/203507-giannis-antetokounmpo.webp",
+   "stat": "REB",
+   "stat_label": "rebounds",
+   "number": 12,
+   "label": "12+ rebounds",
+   "last10": [
+    {
+     "date": "2026-11-02",
+     "game_id": "22600172",
+     "opponent": "Los Angeles Lakers",
+     "value": 12,
+     "minutes": 34,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-04",
+     "game_id": "22600186",
+     "opponent": "LA Clippers",
+     "value": 14,
+     "minutes": 40,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-05",
+     "game_id": "22600188",
+     "opponent": "Golden State Warriors",
+     "value": 14,
+     "minutes": 31,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-08",
+     "game_id": "22600202",
+     "opponent": "Sacramento Kings",
+     "value": 14,
+     "minutes": 33,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-10",
+     "game_id": "22600214",
+     "opponent": "Utah Jazz",
+     "value": 11,
+     "minutes": 30,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600036",
+     "opponent": "Cleveland Cavaliers",
+     "value": 9,
+     "minutes": 31,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-14",
+     "game_id": "22600233",
+     "opponent": "Detroit Pistons",
+     "value": 14,
+     "minutes": 30,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600249",
+     "opponent": "Houston Rockets",
+     "value": 13,
+     "minutes": 28,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-18",
+     "game_id": "22600260",
+     "opponent": "Milwaukee Bucks",
+     "value": 14,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-25",
+     "game_id": "22600055",
+     "opponent": "Philadelphia 76ers",
+     "value": 14,
+     "minutes": 36,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 4,
+     "games": 5,
+     "pct": 80
+    },
+    "l10": {
+     "hits": 8,
+     "games": 10,
+     "pct": 80
+    },
+    "l15": {
+     "hits": 12,
+     "games": 15,
+     "pct": 80
+    },
+    "season": {
+     "hits": 12,
+     "games": 16,
+     "pct": 75
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 34,
+    "hits": 11,
+    "pct": 32
+   },
+   "gap_points": 48,
+   "streak": 4,
+   "season_average": 12.7,
+   "pre_stretch_average": 10.2,
+   "note": "Antetokounmpo is putting up 2.7 more rebounds a game than last season over this 10-game stretch."
+  },
+  {
+   "player_id": 1630558,
+   "name": "Davion Mitchell",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/davion-mitchell-1630558.html",
+   "team": "Miami Heat",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/miami-heat.html",
+   "position": "G",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1630558-davion-mitchell.webp",
+   "stat": "AST",
+   "stat_label": "assists",
+   "number": 8,
+   "label": "8+ assists",
+   "last10": [
+    {
+     "date": "2026-11-04",
+     "game_id": "22600186",
+     "opponent": "LA Clippers",
+     "value": 10,
+     "minutes": 43,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-05",
+     "game_id": "22600188",
+     "opponent": "Golden State Warriors",
+     "value": 8,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-08",
+     "game_id": "22600202",
+     "opponent": "Sacramento Kings",
+     "value": 11,
+     "minutes": 40,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-10",
+     "game_id": "22600214",
+     "opponent": "Utah Jazz",
+     "value": 8,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600036",
+     "opponent": "Cleveland Cavaliers",
+     "value": 17,
+     "minutes": 38,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-14",
+     "game_id": "22600233",
+     "opponent": "Detroit Pistons",
+     "value": 9,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600249",
+     "opponent": "Houston Rockets",
+     "value": 10,
+     "minutes": 33,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-18",
+     "game_id": "22600260",
+     "opponent": "Milwaukee Bucks",
+     "value": 6,
+     "minutes": 35,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-22",
+     "game_id": "22600281",
+     "opponent": "Oklahoma City Thunder",
+     "value": 3,
+     "minutes": 33,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-25",
+     "game_id": "22600055",
+     "opponent": "Philadelphia 76ers",
+     "value": 10,
+     "minutes": 40,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 3,
+     "games": 5,
+     "pct": 60
+    },
+    "l10": {
+     "hits": 8,
+     "games": 10,
+     "pct": 80
+    },
+    "l15": {
+     "hits": 11,
+     "games": 15,
+     "pct": 73
+    },
+    "season": {
+     "hits": 12,
+     "games": 17,
+     "pct": 71
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 70,
+    "hits": 24,
+    "pct": 34
+   },
+   "gap_points": 46,
+   "streak": 1,
+   "season_average": 8.7,
+   "pre_stretch_average": 6.5,
+   "note": "Only 2 games under 8 in the last 10; the latest was 3 assists on Nov 22."
+  },
+  {
+   "player_id": 1642844,
+   "name": "Dylan Harper",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/dylan-harper-1642844.html",
+   "team": "San Antonio Spurs",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/san-antonio-spurs.html",
+   "position": "G",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1642844-dylan-harper.webp",
+   "stat": "PTS",
+   "stat_label": "points",
+   "number": 15,
+   "label": "15+ points",
+   "last10": [
+    {
+     "date": "2026-10-31",
+     "game_id": "22600152",
+     "opponent": "Minnesota Timberwolves",
+     "value": 25,
+     "minutes": 38,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-02",
+     "game_id": "22600168",
+     "opponent": "Utah Jazz",
+     "value": 17,
+     "minutes": 27,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-04",
+     "game_id": "22600184",
+     "opponent": "Dallas Mavericks",
+     "value": 21,
+     "minutes": 35,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-06",
+     "game_id": "22600033",
+     "opponent": "Sacramento Kings",
+     "value": 19,
+     "minutes": 28,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-07",
+     "game_id": "22600195",
+     "opponent": "Portland Trail Blazers",
+     "value": 13,
+     "minutes": 28,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-09",
+     "game_id": "22600209",
+     "opponent": "Phoenix Suns",
+     "value": 17,
+     "minutes": 25,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-11",
+     "game_id": "22600220",
+     "opponent": "Chicago Bulls",
+     "value": 18,
+     "minutes": 35,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600040",
+     "opponent": "Golden State Warriors",
+     "value": 9,
+     "minutes": 25,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-15",
+     "game_id": "22600239",
+     "opponent": "Utah Jazz",
+     "value": 31,
+     "minutes": 34,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-17",
+     "game_id": "22600255",
+     "opponent": "Detroit Pistons",
+     "value": 20,
+     "minutes": 34,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 4,
+     "games": 5,
+     "pct": 80
+    },
+    "l10": {
+     "hits": 8,
+     "games": 10,
+     "pct": 80
+    },
+    "l15": {
+     "hits": 11,
+     "games": 15,
+     "pct": 73
+    },
+    "season": {
+     "hits": 11,
+     "games": 15,
+     "pct": 73
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 89,
+    "hits": 33,
+    "pct": 37
+   },
+   "gap_points": 43,
+   "streak": 2,
+   "season_average": 18.4,
+   "pre_stretch_average": 12.6,
+   "note": "Harper has reached 15 points in 8 of his last 10 games. Last season, that happened in 37% of his games."
+  },
+  {
+   "player_id": 1630567,
+   "name": "Scottie Barnes",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/scottie-barnes-1630567.html",
+   "team": "Toronto Raptors",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/toronto-raptors.html",
+   "position": "F-G",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1630567-scottie-barnes.webp",
+   "stat": "PTS",
+   "stat_label": "points",
+   "number": 20,
+   "label": "20+ points",
+   "last10": [
+    {
+     "date": "2026-10-25",
+     "game_id": "22600115",
+     "opponent": "Minnesota Timberwolves",
+     "value": 0,
+     "minutes": 27,
+     "cleared": false
+    },
+    {
+     "date": "2026-10-28",
+     "game_id": "22600136",
+     "opponent": "Orlando Magic",
+     "value": 28,
+     "minutes": 31,
+     "cleared": true
+    },
+    {
+     "date": "2026-10-30",
+     "game_id": "22600019",
+     "opponent": "Orlando Magic",
+     "value": 41,
+     "minutes": 38,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-01",
+     "game_id": "22600157",
+     "opponent": "Los Angeles Lakers",
+     "value": 29,
+     "minutes": 36,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-02",
+     "game_id": "22600171",
+     "opponent": "LA Clippers",
+     "value": 22,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-04",
+     "game_id": "22600182",
+     "opponent": "Denver Nuggets",
+     "value": 17,
+     "minutes": 31,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-15",
+     "game_id": "22600241",
+     "opponent": "New York Knicks",
+     "value": 30,
+     "minutes": 36,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-17",
+     "game_id": "22600253",
+     "opponent": "New York Knicks",
+     "value": 20,
+     "minutes": 34,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-20",
+     "game_id": "22600046",
+     "opponent": "Detroit Pistons",
+     "value": 29,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-23",
+     "game_id": "22600290",
+     "opponent": "Milwaukee Bucks",
+     "value": 31,
+     "minutes": 38,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 4,
+     "games": 5,
+     "pct": 80
+    },
+    "l10": {
+     "hits": 8,
+     "games": 10,
+     "pct": 80
+    },
+    "l15": {
+     "hits": 10,
+     "games": 12,
+     "pct": 83
+    },
+    "season": {
+     "hits": 10,
+     "games": 12,
+     "pct": 83
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 87,
+    "hits": 34,
+    "pct": 39
+   },
+   "gap_points": 41,
+   "streak": 4,
+   "season_average": 24.8,
+   "pre_stretch_average": 18.6,
+   "note": "8 of the last 10 at 20 or more points, up from a 39% clip last season."
   },
   {
    "player_id": 1627783,
@@ -319,7 +1601,7 @@
    "team": "Indiana Pacers",
    "team_url": "https://hoopsmatic.com/streaks-droughts/teams/indiana-pacers.html",
    "position": "F",
-   "headshot": "https://cdn.nba.com/headshots/nba/latest/260x190/1627783.png",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1627783-pascal-siakam.webp",
    "stat": "3PM",
    "stat_label": "3-pointers",
    "number": 2,
@@ -437,7 +1719,264 @@
    "gap_points": 40,
    "streak": 4,
    "season_average": 1.8,
+   "pre_stretch_average": 1.7,
    "note": "Before this stretch he got to 2 3-pointers in 50% of games last season. Now it is 9 out of 10."
+  },
+  {
+   "player_id": 1630183,
+   "name": "Jaden McDaniels",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/jaden-mcdaniels-1630183.html",
+   "team": "Minnesota Timberwolves",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/minnesota-timberwolves.html",
+   "position": "F",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1630183-jaden-mcdaniels.webp",
+   "stat": "REB",
+   "stat_label": "rebounds",
+   "number": 5,
+   "label": "5+ rebounds",
+   "last10": [
+    {
+     "date": "2026-11-06",
+     "game_id": "22600031",
+     "opponent": "New Orleans Pelicans",
+     "value": 6,
+     "minutes": 39,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-08",
+     "game_id": "22600198",
+     "opponent": "Utah Jazz",
+     "value": 6,
+     "minutes": 32,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-12",
+     "game_id": "22600229",
+     "opponent": "Dallas Mavericks",
+     "value": 9,
+     "minutes": 25,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-14",
+     "game_id": "22600235",
+     "opponent": "Chicago Bulls",
+     "value": 5,
+     "minutes": 37,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600250",
+     "opponent": "Portland Trail Blazers",
+     "value": 6,
+     "minutes": 31,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-17",
+     "game_id": "22600254",
+     "opponent": "Portland Trail Blazers",
+     "value": 5,
+     "minutes": 36,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-19",
+     "game_id": "22600272",
+     "opponent": "New York Knicks",
+     "value": 4,
+     "minutes": 38,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-21",
+     "game_id": "22600277",
+     "opponent": "Memphis Grizzlies",
+     "value": 5,
+     "minutes": 35,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-23",
+     "game_id": "22600291",
+     "opponent": "Brooklyn Nets",
+     "value": 10,
+     "minutes": 34,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-25",
+     "game_id": "22600058",
+     "opponent": "Oklahoma City Thunder",
+     "value": 10,
+     "minutes": 36,
+     "cleared": true
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 4,
+     "games": 5,
+     "pct": 80
+    },
+    "l10": {
+     "hits": 9,
+     "games": 10,
+     "pct": 90
+    },
+    "l15": {
+     "hits": 13,
+     "games": 15,
+     "pct": 87
+    },
+    "season": {
+     "hits": 17,
+     "games": 19,
+     "pct": 89
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 84,
+    "hits": 42,
+    "pct": 50
+   },
+   "gap_points": 40,
+   "streak": 3,
+   "season_average": 6.4,
+   "pre_stretch_average": 4.5,
+   "note": "He is averaging 6.6 rebounds across the last 10, compared with 4.5 last season."
+  },
+  {
+   "player_id": 1626157,
+   "name": "Karl-Anthony Towns",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/karl-anthony-towns-1626157.html",
+   "team": "New York Knicks",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/new-york-knicks.html",
+   "position": "C-F",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1626157-karl-anthony-towns.webp",
+   "stat": "3PM",
+   "stat_label": "3-pointers",
+   "number": 2,
+   "label": "2+ 3-pointers",
+   "last10": [
+    {
+     "date": "2026-11-04",
+     "game_id": "22600177",
+     "opponent": "Chicago Bulls",
+     "value": 2,
+     "minutes": 25,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-07",
+     "game_id": "22600191",
+     "opponent": "Cleveland Cavaliers",
+     "value": 2,
+     "minutes": 33,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-10",
+     "game_id": "22600211",
+     "opponent": "Milwaukee Bucks",
+     "value": 2,
+     "minutes": 27,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-11",
+     "game_id": "22600218",
+     "opponent": "Cleveland Cavaliers",
+     "value": 2,
+     "minutes": 34,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-13",
+     "game_id": "22600034",
+     "opponent": "Indiana Pacers",
+     "value": 3,
+     "minutes": 33,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-15",
+     "game_id": "22600241",
+     "opponent": "Toronto Raptors",
+     "value": 3,
+     "minutes": 42,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-17",
+     "game_id": "22600253",
+     "opponent": "Toronto Raptors",
+     "value": 1,
+     "minutes": 36,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-19",
+     "game_id": "22600272",
+     "opponent": "Minnesota Timberwolves",
+     "value": 2,
+     "minutes": 33,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-22",
+     "game_id": "22600285",
+     "opponent": "Indiana Pacers",
+     "value": 4,
+     "minutes": 29,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-25",
+     "game_id": "22600057",
+     "opponent": "Cleveland Cavaliers",
+     "value": 1,
+     "minutes": 32,
+     "cleared": false
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 3,
+     "games": 5,
+     "pct": 60
+    },
+    "l10": {
+     "hits": 8,
+     "games": 10,
+     "pct": 80
+    },
+    "l15": {
+     "hits": 10,
+     "games": 15,
+     "pct": 67
+    },
+    "season": {
+     "hits": 12,
+     "games": 17,
+     "pct": 71
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 94,
+    "hits": 39,
+    "pct": 41
+   },
+   "gap_points": 39,
+   "streak": 0,
+   "season_average": 2.1,
+   "pre_stretch_average": 1.5,
+   "note": "The high point so far: 4 3-pointers against the Pacers on Nov 22."
   },
   {
    "player_id": 1642845,
@@ -446,7 +1985,7 @@
    "team": "Philadelphia 76ers",
    "team_url": "https://hoopsmatic.com/streaks-droughts/teams/philadelphia-76ers.html",
    "position": "G",
-   "headshot": "https://cdn.nba.com/headshots/nba/latest/260x190/1642845.png",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1642845-vj-edgecombe.webp",
    "stat": "STL",
    "stat_label": "steals",
    "number": 2,
@@ -564,7 +2103,136 @@
    "gap_points": 36,
    "streak": 5,
    "season_average": 1.7,
-   "note": "He is averaging 2.2 steals across the last 10, compared with 1.4 last season."
+   "pre_stretch_average": 1.4,
+   "note": "That is a jump of 36 points in hit rate at 2+ steals compared with last season."
+  },
+  {
+   "player_id": 1642849,
+   "name": "Nolan Traore",
+   "player_url": "https://hoopsmatic.com/streaks-droughts/players/nolan-traore-1642849.html",
+   "team": "Brooklyn Nets",
+   "team_url": "https://hoopsmatic.com/streaks-droughts/teams/brooklyn-nets.html",
+   "position": "G",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1642849-nolan-traore.webp",
+   "stat": "PTS",
+   "stat_label": "points",
+   "number": 10,
+   "label": "10+ points",
+   "last10": [
+    {
+     "date": "2026-10-30",
+     "game_id": "22600017",
+     "opponent": "Detroit Pistons",
+     "value": 9,
+     "minutes": 25,
+     "cleared": false
+    },
+    {
+     "date": "2026-11-01",
+     "game_id": "22600155",
+     "opponent": "Indiana Pacers",
+     "value": 16,
+     "minutes": 30,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-02",
+     "game_id": "22600161",
+     "opponent": "New York Knicks",
+     "value": 17,
+     "minutes": 24,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-04",
+     "game_id": "22600176",
+     "opponent": "Charlotte Hornets",
+     "value": 16,
+     "minutes": 27,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-07",
+     "game_id": "22600190",
+     "opponent": "Atlanta Hawks",
+     "value": 19,
+     "minutes": 22,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-08",
+     "game_id": "22600199",
+     "opponent": "Dallas Mavericks",
+     "value": 14,
+     "minutes": 21,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-14",
+     "game_id": "22600234",
+     "opponent": "Memphis Grizzlies",
+     "value": 11,
+     "minutes": 19,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-16",
+     "game_id": "22600248",
+     "opponent": "Philadelphia 76ers",
+     "value": 23,
+     "minutes": 29,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-18",
+     "game_id": "22600262",
+     "opponent": "Chicago Bulls",
+     "value": 13,
+     "minutes": 23,
+     "cleared": true
+    },
+    {
+     "date": "2026-11-20",
+     "game_id": "22600044",
+     "opponent": "Orlando Magic",
+     "value": 4,
+     "minutes": 17,
+     "cleared": false
+    }
+   ],
+   "hit_rates": {
+    "l5": {
+     "hits": 4,
+     "games": 5,
+     "pct": 80
+    },
+    "l10": {
+     "hits": 8,
+     "games": 10,
+     "pct": 80
+    },
+    "l15": {
+     "hits": 10,
+     "games": 14,
+     "pct": 71
+    },
+    "season": {
+     "hits": 10,
+     "games": 14,
+     "pct": 71
+    }
+   },
+   "baseline": {
+    "source": "last_season",
+    "games": 48,
+    "hits": 22,
+    "pct": 46
+   },
+   "gap_points": 34,
+   "streak": 0,
+   "season_average": 12.9,
+   "pre_stretch_average": 9.9,
+   "note": "Since Oct 30 he has 8 games with 10 or more points in 10 tries."
   },
   {
    "player_id": 1630168,
@@ -573,7 +2241,7 @@
    "team": "Atlanta Hawks",
    "team_url": "https://hoopsmatic.com/streaks-droughts/teams/atlanta-hawks.html",
    "position": "F-C",
-   "headshot": "https://cdn.nba.com/headshots/nba/latest/260x190/1630168.png",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1630168-onyeka-okongwu.webp",
    "stat": "3PM",
    "stat_label": "3-pointers",
    "number": 2,
@@ -691,7 +2359,8 @@
    "gap_points": 33,
    "streak": 0,
    "season_average": 1.8,
-   "note": "The high point so far: 5 3-pointers against the Thunder on Nov 18."
+   "pre_stretch_average": 1.9,
+   "note": "Okongwu has reached 2 3-pointers in 9 of his last 10 games. Last season, that happened in 57% of his games."
   },
   {
    "player_id": 1628369,
@@ -700,7 +2369,7 @@
    "team": "Boston Celtics",
    "team_url": "https://hoopsmatic.com/streaks-droughts/teams/boston-celtics.html",
    "position": "F-G",
-   "headshot": "https://cdn.nba.com/headshots/nba/latest/260x190/1628369.png",
+   "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1628369-jayson-tatum.webp",
    "stat": "3PM",
    "stat_label": "3-pointers",
    "number": 3,
@@ -818,7 +2487,8 @@
    "gap_points": 30,
    "streak": 5,
    "season_average": 2.9,
-   "note": "That is a jump of 30 points in hit rate at 3+ 3-pointers compared with last season."
+   "pre_stretch_average": 3.0,
+   "note": "8 of the last 10 at 3 or more 3-pointers, up from a 50% clip last season."
   }
  ]
 }

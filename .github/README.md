@@ -13,7 +13,7 @@ Page: https://hoopsmatic.com/streaks-droughts/on-a-run.html shows players cleari
 - he played 15+ minutes in each of his last 10 games this season (regular season + playoffs),
 - he cleared the number in 8+ of those 10,
 - that rate is 30+ points above his rate at the same number in his baseline: his earlier games this season (before the last 10) when there are 10+, otherwise last season. Baseline games count only with 15+ minutes, and the baseline needs 10+ games,
-- the number is at or above his season average for that stat (so a 25-ppg scorer clearing 10 or 20 never shows up).
+- the number is at or above his average for that stat in the same baseline games, i.e. before this 10-game stretch (so a 25-ppg scorer clearing 10 or 20 never shows up).
 
 Ranked by the gap (L10 rate minus baseline rate), then by the current straight streak (this season). Up to 40 cards.
 
@@ -38,7 +38,7 @@ URL: https://hoopsmatic.com/streaks-droughts/data/on-a-run.json (same cards, sam
       "team": "Detroit Pistons",            // team of his latest game this season
       "team_url": "https://hoopsmatic.com/streaks-droughts/teams/detroit-pistons.html",
       "position": "G-F",                    // NBA.com roster position, or null
-      "headshot": "https://cdn.nba.com/headshots/nba/latest/260x190/1641709.png",  // null when NBA.com has none
+      "headshot": "https://hoopsmatic.com/img/nba-headshots/players/headshots/face-fill/1641709-ausar-thompson.webp",  // HoopsMatic headshot set; null when it has no file for him
       "stat": "REB", "stat_label": "rebounds", "number": 8, "label": "8+ rebounds",
       "last10": [                           // oldest first, most recent last
         { "date": "2026-11-05", "game_id": "22600123", "opponent": "Miami Heat",
@@ -53,14 +53,15 @@ URL: https://hoopsmatic.com/streaks-droughts/data/on-a-run.json (same cards, sam
       "baseline": { "source": "last_season", "games": 60, "hits": 21, "pct": 35 },  // or "earlier_this_season"
       "gap_points": 55,                     // L10 pct minus baseline pct
       "streak": 6,                          // current straight games at "number" this season
-      "season_average": 8.7,
+      "season_average": 8.7,                // this season, all games
+      "pre_stretch_average": 6.2,           // baseline games (before the last 10): the guard
       "note": "One plain-language sentence shown on the card."
     }
   ]
 }
 ```
 
-`data/player-meta-cache.json` is a build cache (NBA.com roster position and whether cdn.nba.com has a headshot) for the players on the cards; it is fetched only for players missing from it, and a failed fetch never fails the build.
+`data/player-meta-cache.json` is a build cache for the players on the cards: NBA.com roster position, and the file name of his HoopsMatic headshot (nba-headshots face-fill set on hoopsmatic.com/img/, checked at build time; empty = none, so the card shows no image). A failed fetch never fails the build. Visitors' browsers never contact cdn.nba.com.
 
 ### Player pages: "against a number"
 
