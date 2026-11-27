@@ -1,6 +1,8 @@
 # Data files (large Kaggle dataset — never commit) — but DO keep the nightly pulls
 data/*
 !data/daily/
+!data/on-a-run.json
+!data/player-meta-cache.json
 *.csv
 *.parquet
 

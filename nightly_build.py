@@ -12,7 +12,9 @@ season are picked up the same way as old ones (no incremental state to drift):
   3. build_site.py         leaderboards, feats, droughts, player pages, data .js files
   4. build_teams.py --all  franchise pages + teams index
   5. active-streaks.html   every current active streak, by scope / family / threshold
-  6. build_sitemap.py      sitemap.xml; only pages whose content changed get a new lastmod
+  6. build_on_a_run.py     on-a-run/ page + data/on-a-run.json + "against a number" chart
+                           on the pages of players who played this season or last season
+  7. build_sitemap.py      sitemap.xml; only pages whose content changed get a new lastmod
 
   python nightly_build.py                 # normal run (CI and the .bat)
   python nightly_build.py --no-ready-check
@@ -55,12 +57,13 @@ def main():
             print(f"Season file: {e}. Building from what is published.")
 
     env = dict(os.environ, NBA_STREAKS_DATA=BUILD_DATA, PYTHONIOENCODING="utf-8")
-    step("1/6 prepare data", ["prepare_data.py"], env)
-    step("2/6 active state", ["export_active_state.py"], env)
-    step("3/6 site pages", ["build_site.py"], env)
-    step("4/6 team pages", ["build_teams.py", "--all"], env)
-    step("5/6 active streaks page", ["fetch_nightly.py", "--active-page"], env)
-    step("6/6 sitemap", ["build_sitemap.py"], env)
+    step("1/7 prepare data", ["prepare_data.py"], env)
+    step("2/7 active state", ["export_active_state.py"], env)
+    step("3/7 site pages", ["build_site.py"], env)
+    step("4/7 team pages", ["build_teams.py", "--all"], env)
+    step("5/7 active streaks page", ["fetch_nightly.py", "--active-page"], env)
+    step("6/7 on a run + player charts", ["build_on_a_run.py"], env)
+    step("7/7 sitemap", ["build_sitemap.py"], env)
     print("\nDone.")
     return 0
 
